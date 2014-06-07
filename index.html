@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Switcharoo</title>
+	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,700,900" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" type="text/css" href="Switcharoo.css">
+	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+	<script type="text/javascript" src="lib/underscore-min.js"></script>
+	<script type="text/javascript" src="lib/backbone.js"></script>
+	<script type="text/javascript" src="lib/handlebars-v1.3.0.js"></script>
+	<script type="text/javascript" src="bower_components/velocity/jquery.velocity.min.js"></script>
+	<script type="text/javascript" src="js/container.js"></script>
+	<script type="text/javascript" src="js/slide.js"></script>
+	<script type="text/javascript" src="js/instagram.js"></script>
+	<script type="text/javascript" src="js/twitter.js"></script>
+	<script type="text/javascript" src="js/progress.js"></script>
+</head>
+<body>
+	<div class="progress"></div>
+	<div class="container"></div>
+
+	<script type="text/x-handlebars-template" id="container">
+		<div class="slide"></div>
+		<div class="slide"></div>
+	</script>
+	<script type="text/x-handlebars-template" id="twitter">
+		<h1>Twitter</h1>
+	</script>
+	<script type="text/x-handlebars-template" id="instagram">
+		<h1>Instagram</h1>
+	</script>
+
+<script type="text/javascript">
+	var container = new Switcharoo.ContainerView({ el: '.container', template: '#container', animationDuration: 250 });
+	container.render();
+	container.loadSlides();
+	var progress = new Switcharoo.Progress({ el: '.progress', duration: 10000 });
+	progress.start();
+</script>
+</body>
+</html>

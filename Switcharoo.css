@@ -1,0 +1,41 @@
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+body {
+	background: #101010;
+	font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, 'sans serif';
+	overflow: hidden;
+}
+
+.progress {
+	-webkit-transform: translateZ(0);
+	background: #FCAF17;
+	left: 0;
+	height: 3px;
+	position: absolute;
+	top: 0;
+	width: 0;
+	z-index: 100;
+}
+
+.container h1 {
+	color: white;
+	font-weight: normal;
+	text-align: center;
+}
+
+.container {
+	height: 100%;
+	position: relative;
+	width: 200%;
+}
+
+.slide {
+	float: left;
+	height: 100%;
+	width: 50%;
+}
