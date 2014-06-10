@@ -16,18 +16,19 @@
 
 		loadSlides: function() {
 			var slides = [];
-			[Switcharoo.Twitter, Switcharoo.Instagram].forEach(function(slide) {
+			[Switcharoo.Info, Switcharoo.Twitter, Switcharoo.Instagram].forEach(function(slide) {
 				var view = new slide();
 				view.render();
 				slides.push(view);
 			});
-			console.log(this.$el.find('.slide:nth-child(1)'));
 			this.$el.find('.slide:nth-child(1)').html(slides[0].html());
 			this.$el.find('.slide:nth-child(2)').html(slides[1].html());
 			this.slides = slides;
+			this.current = 1;
 		},
 
 		next: function() {
+			var _container = this;
 			this.$el.velocity({
 				translateX: ['-50%', 0]
 			}, {
@@ -37,11 +38,22 @@
 					var self = $(this);
 					var next = self.find('.slide:nth-child(1)');
 					self.remove('.slide:nth-child(1)');
+					next.html(_container.getNext().html());
 					self.append(next);
 					self.removeAttr('style');
 					Backbone.Events.trigger('slide:next:done');
 				}
 			})
+		},
+
+		getNext: function() {
+			var current = this.current;
+			if (current == this.slides.length - 1)
+				this.current = 0;
+			else
+				this.current += 1;
+
+			return this.slides[this.current];
 		}
 
 	});

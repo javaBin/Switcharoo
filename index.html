@@ -10,10 +10,11 @@
 	<script type="text/javascript" src="lib/handlebars-v1.3.0.js"></script>
 	<script type="text/javascript" src="bower_components/velocity/jquery.velocity.min.js"></script>
 	<script type="text/javascript" src="js/container.js"></script>
-	<script type="text/javascript" src="js/slide.js"></script>
-	<script type="text/javascript" src="js/instagram.js"></script>
-	<script type="text/javascript" src="js/twitter.js"></script>
 	<script type="text/javascript" src="js/progress.js"></script>
+	<script type="text/javascript" src="js/slide/slide.js"></script>
+	<script type="text/javascript" src="js/slide/instagram.js"></script>
+	<script type="text/javascript" src="js/slide/twitter.js"></script>
+	<script type="text/javascript" src="js/slide/info.js"></script>
 </head>
 <body>
 	<div class="progress"></div>
@@ -29,12 +30,15 @@
 	<script type="text/x-handlebars-template" id="instagram">
 		<h1>Instagram</h1>
 	</script>
+	<script type="text/x-handlebars-template" id="info">
+		<h1>Info</h1>
+	</script>
 
 <script type="text/javascript">
-	var container = new Switcharoo.ContainerView({ el: '.container', template: '#container', animationDuration: 250 });
+	window.container = new Switcharoo.ContainerView({ el: '.container', template: '#container', animationDuration: 250 });
 	container.render();
 	container.loadSlides();
-	var progress = new Switcharoo.Progress({ el: '.progress', duration: 10000 });
+	var progress = new Switcharoo.Progress({ el: '.progress', duration: 4000 });
 	progress.start();
 </script>
 </body>
