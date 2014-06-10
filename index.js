@@ -10,3 +10,4 @@ app.get('/twitter', function(req, res) {
 });
 
 app.listen(1337);
+console.log("Now listening on http://localhost:1337");
