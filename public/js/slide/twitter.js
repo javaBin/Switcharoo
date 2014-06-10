@@ -1,10 +1,18 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
-	var Twitter = Switcharoo.Slide.extend({
-		template: '#twitter'
+	var view = Switcharoo.Slide.extend({
+		template: '#twitter',
+		className: 'twitter'
 	});
 
-	Switcharoo.Twitter = Twitter;
+	var model = Backbone.Model.extend({
+		urlRoot: '/slides'
+	});
+
+	Switcharoo.Twitter = {
+		view: view,
+		model: model
+	};
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

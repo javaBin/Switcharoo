@@ -1,10 +1,18 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
-	var Info = Switcharoo.Slide.extend({
-		template: '#info'
+	var view = Switcharoo.Slide.extend({
+		template: '#info',
+		className: 'info'
 	});
 
-	Switcharoo.Info = Info;
+	var model = Backbone.Model.extend({
+		urlRoot: '/slides'
+	});
+
+	Switcharoo.Info = {
+		view: view,
+		model: model
+	};
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

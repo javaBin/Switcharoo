@@ -6,8 +6,24 @@ var app = express();
 app.use(express.static(__dirname + '/public'));
 
 app.get('/slides', function(req, res) {
-	var slides = ['info', 'twitter', 'instagram'];
+	var slides = [
+		{
+			view: 'info',
+			id: 'info'
+		}, {
+			view: 'twitter',
+			id: 'twitter'
+		}, {
+			view: 'instagram',
+			id: 'instagram'
+		}
+	];
 	res.json({'slides': slides});
+});
+
+app.get('/slides/:id', function(req, res) {
+	console.log("Getting slide " + req.params.id);
+	res.json({'header': req.params.id});
 });
 
 app.get('/twitter', function(req, res) {

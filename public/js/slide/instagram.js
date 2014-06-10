@@ -1,10 +1,18 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
-	var Instagram = Switcharoo.Slide.extend({
-		template: '#instagram'
+	var view = Switcharoo.Slide.extend({
+		template: '#instagram',
+		className: 'instagram'
 	});
 
-	Switcharoo.Instagram = Instagram;
+	var model = Backbone.Model.extend({
+		urlRoot: '/slides'
+	});
+
+	Switcharoo.Instagram = {
+		view: view,
+		model: model
+	};
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

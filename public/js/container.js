@@ -1,8 +1,8 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
-	function resolveType(type) {
-		switch (type.toLowerCase()) {
+	function resolveType(slide) {
+		switch (slide.view.toLowerCase()) {
 			case 'info':
 				return Switcharoo.Info;
 			case 'twitter':
@@ -14,7 +14,7 @@
 		}
 	}
 
-	var ContainerView = Backbone.View.extend({
+	var view = Backbone.View.extend({
 
 		initialize: function(options) {
 			this.template = options.template;
@@ -28,7 +28,12 @@
 			var slides = [];
 			model.forEach(function(s) {
 				var Slide = resolveType(s);
-				Slide && slides.push(new Slide().render());
+				if (!Slide)
+					return;
+
+				var m = new Slide.model({id: s.id});
+				slides.push(new Slide.view({ model: m }));
+				m.fetch();
 			});
 			this.slides = slides;
 			var template = $(this.template).html();
@@ -72,11 +77,13 @@
 
 	});
 
-	var ContainerModel = Backbone.Model.extend({
+	var model = Backbone.Model.extend({
 		url: '/slides'
 	});
 
-	Switcharoo.ContainerView = ContainerView;
-	Switcharoo.ContainerModel = ContainerModel;
+	Switcharoo.Container = {
+		view: view,
+		model: model
+	};
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

@@ -25,18 +25,18 @@
 		<div class="slide"></div>
 	</script>
 	<script type="text/x-handlebars-template" id="twitter">
-		<h1>Twitter</h1>
+		<h1>{{header}}</h1>
 	</script>
 	<script type="text/x-handlebars-template" id="instagram">
-		<h1>Instagram</h1>
+		<h1>{{header}}</h1>
 	</script>
 	<script type="text/x-handlebars-template" id="info">
-		<h1>Info</h1>
+		<h1>{{header}}</h1>
 	</script>
 
 <script type="text/javascript">
-	var model = new Switcharoo.ContainerModel();
-	window.container = new Switcharoo.ContainerView({ el: '.container', template: '#container', animationDuration: 250, model: model });
+	var model = new Switcharoo.Container.model();
+	var container = new Switcharoo.Container.view({ el: '.container', template: '#container', animationDuration: 250, model: model });
 	var progress = new Switcharoo.Progress({ el: '.progress', duration: 4000 });
 	Backbone.Events.on('render:done', progress.start, progress);
 	model.fetch();
