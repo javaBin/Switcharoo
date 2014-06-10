@@ -35,11 +35,11 @@
 	</script>
 
 <script type="text/javascript">
-	window.container = new Switcharoo.ContainerView({ el: '.container', template: '#container', animationDuration: 250 });
-	container.render();
-	container.loadSlides();
+	var model = new Switcharoo.ContainerModel();
+	window.container = new Switcharoo.ContainerView({ el: '.container', template: '#container', animationDuration: 250, model: model });
 	var progress = new Switcharoo.Progress({ el: '.progress', duration: 4000 });
-	progress.start();
+	Backbone.Events.on('render:done', progress.start, progress);
+	model.fetch();
 </script>
 </body>
 </html>

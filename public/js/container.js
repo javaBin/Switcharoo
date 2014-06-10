@@ -1,30 +1,44 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
+	function resolveType(type) {
+		switch (type.toLowerCase()) {
+			case 'info':
+				return Switcharoo.Info;
+			case 'twitter':
+				return Switcharoo.Twitter;
+			case 'instagram':
+				return Switcharoo.Instagram;
+			default:
+				return undefined;
+		}
+	}
+
 	var ContainerView = Backbone.View.extend({
 
 		initialize: function(options) {
 			this.template = options.template;
 			this.animationDuration = options.animationDuration || 500;
 			Backbone.Events.on('slide:next', this.next, this);
+			this.model.on('change', this.render, this);
 		},
 
 		render: function() {
+			var model = this.model.toJSON().slides;
+			var slides = [];
+			model.forEach(function(s) {
+				var Slide = resolveType(s);
+				Slide && slides.push(new Slide().render());
+			});
+			this.slides = slides;
 			var template = $(this.template).html();
 			this.$el.html(Handlebars.compile(template)());
-		},
-
-		loadSlides: function() {
-			var slides = [];
-			[Switcharoo.Info, Switcharoo.Twitter, Switcharoo.Instagram].forEach(function(slide) {
-				var view = new slide();
-				view.render();
-				slides.push(view);
-			});
 			this.$el.find('.slide:nth-child(1)').html(slides[0].html());
 			this.$el.find('.slide:nth-child(2)').html(slides[1].html());
-			this.slides = slides;
 			this.current = 1;
+
+			Backbone.Events.trigger('render:done');
+			return this;
 		},
 
 		next: function() {
@@ -58,6 +72,11 @@
 
 	});
 
+	var ContainerModel = Backbone.Model.extend({
+		url: '/slides'
+	});
+
 	Switcharoo.ContainerView = ContainerView;
+	Switcharoo.ContainerModel = ContainerModel;
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

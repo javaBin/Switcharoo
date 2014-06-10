@@ -6,6 +6,8 @@
 		render: function() {
 			var template = $(this.template).html();
 			this.$el.html(Handlebars.compile(template)());
+
+			return this;
 		},
 
 		html: function() {
