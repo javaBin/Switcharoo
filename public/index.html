@@ -3,7 +3,8 @@
 <head>
 	<title>Switcharoo</title>
 	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,700,900" rel="stylesheet" type="text/css">
-	<link rel="stylesheet" type="text/css" href="Switcharoo.css">
+	<link rel="stylesheet" type="text/css" href="css/switcharoo.css">
+	<link rel="stylesheet" type="text/css" href="css/twitter.css">
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/underscore-min.js"></script>
 	<script type="text/javascript" src="lib/backbone.js"></script>
@@ -25,7 +26,16 @@
 		<div class="slide"></div>
 	</script>
 	<script type="text/x-handlebars-template" id="twitter">
-		<h1>{{header}}</h1>
+		<div class="twitter">
+			<h1>#JavaZone</h1>
+			<ul>
+			{{#each statuses}}
+				<li>
+					<span class="user">{{user.name}}</span> <span class="message">{{text}}</span>
+				</li>
+			{{/each}}
+			</ul>
+		</twitter>
 	</script>
 	<script type="text/x-handlebars-template" id="instagram">
 		<h1>{{header}}</h1>

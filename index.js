@@ -14,8 +14,7 @@ app.get('/slides', function(req, res) {
 			view: 'info',
 			id: 'info'
 		}, {
-			view: 'twitter',
-			id: 'twitter'
+			view: 'twitter'
 		}, {
 			view: 'instagram',
 			id: 'instagram'

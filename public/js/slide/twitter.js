@@ -7,7 +7,7 @@
 	});
 
 	var model = Backbone.Model.extend({
-		urlRoot: '/slides'
+		urlRoot: '/twitter'
 	});
 
 	Switcharoo.Twitter = {
