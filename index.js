@@ -2,6 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var twit = require('twit');
 var config = require('./configuration');
+var morgan = require('morgan');
 
 var Twitter = new twit(config.twitter);
 var Instagram = require('instagram-node-lib');
@@ -10,6 +11,7 @@ Instagram.set('client_secret', config.instagram.client_secret);
 
 var app = express();
 app.use(express.static(__dirname + '/public'));
+app.use(morgan('dev'));
 
 app.get('/slides', function(req, res) {
 	var slides = [
@@ -45,5 +47,6 @@ app.get('/instagram', function(req, res) {
 	}})
 });
 
-app.listen(1337);
-console.log("Now listening on http://localhost:1337");
+app.listen(config.app.port, function() {
+	console.log('Server listening on http://localhost:' + config.app.port);
+});
