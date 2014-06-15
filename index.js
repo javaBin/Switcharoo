@@ -3,9 +3,12 @@ var fs = require('fs');
 var twit = require('twit');
 var config = require('./configuration');
 
-var app = express();
 var Twitter = new twit(config.twitter);
+var Instagram = require('instagram-node-lib');
+Instagram.set('client_id', config.instagram.client_id);
+Instagram.set('client_secret', config.instagram.client_secret);
 
+var app = express();
 app.use(express.static(__dirname + '/public'));
 
 app.get('/slides', function(req, res) {
@@ -16,8 +19,7 @@ app.get('/slides', function(req, res) {
 		}, {
 			view: 'twitter'
 		}, {
-			view: 'instagram',
-			id: 'instagram'
+			view: 'instagram'
 		}
 	];
 	res.json({'slides': slides});
@@ -38,7 +40,9 @@ app.get('/twitter', function(req, res) {
 });
 
 app.get('/instagram', function(req, res) {
-	res.json({'header': 'Instagram'});
+	Instagram.tags.recent({name: 'javazone', complete: function(data) {
+		res.json(data);
+	}})
 });
 
 app.listen(1337);

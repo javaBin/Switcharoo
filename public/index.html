@@ -5,6 +5,7 @@
 	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,700,900" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" type="text/css" href="css/switcharoo.css">
 	<link rel="stylesheet" type="text/css" href="css/twitter.css">
+	<link rel="stylesheet" type="text/css" href="css/instagram.css">
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/underscore-min.js"></script>
 	<script type="text/javascript" src="lib/backbone.js"></script>
@@ -38,7 +39,13 @@
 		</twitter>
 	</script>
 	<script type="text/x-handlebars-template" id="instagram">
-		<h1>{{header}}</h1>
+		<div class="instagram">
+		<ul>
+		{{#each this}}
+			<li><img src="{{images.low_resolution.url}}" /></li>
+		{{/each}}
+		</ul>
+		</div>
 	</script>
 	<script type="text/x-handlebars-template" id="info">
 		<h1>{{header}}</h1>

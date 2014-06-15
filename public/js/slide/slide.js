@@ -5,7 +5,6 @@
 
 		initialize: function() {
 			this.model.on('change', this.render, this);
-			console.log(this.model.get('id'));
 		},
 
 		render: function() {

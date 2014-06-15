@@ -7,7 +7,7 @@
 	});
 
 	var model = Backbone.Model.extend({
-		urlRoot: '/slides'
+		urlRoot: '/instagram'
 	});
 
 	Switcharoo.Instagram = {
