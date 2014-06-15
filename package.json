@@ -19,6 +19,8 @@
   "homepage": "https://github.com/javaBin/Switcharoo",
   "private": true,
   "dependencies": {
-    "express": "^4.4.2"
+    "express": "^4.4.2",
+    "instagram-node-lib": "^0.1.1",
+    "twit": "^1.1.15"
   }
 }
