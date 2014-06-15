@@ -24,6 +24,7 @@
 		},
 
 		render: function() {
+			var self = this;
 			var model = this.model.toJSON().slides;
 			var slides = [];
 			model.forEach(function(s) {
@@ -32,18 +33,29 @@
 					return;
 
 				var m = new Slide.model({id: s.id});
-				slides.push(new Slide.view({ model: m }));
-				m.fetch();
+				var slide = new Slide.view({ model: m });
+				slide.on('render:done', self.slideReady, self);
+				slides.push(slide);
 			});
 			this.slides = slides;
+			this.slidesReady = 0;
+			this.slides.forEach(function(slide) {
+				slide.model.fetch();
+			});
 			var template = $(this.template).html();
 			this.$el.html(Handlebars.compile(template)());
-			this.$el.find('.slide:nth-child(1)').html(slides[0].html());
-			this.$el.find('.slide:nth-child(2)').html(slides[1].html());
-			this.current = 1;
-
-			Backbone.Events.trigger('render:done');
 			return this;
+		},
+
+		slideReady: function() {
+			this.slidesReady++;
+
+			if (this.slidesReady >= this.slides.length) {
+				this.$el.find('.slide:nth-child(1)').html(this.slides[0].html());
+				this.$el.find('.slide:nth-child(2)').html(this.slides[1].html());
+				this.current = 1;
+				Backbone.Events.trigger('render:done');
+			}
 		},
 
 		next: function() {

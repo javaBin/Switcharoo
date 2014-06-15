@@ -10,10 +10,9 @@
 
 		render: function() {
 			var model = this.model.toJSON();
-			console.log(model);
 			var template = $(this.template).html();
 			this.$el.html(Handlebars.compile(template)(model));
-
+			this.trigger('render:done');
 			return this;
 		},
 
