@@ -8,6 +8,11 @@ var config = {
 		consumer_secret: '',
 		access_token: '',
 		access_token_secret: ''
+	},
+
+	instagram: {
+		client_id: '',
+		client_secret: ''
 	}
 };
 
