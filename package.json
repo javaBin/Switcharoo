@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "if type nodemon > /dev/null; then nodemon index.js; else node index.js; fi"
   },
   "repository": {
     "type": "git",
