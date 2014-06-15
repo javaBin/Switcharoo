@@ -3,6 +3,10 @@
 */
 
 var config = {
+	app: {
+		port: 1337
+	},
+	
 	twitter: {
 		consumer_key: '',
 		consumer_secret: '',
