@@ -6,4 +6,5 @@ Information monitor system
 
 ### Howto
 - `git clone $(this)`
-- open `index.html` in your favorite (_modern_) browser
+- `npm start`
+	- Requires nodemon on global path: `npm install -g nodemon`
