@@ -1,0 +1,15 @@
+.twitter {
+	color: white;
+}
+
+.twitter li {
+	display: block;
+}
+
+.twitter .user {
+	color: red;
+}
+
+.twitter .message {
+	color: white;
+}
