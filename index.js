@@ -1,11 +1,11 @@
 var express = require('express');
-var bodyParser = require('body-parser');
-var twit = require('twit');
 var config = require('./configuration');
+var bodyParser = require('body-parser');
+var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
+var twit = require('twit');
 var morgan = require('morgan');
 var restful = require('node-restful');
 var mongoose = restful.mongoose;
-
 var Twitter = new twit(config.twitter);
 var Instagram = require('instagram-node-lib');
 Instagram.set('client_id', config.instagram.client_id);
@@ -52,14 +52,9 @@ app.get('/instagram', function(req, res) {
 	}})
 });
 
-
-//app.use(auth);
-app.use('/admin', express.static(__dirname + '/admin'));
-
-function authorize(req, res, next) {
-	console.log(req.query.pwd !== config.app.pwd);
+function authorize_slides(req, res, next) {
 	if (req.query.pwd !== config.app.pwd)
-		return res.json(404, {message: 'Wrong password'});
+		return rs.json(401, {message: 'Wrong password'});
 
 	next();
 }
@@ -70,20 +65,13 @@ var Slide = restful.model('slides', mongoose.Schema({
 	background: 'string',
 	visible: 'boolean'
 })).methods(['get', 'put', 'post', 'delete']);
-
-Slide.before('put', authorize);
-Slide.before('post', authorize);
-Slide.before('delete', authorize);
-
+Slide.before('put', basicAuth);
+Slide.before('post', basicAuth);
+Slide.before('delete', basicAuth);
 Slide.register(app, '/slides');
 
-/*app.get(config.app.admin, function(req, res) {
-	var pwd = req.query.pwd;
-	if (pwd !== config.app.pwd)
-		return res.json(404, {error: 'Invalid password'});
-
-	res.sendfile('./admin/index.html');
-})*/
+app.use(basicAuth);
+app.use('/admin', express.static(__dirname + '/admin'));
 
 app.listen(config.app.port, function() {
 	console.log('Server listening on http://localhost:' + config.app.port);
