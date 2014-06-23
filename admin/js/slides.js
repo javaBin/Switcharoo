@@ -9,8 +9,10 @@
 		},
 
 		render: function() {
-			var model = this.model.toJSON();
-			console.log(model);
+			var model = _(this.model.toJSON()).map(function(slide) {
+				slide.visible = slide.visible.toString();
+				return slide;
+			});
 			this.$el.html(this.template(model));
 			return this.el;
 		},
