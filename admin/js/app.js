@@ -4,13 +4,12 @@
 
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
-			this.model.on('change', this.render, this);
-			this.model.fetch();
+			this.slides = new Admin.Slides.view({model: new Admin.Slides.model(), template: '#slides-template'});
 		},
 
 		render: function() {
-			var model = this.model.toJSON();
-			this.$el.html(this.template(model));
+			this.$el.html(this.template());
+			this.assign(this.slides, '.slides');
 			return this.el;
 		},
 
@@ -19,13 +18,8 @@
 		}
 	});
 
-	var model = Backbone.Model.extend({
-		url: '/slides'
-	});
-
-	Admin.Slides = {
-		view: view,
-		model: model
+	Admin.App = {
+		view: view
 	};
 
 })(window.Admin = window.Admin || {}, window.Backbone, window.Handlebars);

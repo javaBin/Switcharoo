@@ -8,14 +8,31 @@
 	<script type="text/javascript" src="/lib/underscore-min.js"></script>
 	<script type="text/javascript" src="/lib/backbone.js"></script>
 	<script type="text/javascript" src="/lib/handlebars-v1.3.0.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/slides.js"></script>
 </head>
 <body>
 	<h1>Switcharoo</h1>
+	<div class="container">
+		
+	</div>
 
-	<script type="text/x-handlebars-template" id="container">
+	<script type="text/x-handlebars-template" id="app-template">
+		<div class="slides"></div>
+		<div class="slide"></div>
+	</script>
+
+	<script type="text/x-handlebars-template" id="slides-template">
 		<ul>
+			{{#each this}}
+			<li>{{title}}</li>
+			{{/each}}
 		</ul>
+	</script>
+
+	<script type="text/javascript">
+		var view = new Admin.App.view({el: $('.container'), template: $('#app-template')});
+		view.render();
 	</script>
 </body>
 </html>
