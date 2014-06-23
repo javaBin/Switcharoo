@@ -10,4 +10,4 @@ Information monitor system
 - `cp configuration_example.js configuration.js`
 - Open `configuration.js` and fill in the blanks. All fields need filling.
 - `npm start`
-	- Added value: install nodemon globally and `npm start` will use it to launch Switcharoo
+	- Added value: install nodemon globally (`npm install -g nodemon`) and `npm start` will use it to launch Switcharoo

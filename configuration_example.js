@@ -4,7 +4,10 @@
 
 var config = {
 	app: {
-		port: 1337
+		admin: '/admin',
+		port: 1337,
+		user: '',
+		pass: ''
 	},
 	
 	twitter: {
@@ -17,6 +20,10 @@ var config = {
 	instagram: {
 		client_id: '',
 		client_secret: ''
+	},
+
+	mongodb: {
+		connection_string: ''
 	}
 };
 
