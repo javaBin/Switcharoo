@@ -5,6 +5,10 @@
 		initialize: function(options) {
 			this.template = $(options.template).html();
 			this.model.on('change', this.render, this);
+		},
+
+		render: function() {
+			
 		}
 	});
 

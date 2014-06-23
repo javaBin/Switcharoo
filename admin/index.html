@@ -23,11 +23,17 @@
 	</script>
 
 	<script type="text/x-handlebars-template" id="slides-template">
-		<ul>
+		<ol>
 			{{#each this}}
-			<li>{{title}}</li>
+			<li>
+				<div class="visible visible-{{visible}}"></div>
+				<div class="title">{{title}}</div>
+				<div class="body">{{body}}</div>
+				<div class="action action-edit"></div>
+				<div class="action action-delete"></div>
+			</li>
 			{{/each}}
-		</ul>
+		</ol>
 	</script>
 
 	<script type="text/javascript">

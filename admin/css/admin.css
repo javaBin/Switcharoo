@@ -7,3 +7,79 @@ body {
 h1 {
 	text-align: center;
 }
+
+.slides {
+	margin: 0 auto;
+	margin-top: 60px;
+	max-width: 600px;
+}
+
+.slides ol {
+	counter-reset: li;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.slides li {
+	border-bottom: 1px solid #E4E3E1;
+	margin-top: 20px;
+	min-height: 80px;
+	position: relative;
+}
+
+.slides li:hover {
+	background: #eee;
+}
+
+.slides .title {
+}
+
+.slides .body {
+	color: #999;
+}
+
+.slides .visible:before {
+	content: counter(li);
+	counter-increment: li;
+}
+
+.slides .visible {
+	color: white;
+	left: -80px;
+	line-height: 60px;
+	position: absolute;
+	text-align: center;
+	top: 5px;
+	width: 60px;
+}
+
+.slides .visible-true {
+	background: #00887E;	
+}
+
+.slides .visible-false {
+	background: #999;
+}
+
+.slides .action {
+	display: none;
+	height: 30px;
+	position: absolute;
+	right: 0;
+	width: 30px;
+}
+
+.slides li:hover .action {
+	display: block;
+}
+
+.slides .action-edit {
+	background: #00887E;
+	top: 0;
+}
+
+.slides .action-delete {
+	background: #911D33;
+	top: 30px;
+}
