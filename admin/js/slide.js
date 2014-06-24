@@ -2,18 +2,61 @@
 
 	var view = Backbone.View.extend({
 
+		tagName: 'li',
+
+		events: {
+			'click .visible': 'toggleVisible',
+			'click .action-edit': 'edit',
+			'click .save': 'save',
+			'click .close': 'close'
+		},
+
 		initialize: function(options) {
-			this.template = $(options.template).html();
-			this.model.on('change', this.render, this);
+			this.template = Handlebars.compile($(options.template).html());
+			if (this.model)
+				this.model.on('change', this.render, this);
 		},
 
 		render: function() {
-			
+			var model = this.model.toJSON()
+			model.visible = model.visible.toString();
+			this.$el.html(this.template(model));
+			return this.el;
+		},
+
+		toggleVisible: function(event) {
+			this.model.set({'visible': !this.model.get('visible')});
+			this.model.save();
+		},
+
+		edit: function(event) {
+			Backbone.Events.trigger('slide:edit', this.model);
+		},
+
+		save: function(event) {
+			if (event)
+				event.preventDefault();
+
+			this.model.set({
+				'title': this.$el.find('input[name="title"]').val(),
+				'body': this.$el.find('textarea[name="body"]').val()
+			});
+			console.log(this.model);
+			this.model.save();
+			Backbone.Events.trigger('slide:edit:close');
+		},
+
+		close: function(event) {
+			Backbone.Events.trigger('slide:edit:close');
 		}
 	});
 
 	var model = Backbone.Model.extend({
-		urlRoot: '/slides'
+
+		urlRoot: '/slides',
+
+		idAttribute: '_id'
+
 	});
 
 	Admin.Slide = {

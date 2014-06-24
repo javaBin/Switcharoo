@@ -4,16 +4,21 @@
 
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
-			this.model.on('change', this.render, this);
-			this.model.fetch();
+			this.collection.on('sync', this.render, this);
+			this.collection.fetch();
+			this.slides = [];
 		},
 
 		render: function() {
-			var model = _(this.model.toJSON()).map(function(slide) {
-				slide.visible = slide.visible.toString();
-				return slide;
+			var self = this;
+			var container = document.createDocumentFragment();
+			this.$el.html(this.template());
+			this.collection.each(function(model) {
+				var view = new Admin.Slide.view({model: model, template: '#slide-template'});
+				self.slides.push(view);
+				container.appendChild(view.render());
 			});
-			this.$el.html(this.template(model));
+			this.$el.find('ol').append(container);
 			return this.el;
 		},
 
@@ -22,13 +27,14 @@
 		}
 	});
 
-	var model = Backbone.Model.extend({
+	var collection = Backbone.Collection.extend({
+		model: Admin.Slide.model,
 		url: '/slides'
 	});
 
 	Admin.Slides = {
 		view: view,
-		model: model
+		collection: collection
 	};
 
 })(window.Admin = window.Admin || {}, window.Backbone, window.Handlebars);

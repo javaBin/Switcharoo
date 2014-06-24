@@ -1,3 +1,7 @@
+*, *:before, *:after {
+	-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
 body {
 	font-family: 'Open Sans', sans-serif;
 	margin: 0;
@@ -23,7 +27,7 @@ h1 {
 
 .slides li {
 	border-bottom: 1px solid #E4E3E1;
-	margin-top: 20px;
+	padding-top: 20px;
 	min-height: 80px;
 	position: relative;
 }
@@ -46,11 +50,12 @@ h1 {
 
 .slides .visible {
 	color: white;
+	cursor: pointer;
 	left: -80px;
 	line-height: 60px;
 	position: absolute;
 	text-align: center;
-	top: 5px;
+	top: 25px;
 	width: 60px;
 }
 
@@ -63,6 +68,7 @@ h1 {
 }
 
 .slides .action {
+	cursor: pointer;
 	display: none;
 	height: 30px;
 	position: absolute;
@@ -82,4 +88,65 @@ h1 {
 .slides .action-delete {
 	background: #911D33;
 	top: 30px;
+}
+
+.slide-edit {
+	background: rgba(0, 0, 0, .8);
+	display: none;
+	left: 0;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	z-index: 10;
+	width: 100%;
+}
+
+.slide-edit:not(:empty) {
+	display: block;
+}
+
+.slide-edit-form {
+	background: whitesmoke;
+	margin: 0 auto;
+	margin-top: 200px;
+	padding: 20px;
+	position: relative;
+	width: 500px;
+}
+
+.slide-edit-form:after {
+	content:"";
+	display:table;
+	clear:both;
+}
+
+.slide-edit-form input, .slide-edit-form textarea {
+	font-size: 16px;
+}
+
+.slide-edit-form input[type="text"], .slide-edit-form textarea {
+	background: transparent;
+	border: 0;
+	border-bottom: 2px solid black;
+	display: block;
+	margin-bottom: 10px;
+}
+
+.slide-edit-form .save {
+	background: #00887E;
+	border: 0;
+	color: white;
+	display: block;
+	float: right;
+	padding: 10px 20px;
+	text-transform: uppercase;
+}
+
+.slide-edit-form .close {
+	background: black;
+	border: 0;
+	color: white;
+	position: absolute;
+	right: 5px;
+	top: 5px;
 }
