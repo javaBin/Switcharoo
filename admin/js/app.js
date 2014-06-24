@@ -2,12 +2,17 @@
 
 	var view = Backbone.View.extend({
 
+		events: {
+			'click .slide-new': 'create'
+		},
+
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
 			this.slides = new Admin.Slides.view({collection: new Admin.Slides.collection(), template: '#slides-template'});
 			this.slideEdit = new Admin.Slide.view({template: '#slide-edit-template'});
 			Backbone.Events.on('slide:edit', this.edit, this);
-			Backbone.Events.on('slide:edit:close', this.cancelEdit, this);
+			Backbone.Events.on('slide:edit:close', this.closeEdit, this);
+			Backbone.Events.on('slide:remove', this.remove, this);
 		},
 
 		render: function() {
@@ -25,11 +30,22 @@
 			this.assign(this.slideEdit, '.slide-edit');
 		},
 
-		cancelEdit: function() {
+		closeEdit: function() {
 			this.slideEdit.model = undefined;
 			this.$el.find('.slide-edit').empty();
-		}
+			this.slides.collection.fetch();
+		},
 
+		create: function() {
+			var model = new Admin.Slide.model();
+			this.slideEdit.model = model;
+			this.assign(this.slideEdit, '.slide-edit');
+		},
+
+		remove: function(slide) {
+			slide.model.destroy();
+			this.slides.collection.remove(slide);
+		}
 
 	});
 

@@ -7,6 +7,7 @@
 		events: {
 			'click .visible': 'toggleVisible',
 			'click .action-edit': 'edit',
+			'click .action-delete': 'remove',
 			'click .save': 'save',
 			'click .close': 'close'
 		},
@@ -33,6 +34,10 @@
 			Backbone.Events.trigger('slide:edit', this.model);
 		},
 
+		remove: function(event) {
+			Backbone.Events.trigger('slide:remove', this);
+		},
+
 		save: function(event) {
 			if (event)
 				event.preventDefault();
@@ -41,7 +46,6 @@
 				'title': this.$el.find('input[name="title"]').val(),
 				'body': this.$el.find('textarea[name="body"]').val()
 			});
-			console.log(this.model);
 			this.model.save();
 			Backbone.Events.trigger('slide:edit:close');
 		},
@@ -55,7 +59,14 @@
 
 		urlRoot: '/slides',
 
-		idAttribute: '_id'
+		idAttribute: '_id',
+
+		defaults: {
+			'title': '',
+			'body': '',
+			'background': '',
+			'visible': false
+		}
 
 	});
 

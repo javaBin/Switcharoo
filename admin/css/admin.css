@@ -6,16 +6,35 @@ body {
 	font-family: 'Open Sans', sans-serif;
 	margin: 0;
 	padding: 0;
+	padding-bottom: 50px;
 }
 
 h1 {
 	text-align: center;
 }
 
-.slides {
+.btn {
+	background: #00887E;
+	color: white;
+	cursor: pointer;
+	border: 0;
+	padding: 10px 20px;
+	text-transform: uppercase;
+}
+
+.container {
 	margin: 0 auto;
+	width: 600px;
+}
+
+.container:after {
+	content:"";
+	display:table;
+	clear:both;
+}
+
+.slides {
 	margin-top: 60px;
-	max-width: 600px;
 }
 
 .slides ol {
@@ -27,7 +46,7 @@ h1 {
 
 .slides li {
 	border-bottom: 1px solid #E4E3E1;
-	padding-top: 20px;
+	margin-top: 20px;
 	min-height: 80px;
 	position: relative;
 }
@@ -55,7 +74,7 @@ h1 {
 	line-height: 60px;
 	position: absolute;
 	text-align: center;
-	top: 25px;
+	top: 5px;
 	width: 60px;
 }
 
@@ -95,7 +114,7 @@ h1 {
 	display: none;
 	left: 0;
 	height: 100%;
-	position: absolute;
+	position: fixed;
 	top: 0;
 	z-index: 10;
 	width: 100%;
@@ -124,22 +143,24 @@ h1 {
 	font-size: 16px;
 }
 
+.slide-edit-form textarea {
+	height: 100px;
+	max-width: 100%;
+	width: 100%;
+}
+
 .slide-edit-form input[type="text"], .slide-edit-form textarea {
 	background: transparent;
 	border: 0;
 	border-bottom: 2px solid black;
 	display: block;
-	margin-bottom: 10px;
+	margin-bottom: 50px;
+	padding: 10px 0;
 }
 
 .slide-edit-form .save {
-	background: #00887E;
-	border: 0;
-	color: white;
 	display: block;
 	float: right;
-	padding: 10px 20px;
-	text-transform: uppercase;
 }
 
 .slide-edit-form .close {
@@ -149,4 +170,9 @@ h1 {
 	position: absolute;
 	right: 5px;
 	top: 5px;
+}
+
+.slide-new {
+	float: right;
+	margin-top: 40px;
 }

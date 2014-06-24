@@ -22,6 +22,7 @@
 		<div class="slides"></div>
 		<div class="slide"></div>
 		<div class="slide-edit"></div>
+		<button class="btn slide-new">New slide</button>
 	</script>
 
 	<script type="text/x-handlebars-template" id="slides-template">
@@ -41,8 +42,8 @@
 		<div class="slide-edit-form">
 			<form>
 				<input type="text" name="title" value="{{title}}" placeholder="Title" />
-				<textarea name="body">{{body}}</textarea>
-				<input type="submit" class="save" value="save" />
+				<textarea name="body" placeholder="Tekst">{{body}}</textarea>
+				<input type="submit" class="btn save" value="save" />
 			</form>
 
 			<button class="close">X</button>

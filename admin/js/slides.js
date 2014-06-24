@@ -4,15 +4,16 @@
 
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
-			this.collection.on('sync', this.render, this);
+			this.collection.on('sync remove', this.render, this);
 			this.collection.fetch();
-			this.slides = [];
+			Backbone.Events.on('slides:reload', this.collection.fetch, this);
 		},
 
 		render: function() {
 			var self = this;
 			var container = document.createDocumentFragment();
 			this.$el.html(this.template());
+			this.slides = [];
 			this.collection.each(function(model) {
 				var view = new Admin.Slide.view({model: model, template: '#slide-template'});
 				self.slides.push(view);
