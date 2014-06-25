@@ -28,6 +28,9 @@
 			this.$el.html(this.template());
 			this.slides = [];
 			this.collection.each(function(slide) {
+				if (!slide.get('visible'))
+					return;
+				
 				var view = new Switcharoo.Info.view({model: slide, template: '#slide-info'});
 				self.slides.push(view);
 				view.render();
