@@ -4,7 +4,6 @@
 	var Slide = Backbone.View.extend({
 
 		initialize: function(options) {
-			//this.model.on('change', this.render, this);
 			this.template = Handlebars.compile($(options.template).html());
 		},
 
