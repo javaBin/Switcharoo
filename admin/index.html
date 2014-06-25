@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Admin</title>
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>-->
 	<link rel="stylesheet" type="text/css" href="css/admin.css">
 	<script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="/lib/underscore-min.js"></script>
@@ -20,7 +20,6 @@
 
 	<script type="text/x-handlebars-template" id="app-template">
 		<div class="slides"></div>
-		<div class="slide"></div>
 		<div class="slide-edit"></div>
 		<button class="btn slide-new">New slide</button>
 	</script>
@@ -31,11 +30,15 @@
 	</script>
 
 	<script type="text/x-handlebars-template" id="slide-template">
-		<div class="visible visible-{{visible}}"></div>
-		<div class="title">{{title}}</div>
-		<div class="body">{{body}}</div>
-		<div class="action action-edit"></div>
-		<div class="action action-delete"></div>
+		<div class="slide">
+			<div class="visible visible-{{visible}}"></div>
+			<div class="slide-info">
+				<div class="title">{{title}}</div>
+				<div class="body">{{body}}</div>
+				<div class="action action-edit"></div>
+				<div class="action action-delete"></div>
+			</div>
+		</div>
 	</script>
 
 	<script type="text/x-handlebars-template" id="slide-edit-template">

@@ -24,7 +24,7 @@ h1 {
 
 .container {
 	margin: 0 auto;
-	width: 600px;
+	width: 960px;
 }
 
 .container:after {
@@ -39,74 +39,93 @@ h1 {
 
 .slides ol {
 	counter-reset: li;
+	display: inline-block;
 	list-style: none;
-	margin: 0;
 	padding: 0;
+	width: 100%;
 }
 
 .slides li {
-	border-bottom: 1px solid #E4E3E1;
-	margin-top: 20px;
+	margin-bottom: 20px;
 	min-height: 80px;
+	position: relative;
+	width: 100%;
+}
+
+.slide {
 	position: relative;
 }
 
-.slides li:hover {
+.slide:hover .slide-info{
 	background: #eee;
 }
 
-.slides .title {
+.slide:after {
+	content: "";
+	display: table;
+	clear: both;
 }
 
-.slides .body {
+.slide .title {
+}
+
+.slide .body {
 	color: #999;
 }
 
-.slides .visible:before {
+.slide .visible:before {
 	content: counter(li);
 	counter-increment: li;
 }
 
-.slides .visible {
+.slide .visible {
 	color: white;
 	cursor: pointer;
-	left: -80px;
+	float: left;
 	line-height: 60px;
-	position: absolute;
+	position: relative;
 	text-align: center;
-	top: 5px;
+	top: 2px;
 	width: 60px;
 }
 
-.slides .visible-true {
+.slide .visible-true {
 	background: #00887E;	
 }
 
-.slides .visible-false {
+.slide .visible-false {
 	background: #999;
 }
 
-.slides .action {
-	cursor: pointer;
-	display: none;
-	height: 30px;
-	position: absolute;
-	right: 0;
-	width: 30px;
+.slide-info {
+	border-bottom: 1px solid #E4E3E1;
+	margin-left: 80px;
+	min-height: 80px;
+	position: relative;
 }
 
-.slides li:hover .action {
+.slide .action {
+	cursor: pointer;
+	display: none;
+	height: 40px;
+	opacity: .8;
+	position: absolute;
+	top: 20px;
+	width: 40px;
+}
+
+.slide:hover .action {
 	display: block;
 }
 
-.slides .action-edit {
+.slide .action-edit {
 	background: #00887E;
-	top: 0;
+	right: 70px;
 }
 
-.slides .action-delete {
+.slide .action-delete {
 	background: #911D33;
-	top: 30px;
+	right: 20px;
 }
 
 .slide-edit {
