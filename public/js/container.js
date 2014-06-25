@@ -17,17 +17,24 @@
 	var view = Backbone.View.extend({
 
 		initialize: function(options) {
-			this.template = options.template;
+			this.template = Handlebars.compile($(options.template).html());;
 			this.animationDuration = options.animationDuration || 500;
 			Backbone.Events.on('slide:next', this.next, this);
-			this.model.on('change', this.render, this);
+			this.collection.on('sync', this.render, this);
 		},
 
 		render: function() {
 			var self = this;
-			var model = this.model.toJSON().slides;
-			var slides = [];
-			model.forEach(function(s) {
+			this.$el.html(this.template());
+			//var model = this.model.toJSON().slides;
+			this.slides = [];
+			this.collection.each(function(slide) {
+				//var model = new Switcharoo.Info.model({id: slide.id});
+				var view = new Switcharoo.Info.view({model: slide, template: '#slide-info'});
+				self.slides.push(view);
+				view.render();
+			});
+			/*model.forEach(function(s) {
 				var Slide = resolveType(s);
 				if (!Slide)
 					return;
@@ -36,18 +43,18 @@
 				var slide = new Slide.view({ model: m });
 				slide.on('render:done', self.slideReady, self);
 				slides.push(slide);
-			});
-			this.slides = slides;
-			this.slidesReady = 0;
-			this.slides.forEach(function(slide) {
+			});*/
+			//this.slidesReady = 0;
+			/*this.slides.forEach(function(slide) {
 				slide.model.fetch();
-			});
-			var template = $(this.template).html();
-			this.$el.html(Handlebars.compile(template)());
-			return this;
+			});*/
+			//this.$el.html(this.template());
+			console.log(this.slides);
+			this.start();
+			return this.el;
 		},
 
-		slideReady: function() {
+		/*slideReady: function() {
 			this.slidesReady++;
 
 			if (this.slidesReady >= this.slides.length) {
@@ -56,6 +63,13 @@
 				this.current = 1;
 				Backbone.Events.trigger('render:done');
 			}
+		},*/
+
+		start: function() {
+			this.$el.find('.slide:nth-child(1)').html(this.slides[0].html());
+			this.$el.find('.slide:nth-child(2)').html(this.slides[1].html());
+			this.current = 1;
+			Backbone.Events.trigger('render:done');
 		},
 
 		next: function() {
@@ -93,9 +107,16 @@
 		url: '/slides'
 	});
 
+	var collection = Backbone.Collection.extend({
+		model: model,
+
+		url: '/slides'
+	});
+
 	Switcharoo.Container = {
 		view: view,
-		model: model
+		model: model,
+		collection: collection
 	};
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

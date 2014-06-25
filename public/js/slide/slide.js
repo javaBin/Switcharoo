@@ -3,16 +3,15 @@
 
 	var Slide = Backbone.View.extend({
 
-		initialize: function() {
-			this.model.on('change', this.render, this);
+		initialize: function(options) {
+			//this.model.on('change', this.render, this);
+			this.template = Handlebars.compile($(options.template).html());
 		},
 
 		render: function() {
 			var model = this.model.toJSON();
-			var template = $(this.template).html();
-			this.$el.html(Handlebars.compile(template)(model));
-			this.trigger('render:done');
-			return this;
+			this.$el.html(this.template(model));
+			return this.el;
 		},
 
 		html: function() {
@@ -23,4 +22,4 @@
 
 	Switcharoo.Slide = Slide;
 
-})(window.Switcharoo = window.Switcharoo || {}, window.Backbone);
+})(window.Switcharoo = window.Switcharoo || {}, window.Backbone, window.Handlebars);

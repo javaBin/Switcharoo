@@ -2,10 +2,11 @@
 <html>
 <head>
 	<title>Switcharoo</title>
-	<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,700,900" rel="stylesheet" type="text/css">
+	<!--<link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,400,700,900" rel="stylesheet" type="text/css">-->
 	<link rel="stylesheet" type="text/css" href="css/switcharoo.css">
 	<link rel="stylesheet" type="text/css" href="css/twitter.css">
 	<link rel="stylesheet" type="text/css" href="css/instagram.css">
+	<link rel="stylesheet" type="text/css" href="css/info.css">
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/underscore-min.js"></script>
 	<script type="text/javascript" src="lib/backbone.js"></script>
@@ -47,16 +48,18 @@
 		</ul>
 		</div>
 	</script>
-	<script type="text/x-handlebars-template" id="info">
-		<h1>{{header}}</h1>
+	<script type="text/x-handlebars-template" id="slide-info">
+		<h1>{{title}}</h1>
+		<div class="body">{{body}}</div>
 	</script>
 
 <script type="text/javascript">
-	var model = new Switcharoo.Container.model();
-	var container = new Switcharoo.Container.view({ el: '.container', template: '#container', animationDuration: 250, model: model });
+	//var model = new Switcharoo.Container.model();
+	var slides = new Switcharoo.Container.collection();
+	var container = new Switcharoo.Container.view({ el: '.container', template: '#container', animationDuration: 250, collection: slides });
 	var progress = new Switcharoo.Progress({ el: '.progress', duration: 4000 });
 	Backbone.Events.on('render:done', progress.start, progress);
-	model.fetch();
+	slides.fetch();
 </script>
 </body>
 </html>
