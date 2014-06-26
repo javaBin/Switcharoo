@@ -16,26 +16,7 @@ mongoose.connect(config.mongodb.connection_string);
 var app = express();
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
-app.use(morgan('dev'));
-
-/*app.get('/slides', function(req, res) {
-	var slides = [
-		{
-			view: 'info',
-			id: 'info'
-		}, {
-			view: 'twitter'
-		}, {
-			view: 'instagram'
-		}
-	];
-	res.json({'slides': slides});
-});*/
-
-/*app.get('/slides/:id', function(req, res) {
-	console.log("Getting slide " + req.params.id);
-	res.json({'header': req.params.id});
-});*/
+app.use(morgan(config.app.env));
 
 app.get('/twitter', function(req, res) {
 	Twitter.get('search/tweets', {q: '#JavaZone', count: 10}, function(err, data, response) {
@@ -52,13 +33,6 @@ app.get('/instagram', function(req, res) {
 	}})
 });
 
-function authorize_slides(req, res, next) {
-	if (req.query.pwd !== config.app.pwd)
-		return rs.json(401, {message: 'Wrong password'});
-
-	next();
-}
-
 var Slide = restful.model('slides', mongoose.Schema({
 	title: 'string',
 	body: 'string',
@@ -71,7 +45,7 @@ Slide.before('delete', basicAuth);
 Slide.register(app, '/slides');
 
 app.use(basicAuth);
-app.use('/admin', express.static(__dirname + '/admin'));
+app.use(config.app.admin, express.static(__dirname + '/admin'));
 
 app.listen(config.app.port, function() {
 	console.log('Server listening on http://localhost:' + config.app.port);

@@ -4,10 +4,11 @@
 
 var config = {
 	app: {
-		admin: '/admin',
+		admin: '',
 		port: 1337,
 		user: '',
-		pass: ''
+		pass: '',
+		env: ''
 	},
 	
 	twitter: {
