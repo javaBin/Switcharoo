@@ -1,3 +1,9 @@
+h1 {
+	display: none;
+}
+
 .body {
 	color: white;
+	display: none;
+	text-align: center;
 }

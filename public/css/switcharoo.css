@@ -31,11 +31,11 @@ body {
 .container {
 	height: 100%;
 	position: relative;
-	width: 200%;
+	width: 100%;
 }
 
 .slide {
 	float: left;
 	height: 100%;
-	width: 50%;
+	width: 100%;
 }

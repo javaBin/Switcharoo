@@ -19,7 +19,7 @@
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());;
 			this.animationDuration = options.animationDuration || 500;
-			Backbone.Events.on('slide:next', this.next, this);
+			Backbone.Events.on('slide:next', this.slideInNext, this);
 			this.collection.on('sync', this.render, this);
 		},
 
@@ -30,7 +30,7 @@
 			this.collection.each(function(slide) {
 				if (!slide.get('visible'))
 					return;
-				
+
 				var view = new Switcharoo.Info.view({model: slide, template: '#slide-info'});
 				self.slides.push(view);
 				view.render();
@@ -40,13 +40,13 @@
 		},
 
 		start: function() {
-			this.$el.find('.slide:nth-child(1)').html(this.slides[0].html());
-			this.$el.find('.slide:nth-child(2)').html(this.slides[1].html());
-			this.current = 1;
+			this.current = -1;
+			this.$el.find('.slide').html(this.getNext().html());
+			this.$el.find('.slide').children().velocity('transition.slideUpIn');
 			Backbone.Events.trigger('render:done');
 		},
 
-		next: function() {
+		slideNext: function() {
 			var _container = this;
 			this.$el.velocity({
 				translateX: ['-50%', 0]
@@ -63,6 +63,21 @@
 					Backbone.Events.trigger('slide:next:done');
 				}
 			})
+		},
+
+		slideInNext: function() {
+			console.log("slideInNext");
+			var self = this;
+			this.$el.find('.slide h1, .slide .body').velocity('transition.slideUpOut', {
+				complete: function() {
+					console.log('complete');
+					var next = self.getNext();
+					//console.log(next.html());
+					self.$el.find('.slide').html(next.html());
+					self.$el.find('.slide').children().velocity('transition.slideUpIn');
+					Backbone.Events.trigger('slide:next:done');
+				}
+			});
 		},
 
 		getNext: function() {
