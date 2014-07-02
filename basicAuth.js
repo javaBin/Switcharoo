@@ -1,7 +1,6 @@
 var basicAuth = require('basic-auth');
 
 module.exports = function(username, password) {
-	console.log('setting login to ' + username + ':' + password);
 	return function(req, res, next) {
 		var user = basicAuth(req);
 		if (!user) {

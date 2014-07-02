@@ -35,8 +35,17 @@
 				self.slides.push(view);
 				view.render();
 			});
+			this.slides.push(this.twitter());
+			//this.slides.push(this.instagram());
 			this.start();
 			return this.el;
+		},
+
+		twitter: function() {
+			var model = new Switcharoo.Twitter.model();
+			var view = new Switcharoo.Twitter.view({model: model});
+			model.fetch();
+			return view;
 		},
 
 		start: function() {
@@ -66,14 +75,12 @@
 		},
 
 		slideInNext: function() {
-			console.log("slideInNext");
 			var self = this;
-			this.$el.find('.slide h1, .slide .body').velocity('transition.slideUpOut', {
+			this.$el.find('.slide').children().velocity('transition.slideUpOut', {
 				complete: function() {
-					console.log('complete');
 					var next = self.getNext();
-					//console.log(next.html());
 					self.$el.find('.slide').html(next.html());
+					console.log(self.$el.find('.slide').children());
 					self.$el.find('.slide').children().velocity('transition.slideUpIn');
 					Backbone.Events.trigger('slide:next:done');
 				}
