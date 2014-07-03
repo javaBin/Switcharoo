@@ -14,7 +14,7 @@
 		},
 
 		html: function() {
-			return this.$el.html();
+			return this.el;
 		}
 		
 	});

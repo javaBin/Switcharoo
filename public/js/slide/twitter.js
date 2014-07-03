@@ -9,6 +9,10 @@
 		initialize: function() {
 			this.template = Handlebars.compile($(this.template).html());
 			this.model.on('change', this.render, this);
+		},
+
+		animatableElements: function() {
+			return this.$el.find('h1, li');
 		}
 	});
 

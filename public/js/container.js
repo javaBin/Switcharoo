@@ -50,8 +50,9 @@
 
 		start: function() {
 			this.current = -1;
-			this.$el.find('.slide').html(this.getNext().html());
-			this.$el.find('.slide').children().velocity('transition.slideUpIn');
+			var slide = this.getNext();
+			this.$el.find('.slide').html(slide.html());
+			slide.animatableElements().velocity('transition.slideUpIn', {stagger: 50});
 			Backbone.Events.trigger('render:done');
 		},
 
@@ -76,15 +77,19 @@
 
 		slideInNext: function() {
 			var self = this;
-			this.$el.find('.slide').children().velocity('transition.slideUpOut', {
+			this.getCurrent().animatableElements().velocity('transition.slideUpOut', {
+				stagger: 50,
 				complete: function() {
 					var next = self.getNext();
 					self.$el.find('.slide').html(next.html());
-					console.log(self.$el.find('.slide').children());
-					self.$el.find('.slide').children().velocity('transition.slideUpIn');
+					next.animatableElements().velocity('transition.slideUpIn', {stagger: 50});
 					Backbone.Events.trigger('slide:next:done');
 				}
 			});
+		},
+
+		getCurrent: function() {
+			return this.slides[this.current];
 		},
 
 		getNext: function() {

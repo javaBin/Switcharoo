@@ -1,10 +1,9 @@
 .twitter {
 	color: white;
-	display: none;
 }
 
 .twitter li {
-	display: block;
+	display: none;
 }
 
 .twitter .user {

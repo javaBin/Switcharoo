@@ -3,7 +3,14 @@
 
 	var view = Switcharoo.Slide.extend({
 		template: '#info',
-		className: 'info'
+
+		className: 'info',
+
+		animatableElements: function() {
+			return this.$el.find('h1, .body');
+			//console.log(this.el);
+			//return $('h1, .body');
+		}
 	});
 
 	var model = Backbone.Model.extend({
