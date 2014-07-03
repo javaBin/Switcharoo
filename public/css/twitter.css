@@ -3,7 +3,7 @@
 }
 
 .twitter li {
-	display: none;
+	opacity: 0;
 }
 
 .twitter .user {

@@ -1,9 +1,9 @@
 h1 {
-	display: none;
+	opacity: 0;
 }
 
 .body {
 	color: white;
-	display: none;
+	opacity: 0;
 	text-align: center;
 }

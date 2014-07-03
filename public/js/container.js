@@ -36,7 +36,7 @@
 				view.render();
 			});
 			this.slides.push(this.twitter());
-			//this.slides.push(this.instagram());
+			this.slides.push(this.instagram());
 			this.start();
 			return this.el;
 		},
@@ -48,11 +48,18 @@
 			return view;
 		},
 
+		instagram: function() {
+			var model = new Switcharoo.Instagram.model();
+			var view = new Switcharoo.Instagram.view({model: model});
+			model.fetch();
+			return view;
+		},
+
 		start: function() {
 			this.current = -1;
 			var slide = this.getNext();
 			this.$el.find('.slide').html(slide.html());
-			slide.animatableElements().velocity('transition.slideUpIn', {stagger: 50});
+			slide.animatableElements().velocity('transition.slideUpIn');
 			Backbone.Events.trigger('render:done');
 		},
 
@@ -78,11 +85,10 @@
 		slideInNext: function() {
 			var self = this;
 			this.getCurrent().animatableElements().velocity('transition.slideUpOut', {
-				stagger: 50,
 				complete: function() {
 					var next = self.getNext();
 					self.$el.find('.slide').html(next.html());
-					next.animatableElements().velocity('transition.slideUpIn', {stagger: 50});
+					next.animatableElements().velocity('transition.slideUpIn');
 					Backbone.Events.trigger('slide:next:done');
 				}
 			});

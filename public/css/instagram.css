@@ -1,3 +1,7 @@
 .instagram li {
 	display: inline-block;
 }
+
+.instagram li img {
+	opacity: 0;
+}
