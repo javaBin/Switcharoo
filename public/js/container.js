@@ -63,25 +63,6 @@
 			Backbone.Events.trigger('render:done');
 		},
 
-		slideNext: function() {
-			var _container = this;
-			this.$el.velocity({
-				translateX: ['-50%', 0]
-			}, {
-				easing: 'ease-in-out',
-				duration: this.animationDuration,
-				complete: function() {
-					var self = $(this);
-					var next = self.find('.slide:nth-child(1)');
-					self.remove('.slide:nth-child(1)');
-					next.html(_container.getNext().html());
-					self.append(next);
-					self.removeAttr('style');
-					Backbone.Events.trigger('slide:next:done');
-				}
-			})
-		},
-
 		slideInNext: function() {
 			var self = this;
 			this.getCurrent().animatableElements().velocity('transition.slideUpOut', {
