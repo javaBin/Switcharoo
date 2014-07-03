@@ -1,3 +1,10 @@
+.info {
+	display: table-cell;
+	top: -100px;
+	vertical-align: middle;
+	position: relative;
+}
+
 .info .body {
 	color: white;
 	font-size: 4em;
