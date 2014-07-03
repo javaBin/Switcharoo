@@ -70,6 +70,7 @@
 					var next = self.getNext();
 					self.$el.find('.slide').html(next.html());
 					next.animatableElements().velocity('transition.slideUpIn');
+					self.checkForUpdates();
 					Backbone.Events.trigger('slide:next:done');
 				}
 			});
@@ -84,6 +85,14 @@
 				? this.current + 1
 				: 0;
 			return this.slides[this.current];
+		},
+
+		checkForUpdates: function() {
+			var current = this.getCurrent();
+			if (current instanceof Switcharoo.Twitter.view) {
+				// We should check for updates from backend here,
+				// at least when a certain time has passed
+			}
 		}
 
 	});
