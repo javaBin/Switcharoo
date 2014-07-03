@@ -11,6 +11,12 @@ body {
 	overflow: hidden;
 }
 
+*, *:before, *:after {
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 .progress {
 	-webkit-transform: translateZ(0);
 	background: #FCAF17;
@@ -37,5 +43,12 @@ body {
 .slide {
 	float: left;
 	height: 100%;
+	padding: 0 100px;
 	width: 100%;
+}
+
+.slide h1 {
+	color: #9E0032;
+	font-size: 5em;
+	opacity: 0;
 }
