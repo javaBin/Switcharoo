@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="lib/handlebars-v1.3.0.js"></script>
 	<script type="text/javascript" src="bower_components/velocity/jquery.velocity.min.js"></script>
 	<script type="text/javascript" src="lib/velocity.ui.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/container.js"></script>
 	<script type="text/javascript" src="js/progress.js"></script>
 	<script type="text/javascript" src="js/slide/slide.js"></script>
@@ -50,11 +51,13 @@
 	</script>
 
 <script type="text/javascript">
-	var slides = new Switcharoo.Container.collection();
+	/*var slides = new Switcharoo.Container.collection();
 	var container = new Switcharoo.Container.view({ el: '.container', template: '#container', animationDuration: 250, collection: slides });
 	var progress = new Switcharoo.Progress({ el: '.progress', duration: 4000, animate: false });
 	Backbone.Events.on('render:done', progress.start, progress);
-	slides.fetch();
+	slides.fetch();*/
+	var app = new Switcharoo.App({el: '.container', template: '#container'});
+	app.render();
 </script>
 </body>
 </html>
