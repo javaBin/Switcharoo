@@ -6,23 +6,30 @@
 		initialize: function(options) {
 			this.animationDuration = options.animationDuration || 500;
 			Backbone.Events.on('slide:next', this.slideInNext, this);
-			this.collection.on('sync', this.render, this);
+			this.collection.once('sync', this.render, this);
 		},
 
 		render: function() {
-			var self = this;
-			this.slides = [];
+			this.renderAllSlides();
+			this.collection.on('sync', this.renderAllSlides, this);
+			this.start();
+		},
+
+		renderAllSlides: function() {
+			var slides = [];
 			this.collection.each(function(slide) {
 				if (!slide.get('visible'))
 					return;
 
-				var view = new Switcharoo.Info.view({model: slide, template: '#slide-info'});
-				self.slides.push(view);
+				var view = new Switcharoo.Info.view({model: slide});
+				slides.push(view);
 				view.render();
 			});
-			this.slides.push(this.twitter());
-			this.slides.push(this.instagram());
-			this.start();
+			slides.push(this.twitter());
+			slides.push(this.instagram());
+			this.slides = slides;
+			console.log(slides);
+			//this.start();
 			return this.el;
 		},
 
@@ -77,6 +84,7 @@
 			if (current instanceof Switcharoo.Twitter.view) {
 				// We should check for updates from backend here,
 				// at least when a certain time has passed
+				this.collection.fetch();
 			}
 		}
 

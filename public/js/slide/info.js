@@ -2,7 +2,7 @@
 	"use strict";
 
 	var view = Switcharoo.Slide.extend({
-		template: '#info',
+		template: '#slide-info',
 
 		className: 'info',
 

@@ -16,7 +16,7 @@
 		renderSlides: function() {
 			var slides = new Switcharoo.Container.collection();
 			var container = new Switcharoo.Container.view({el: this.$el.find('.slide'), animationDuration: 250, collection: slides});
-			slides.fetch();
+			slides.fetch({reset:true});
 
 			this.container = container;
 		},
