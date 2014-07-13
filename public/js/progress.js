@@ -5,12 +5,12 @@
 
 		initialize: function(options) {
 			this.duration = options.duration || 10000;
-			this.animate = options.animate;
+			this.shouldAnimate = options.shouldAnimate;
 			Backbone.Events.on('slide:next:done', this.start, this);
 		},
 
 		start: function() {
-			if (this.animate)
+			if (this.shouldAnimate)
 				this.animate();
 			else
 				this.countdown();

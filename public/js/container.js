@@ -1,23 +1,9 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
-	function resolveType(slide) {
-		switch (slide.view.toLowerCase()) {
-			case 'info':
-				return Switcharoo.Info;
-			case 'twitter':
-				return Switcharoo.Twitter;
-			case 'instagram':
-				return Switcharoo.Instagram;
-			default:
-				return undefined;
-		}
-	}
-
 	var view = Backbone.View.extend({
 
 		initialize: function(options) {
-			this.template = Handlebars.compile($(options.template).html());;
 			this.animationDuration = options.animationDuration || 500;
 			Backbone.Events.on('slide:next', this.slideInNext, this);
 			this.collection.on('sync', this.render, this);
@@ -25,7 +11,6 @@
 
 		render: function() {
 			var self = this;
-			this.$el.html(this.template());
 			this.slides = [];
 			this.collection.each(function(slide) {
 				if (!slide.get('visible'))
@@ -58,7 +43,7 @@
 		start: function() {
 			this.current = -1;
 			var slide = this.getNext();
-			this.$el.find('.slide').html(slide.html());
+			this.$el.html(slide.html());
 			slide.animatableElements().velocity('transition.slideUpIn');
 			Backbone.Events.trigger('render:done');
 		},
@@ -68,7 +53,7 @@
 			this.getCurrent().animatableElements().velocity('transition.slideUpOut', {
 				complete: function() {
 					var next = self.getNext();
-					self.$el.find('.slide').html(next.html());
+					self.$el.html(next.html());
 					next.animatableElements().velocity('transition.slideUpIn');
 					self.checkForUpdates();
 					Backbone.Events.trigger('slide:next:done');
