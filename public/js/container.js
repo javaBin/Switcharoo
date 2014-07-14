@@ -10,12 +10,22 @@
 		},
 
 		render: function() {
-			this.renderAllSlides();
-			this.collection.on('sync', this.renderAllSlides, this);
+			var slides = this.renderInfo();
+			this.slides = slides;
+			this.renderSpecial();
+			this.collection.on('sync', this.rerender, this);
 			this.start();
 		},
 
-		renderAllSlides: function() {
+		rerender: function() {
+			if (this.newSlides)
+				delete this.newSlides;
+
+			this.newSlides = this.renderInfo();
+			console.log("rerender");
+		},
+
+		renderInfo: function() {
 			var slides = [];
 			this.collection.each(function(slide) {
 				if (!slide.get('visible'))
@@ -25,26 +35,33 @@
 				slides.push(view);
 				view.render();
 			});
-			slides.push(this.twitter());
-			slides.push(this.instagram());
-			this.slides = slides;
-			console.log(slides);
-			//this.start();
-			return this.el;
+
+			return slides;
+		},
+
+		renderSpecial: function() {
+			this.twitter();
+			this.instagram();
 		},
 
 		twitter: function() {
+			if (this.twitter)
+				delete this.twitter;
+
 			var model = new Switcharoo.Twitter.model();
 			var view = new Switcharoo.Twitter.view({model: model});
 			model.fetch();
-			return view;
+			this.twitter = view;
 		},
 
 		instagram: function() {
+			if (this.instagram)
+				delete this.instagram;
+
 			var model = new Switcharoo.Instagram.model();
 			var view = new Switcharoo.Instagram.view({model: model});
 			model.fetch();
-			return view;
+			this.instagram = view;
 		},
 
 		start: function() {
@@ -57,35 +74,53 @@
 
 		slideInNext: function() {
 			var self = this;
-			this.getCurrent().animatableElements().velocity('transition.slideUpOut', {
+			this.getSlide().animatableElements().velocity('transition.slideUpOut', {
 				complete: function() {
+					if (self.nextIndex() === 0)
+						self.setNext();
+
 					var next = self.getNext();
+					if (next instanceof Switcharoo.Twitter.view)
+						self.collection.fetch();
+
 					self.$el.html(next.html());
 					next.animatableElements().velocity('transition.slideUpIn');
-					self.checkForUpdates();
 					Backbone.Events.trigger('slide:next:done');
 				}
 			});
 		},
 
-		getCurrent: function() {
-			return this.slides[this.current];
+		setNext: function() {
+			delete this.slides;
+			this.slides = this.newSlides;
+			this.current = -1;
+			delete this.nextSlides;
+		},
+
+		getSlide: function(index) {
+			if (typeof index === 'undefined')
+				index = this.current;
+
+			if (index < this.slides.length)
+				return this.slides[index];
+			else if (index == this.slides.length)
+				return this.twitter;
+			else if (index == this.slides.length + 1)
+				return this.instagram;
+
+			return this.slides[0];
+		},
+
+		nextIndex: function() {
+			var max = this.slides.length + 2;
+			return (this.current + 1) % max;
 		},
 
 		getNext: function() {
-			this.current = (this.current !== this.slides.length - 1)
-				? this.current + 1
-				: 0;
-			return this.slides[this.current];
-		},
-
-		checkForUpdates: function() {
-			var current = this.getCurrent();
-			if (current instanceof Switcharoo.Twitter.view) {
-				// We should check for updates from backend here,
-				// at least when a certain time has passed
-				this.collection.fetch();
-			}
+			var next = this.nextIndex();
+			var nextSlide = this.getSlide(next);
+			this.current = next;
+			return nextSlide;
 		}
 
 	});
