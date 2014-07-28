@@ -1,7 +1,8 @@
 var express = require('express');
-var config = require('./configuration');
 var bodyParser = require('body-parser');
+var config = require('./configuration');
 var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
+var Program = require('./program')
 var twit = require('twit');
 var morgan = require('morgan');
 var restful = require('node-restful');
@@ -12,6 +13,8 @@ Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
 
 mongoose.connect(config.mongodb.connection_string);
+
+Program.get();
 
 var app = express();
 app.use(bodyParser.json());
@@ -30,8 +33,12 @@ app.get('/twitter', function(req, res) {
 app.get('/instagram', function(req, res) {
 	Instagram.tags.recent({name: 'javazone', complete: function(data) {
 		res.json(data);
-	}})
+	}});
 });
+
+app.get('/program', function(req, res) {
+	res.json(Program.program());
+})
 
 var Slide = restful.model('slides', mongoose.Schema({
 	title: 'string',
