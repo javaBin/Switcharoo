@@ -3,7 +3,7 @@ var config = require('./configuration').program;
 var request = require('request');
 var moment = require('moment');
 
-var cronPattern = config.cronPattern || '0 */1 * * * *';
+var cronPattern = config.cronPattern || '0 */10 * * * *';
 
 var current_program = null;
 

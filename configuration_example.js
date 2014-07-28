@@ -25,6 +25,11 @@ var config = {
 
 	mongodb: {
 		connection_string: ''
+	},
+
+	program: {
+		cronPattern: '0 */1 * * * *',
+		url: ''
 	}
 };
 
