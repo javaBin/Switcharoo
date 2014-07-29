@@ -35,6 +35,9 @@
 		},
 
 		remove: function(event) {
+			if (!confirm("Do you really want to delete the slide \"" + this.model.get('title') + "\""))
+				return;
+			
 			Backbone.Events.trigger('slide:remove', this);
 		},
 

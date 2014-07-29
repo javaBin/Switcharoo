@@ -104,18 +104,24 @@ h1 {
 	position: relative;
 }
 
+.slide .actions {
+	right: 0;
+	position: absolute;
+	top: 50%;
+	margin-top: -19px;
+}
+
 .slide .action {
+	color: white;
 	cursor: pointer;
 	display: none;
-	height: 40px;
-	opacity: .8;
-	position: absolute;
+	padding: 10px;
 	top: 20px;
-	width: 40px;
+	xwidth: 40px;
 }
 
 .slide:hover .action {
-	display: block;
+	display: inline-block;
 }
 
 .slide .action-edit {
