@@ -12,7 +12,8 @@
 		render: function() {
 			var slides = this.renderInfo();
 			this.slides = slides;
-			this.renderSpecial();
+			var special = this.renderSpecial();
+			this.special = special;
 			this.collection.on('sync', this.rerender, this);
 			this.start();
 		},
@@ -22,7 +23,6 @@
 				delete this.newSlides;
 
 			this.newSlides = this.renderInfo();
-			console.log("rerender");
 		},
 
 		renderInfo: function() {
@@ -40,8 +40,22 @@
 		},
 
 		renderSpecial: function() {
-			this.twitter();
-			this.instagram();
+			var special = [
+				this.program(),
+				this.twitter(),
+				this.instagram()
+			];
+			return special;
+		},
+
+		program: function() {
+			if (this.program)
+				delete this.program;
+
+			var model = new Switcharoo.Program.model();
+			var view = new Switcharoo.Program.view({model: model});
+			model.fetch();
+			return view;
 		},
 
 		twitter: function() {
@@ -51,7 +65,7 @@
 			var model = new Switcharoo.Twitter.model();
 			var view = new Switcharoo.Twitter.view({model: model});
 			model.fetch();
-			this.twitter = view;
+			return view;
 		},
 
 		instagram: function() {
@@ -61,7 +75,7 @@
 			var model = new Switcharoo.Instagram.model();
 			var view = new Switcharoo.Instagram.view({model: model});
 			model.fetch();
-			this.instagram = view;
+			return view;
 		},
 
 		start: function() {
@@ -103,16 +117,12 @@
 
 			if (index < this.slides.length)
 				return this.slides[index];
-			else if (index == this.slides.length)
-				return this.twitter;
-			else if (index == this.slides.length + 1)
-				return this.instagram;
-
-			return this.slides[0];
+			
+			return this.special[index - this.slides.length];
 		},
 
 		nextIndex: function() {
-			var max = this.slides.length + 2;
+			var max = this.slides.length + this.special.length;
 			return (this.current + 1) % max;
 		},
 

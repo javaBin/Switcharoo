@@ -7,6 +7,7 @@
 	<link rel="stylesheet" type="text/css" href="css/twitter.css">
 	<link rel="stylesheet" type="text/css" href="css/instagram.css">
 	<link rel="stylesheet" type="text/css" href="css/info.css">
+	<link rel="stylesheet" type="text/css" href="css/program.css">
 	<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="lib/underscore-min.js"></script>
 	<script type="text/javascript" src="lib/backbone.js"></script>
@@ -17,6 +18,7 @@
 	<script type="text/javascript" src="js/container.js"></script>
 	<script type="text/javascript" src="js/progress.js"></script>
 	<script type="text/javascript" src="js/slide/slide.js"></script>
+	<script type="text/javascript" src="js/slide/program.js"></script>
 	<script type="text/javascript" src="js/slide/instagram.js"></script>
 	<script type="text/javascript" src="js/slide/twitter.js"></script>
 	<script type="text/javascript" src="js/slide/info.js"></script>
@@ -48,6 +50,15 @@
 	<script type="text/x-handlebars-template" id="slide-info">
 		<h1>{{title}}</h1>
 		<div class="body">{{body}}</div>
+	</script>
+	<script type="text/x-handlebars-template" id="program">
+		<h1>What's happening right now?</h1>
+		<dl>
+			{{#each this}}
+			<dd>{{room}}</dd>
+			<dt>{{title}}{{#if speakers}} - {{speakers}}{{/if}}</dt>
+			{{/each}}
+		</dl>
 	</script>
 
 <script type="text/javascript">
