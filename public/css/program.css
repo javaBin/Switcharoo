@@ -1,27 +1,23 @@
-h1 {
-	opacity: 1 !important;
-}
-
-ul {
+.program ul {
 	list-style: none;
 	color: white;
 	margin: 0;
 	padding: 0;
-	opacity: 1;
+	opacity: 0;
 }
 
-li {
+.program li {
 	float: left;
 	margin-bottom: 60px;
 	width: 50%;
 }
 
-li:nth-child(odd) {
+.program li:nth-child(odd) {
 	width: 40%;
 	margin-right: 10%;
 }
 
-.room {
+.program .room {
 	color: white;
 	font-size: 3em;
 	width: 80px;
@@ -33,12 +29,12 @@ li:nth-child(odd) {
 	border-radius: 100%;
 }
 
-.title {
+.program .title {
 	font-size: 2em;
 	margin-left: 100px;
 }
 
-.speakers {
+.program .speakers {
 	font-size: 1.2em;
 	margin-left: 100px;
 }

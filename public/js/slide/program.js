@@ -12,7 +12,7 @@
 		},
 
 		animatableElements: function() {
-			return this.$el.find('h1, dl');
+			return this.$el.find('h1, ul');
 		}
 	});
 
