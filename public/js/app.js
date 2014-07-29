@@ -9,7 +9,7 @@
 		render: function() {
 			this.$el.html(this.template());
 
-			this.renderProgress();
+			//this.renderProgress();
 			this.renderSlides();
 		},
 

@@ -52,13 +52,16 @@
 		<div class="body">{{body}}</div>
 	</script>
 	<script type="text/x-handlebars-template" id="program">
-		<h1>What's happening right now?</h1>
-		<dl>
+		<h1>What&#39;s happening right now?</h1>
+		<ul>
 			{{#each this}}
-			<dd>{{room}}</dd>
-			<dt>{{title}}{{#if speakers}} - {{speakers}}{{/if}}</dt>
+			<li>
+				<div class="room">{{room}}</div>
+				<div class="title">{{title}}</div>
+				{{#if speakers}}<div class="speakers">{{speakers}}</div>{{/if}}
+			</li>
 			{{/each}}
-		</dl>
+		</ul>
 	</script>
 
 <script type="text/javascript">

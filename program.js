@@ -25,7 +25,7 @@ function getProgram(complete) {
 			return moment(talk.start).isBefore(date) && moment(talk.stop).isAfter(date) && talk.format == 'presentation';
 		}).map(function(talk) {
 			return {
-				room: talk.room,
+				room: talk.room.replace("Room ", ""),
 				title: talk.title,
 				format: talk.format,
 				speakers: talk.speakers.map(function(speaker) { return speaker.name; }).join(', '),
@@ -46,7 +46,7 @@ function getProgram(complete) {
 		});
 
 		if (currentLightningTalk)
-			program.push({room: currentLightningTalk.room, title: 'Lightning Talks'})
+			program.push({room: currentLightningTalk.room.replace("Room ", ""), title: 'Lightning Talks'})
 
 		current_program = program;
 
