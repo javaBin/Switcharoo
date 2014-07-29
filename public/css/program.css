@@ -1,0 +1,21 @@
+dl {
+	list-style: none;
+	color: white;
+	margin: 0;
+	padding: 0;
+	opacity: 0;
+}
+
+dd, dt {
+	margin: 0;
+	padding: 0;
+}
+
+dd {
+	color: #9E0032;
+	font-size: 1.5em;
+}
+
+dt {
+	font-size: 2em;
+}
