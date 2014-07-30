@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var config = require('./configuration');
+var home_folder = process.env.HOME;
+var config = require(home_folder + '/.switcharoo');
 var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
 var Program = require('./program')
 var twit = require('twit');
@@ -12,11 +13,21 @@ var Instagram = require('instagram-node-lib');
 Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
 
-mongoose.connect(config.mongodb.connection_string);
+var mongo_vars = {
+	db: process.env.MONGODB_DATABASE,
+	host: process.env.MONGODB_HOST,
+	port: process.env.MONGODB_POST,
+	username: process.env.MONGODB_USERNAME,
+	password: process.env.MONGODB_PASSWORD,
+	url: process.env.MONGO_URL || config.mongodb.connection_string
+};
+
+mongoose.connect(mongo_vars.url);
 
 Program.get();
 
 var app = express();
+app.set('port', process.env.PORT || config.app.port);
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.use(morgan(config.app.env));
@@ -54,6 +65,6 @@ Slide.register(app, '/slides');
 app.use(basicAuth);
 app.use(config.app.admin, express.static(__dirname + '/admin'));
 
-app.listen(config.app.port, function() {
+app.listen(app.get('port'), function() {
 	console.log('Server listening on http://localhost:' + config.app.port);
 });
