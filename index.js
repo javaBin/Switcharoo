@@ -27,6 +27,9 @@ var mongo_vars = {
 	url: process.env.MONGO_URL
 };
 
+console.log("=================");
+console.log(mongo_vars.url);
+
 mongoose.connect(mongo_vars.url);
 
 Program.get();
