@@ -68,7 +68,7 @@ Slide.before('delete', basicAuth);
 Slide.register(app, '/slides');
 
 app.use(basicAuth);
-app.use(config.app.admin, express.static(__dirname + '/admin'));
+app.use('/admin', express.static(__dirname + '/admin'));
 
 app.listen(app.get('port'), function() {
 	console.log('Server listening on http://localhost:' + app.get('port'));
