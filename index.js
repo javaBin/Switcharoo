@@ -27,6 +27,7 @@ var mongo_vars = {
 	url: process.env.MONGO_URL
 };
 
+
 console.log("=================");
 var mongo_url = 'mongodb://' + mongo_vars.host + ':' + mongo_vars.port + '/' + mongo_vars.db;
 console.log(mongo_url);
