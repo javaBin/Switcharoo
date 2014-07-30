@@ -21,7 +21,7 @@ Instagram.set('client_secret', process.env.INSTAGRAM_CLIENT_SECRET);
 var mongo_vars = {
 	db: process.env.MONGODB_DATABASE,
 	host: process.env.MONGODB_HOST,
-	port: process.env.MONGODB_POST,
+	port: process.env.MONGODB_PORT,
 	username: process.env.MONGODB_USERNAME,
 	password: process.env.MONGODB_PASSWORD,
 	url: process.env.MONGO_URL
