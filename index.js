@@ -1,17 +1,22 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var home_folder = process.env.HOME;
-var config = require(home_folder + '/.switcharoo');
-var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
+//var config = require(home_folder + '/.switcharoo');
+var basicAuth = require('./basicAuth')(process.env.BASIC_USER, process.env.BASIC_PASS);
 var Program = require('./program')
 var twit = require('twit');
 var morgan = require('morgan');
 var restful = require('node-restful');
 var mongoose = restful.mongoose;
-var Twitter = new twit(config.twitter);
+var twitter_config = {
+	consumer_key: process.env.TWITTER_CONSUMER_KEY,
+	consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+	access_token: process.env.TWITTER_ACCESS_TOKEN,
+	access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+}
+var Twitter = new twit(twitter_config);
 var Instagram = require('instagram-node-lib');
-Instagram.set('client_id', config.instagram.client_id);
-Instagram.set('client_secret', config.instagram.client_secret);
+Instagram.set('client_id', process.env.INSTAGRAM_CLIENT_ID);
+Instagram.set('client_secret', process.env.INSTAGRAM_CLIENT_SECRET);
 
 var mongo_vars = {
 	db: process.env.MONGODB_DATABASE,
@@ -19,7 +24,7 @@ var mongo_vars = {
 	port: process.env.MONGODB_POST,
 	username: process.env.MONGODB_USERNAME,
 	password: process.env.MONGODB_PASSWORD,
-	url: process.env.MONGO_URL || config.mongodb.connection_string
+	url: process.env.MONGO_URL
 };
 
 mongoose.connect(mongo_vars.url);
@@ -27,10 +32,10 @@ mongoose.connect(mongo_vars.url);
 Program.get();
 
 var app = express();
-app.set('port', process.env.PORT || config.app.port);
+app.set('port', process.env.PORT);
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
-app.use(morgan(config.app.env));
+//app.use(morgan(config.app.env));
 
 app.get('/twitter', function(req, res) {
 	Twitter.get('search/tweets', {q: '#JavaZone', count: 10}, function(err, data, response) {
@@ -66,5 +71,5 @@ app.use(basicAuth);
 app.use(config.app.admin, express.static(__dirname + '/admin'));
 
 app.listen(app.get('port'), function() {
-	console.log('Server listening on http://localhost:' + config.app.port);
+	console.log('Server listening on http://localhost:' + app.get('port'));
 });
