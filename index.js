@@ -28,8 +28,10 @@ var mongo_vars = {
 };
 
 console.log("=================");
-console.log(mongo_vars.url);
 var mongo_url = 'mongodb://' + mongo_vars.host + ':' + mongo_vars.port + '/' + mongo_vars.db;
+console.log(mongo_url);
+console.log(mongo_vars.username);
+console.log(mongo_vars.password);
 
 mongoose.connect(mongo_url, {user: mongo_vars.username, pass: mongo_vars.password});
 
