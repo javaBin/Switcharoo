@@ -30,7 +30,7 @@ var mongo_vars = {
 console.log("=================");
 console.log(mongo_vars.url);
 
-mongoose.connect(mongo_vars.url);
+mongoose.connect('mongodb://switcharoo:dHB6ZTV3TXAvVUZoYUQ5ZkRXSEtLcGJLdi9ySElITzhja05GMFVWOG1qTT0K@172.17.0.14:27017/switcharoo-production');
 
 Program.get();
 
