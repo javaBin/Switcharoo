@@ -1,5 +1,6 @@
 var cron = require('cron').CronJob;
-//var config = require('./configuration').program;
+var home_folder = process.env.HOME;
+var config = require(home_folder + '/.switcharoo').program;
 var request = require('request');
 var moment = require('moment');
 
@@ -12,14 +13,14 @@ var date = moment("2013-09-11T11:41:00Z");
 var job = new cron(cronPattern, getProgram);
 
 function getProgram(complete) {
-	request(process.env.PROGRAM_URL, function(error, response, body) {
+	request(config.url, function(error, response, body) {
 		if (error)
 			return console.error(error);
 
 		body = JSON.parse(body);
 
 		if (!Array.isArray(body))
-			return console.error("Response from \"" + process.env.PROGRAM_URL + "\" was not an array: " + body);
+			return console.error("Response from \"" + config.url + "\" was not an array: " + body);
 
 		var program = body.filter(function(talk) {
 			return moment(talk.start).isBefore(date) && moment(talk.stop).isAfter(date) && talk.format == 'presentation';

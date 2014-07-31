@@ -17,6 +17,7 @@
 		},
 
 		animate: function() {
+			console.log("lol");
 			this.$el.velocity({
 				width: '100%'
 			}, {
