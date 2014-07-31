@@ -1,0 +1,1 @@
+forever start -l ../switcharoo.log -o ../switcharoo.out -e ../switcharoo.err index.js
