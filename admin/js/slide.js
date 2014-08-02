@@ -9,7 +9,8 @@
 			'click .action-edit': 'edit',
 			'click .action-delete': 'remove',
 			'click .save': 'save',
-			'click .close': 'close'
+			'click .close': 'close',
+			'change .image-input': 'uploadImage'
 		},
 
 		initialize: function(options) {
@@ -45,9 +46,13 @@
 			if (event)
 				event.preventDefault();
 
+			var body = this.model.get('type') === 'image'
+				? this.$el.find('.image-filename').text()
+				: this.$el.find('textarea[name="body"]').val()
+
 			this.model.set({
 				'title': this.$el.find('input[name="title"]').val(),
-				'body': this.$el.find('textarea[name="body"]').val()
+				'body': body
 			});
 			this.model.save();
 			Backbone.Events.trigger('slide:edit:close');
@@ -55,6 +60,31 @@
 
 		close: function(event) {
 			Backbone.Events.trigger('slide:edit:close');
+		},
+
+		uploadImage: function(event) {
+			event.preventDefault();
+			var self = this;
+			var formData = new FormData(this.$el.find('.upload-form')[0]);
+			$.ajax({
+				url: '/image',
+				type: 'POST',
+				xhr: function() {
+					var myXhr = $.ajaxSettings.xhr();
+					return myXhr;
+				},
+				success: function(res) {
+					self.$el.find('.image-input').css('display', 'none');
+					self.$el.find('.image-filename').text(res.filepath);
+				},
+				error: function(xhr) {
+					console.log(xhr);
+				},
+				data: formData,
+				cache: false,
+				contentType: false,
+				processData: false
+			})
 		}
 	});
 

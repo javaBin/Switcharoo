@@ -164,7 +164,7 @@ h1 {
 	clear:both;
 }
 
-.slide-edit-form input, .slide-edit-form textarea {
+.slide-edit-form input[type=text], .slide-edit-form textarea {
 	font-size: 16px;
 }
 
@@ -197,7 +197,14 @@ h1 {
 	top: 5px;
 }
 
-.slide-new {
+.text-slide, .image-slide {
 	float: right;
 	margin-top: 40px;
+}
+
+.text-slide:before, .image-slide:before {
+	content: "+";
+	display: inline-block;
+	position: relative;
+	left: -10px;
 }

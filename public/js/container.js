@@ -31,7 +31,8 @@
 				if (!slide.get('visible'))
 					return;
 
-				var view = new Switcharoo.Info.view({model: slide});
+				var template = slide.get('type') === 'image' ? '#slide-image-info' : '#slide-text-info';
+				var view = new Switcharoo.Info.view({model: slide, template: template});
 				slides.push(view);
 				view.render();
 			});
@@ -53,7 +54,7 @@
 				delete this.program;
 
 			var model = new Switcharoo.Program.model();
-			var view = new Switcharoo.Program.view({model: model});
+			var view = new Switcharoo.Program.view({model: model, template: '#program'});
 			model.fetch();
 			return view;
 		},
@@ -63,7 +64,7 @@
 				delete this.twitter;
 
 			var model = new Switcharoo.Twitter.model();
-			var view = new Switcharoo.Twitter.view({model: model});
+			var view = new Switcharoo.Twitter.view({model: model, template: '#twitter'});
 			model.fetch();
 			return view;
 		},
@@ -73,7 +74,7 @@
 				delete this.instagram;
 
 			var model = new Switcharoo.Instagram.model();
-			var view = new Switcharoo.Instagram.view({model: model});
+			var view = new Switcharoo.Instagram.view({model: model, template: '#instagram'});
 			model.fetch();
 			return view;
 		},

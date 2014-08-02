@@ -3,13 +3,15 @@
 	var view = Backbone.View.extend({
 
 		events: {
-			'click .slide-new': 'create'
+			'click .text-slide': 'createTextSlide',
+			'click .image-slide': 'createImageSlide'
 		},
 
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
 			this.slides = new Admin.Slides.view({collection: new Admin.Slides.collection(), template: '#slides-template'});
-			this.slideEdit = new Admin.Slide.view({template: '#slide-edit-template'});
+			this.textSlideEdit = new Admin.Slide.view({template: '#slide-edit-text-template'});
+			this.imageSlideEdit = new Admin.Slide.view({template: '#slide-edit-image-template'});
 			Backbone.Events.on('slide:edit', this.edit, this);
 			Backbone.Events.on('slide:edit:close', this.closeEdit, this);
 			Backbone.Events.on('slide:remove', this.remove, this);
@@ -26,20 +28,28 @@
 		},
 
 		edit: function(slide) {
-			this.slideEdit.model = slide;
-			this.assign(this.slideEdit, '.slide-edit');
+			this.textSlideEdit.model = slide;
+			this.assign(this.textSlideEdit, '.slide-edit');
 		},
 
 		closeEdit: function() {
-			this.slideEdit.model = undefined;
+			this.textSlideEdit.model = undefined;
 			this.$el.find('.slide-edit').empty();
 			this.slides.collection.fetch();
 		},
 
-		create: function() {
+		createTextSlide: function() {
 			var model = new Admin.Slide.model();
-			this.slideEdit.model = model;
-			this.assign(this.slideEdit, '.slide-edit');
+			model.set('type', 'text');
+			this.textSlideEdit.model = model;
+			this.assign(this.textSlideEdit, '.slide-edit');
+		},
+
+		createImageSlide: function() {
+			var model = new Admin.Slide.model();
+			model.set('type', 'image');
+			this.imageSlideEdit.model = model;
+			this.assign(this.imageSlideEdit, '.slide-edit');
 		},
 
 		remove: function(slide) {

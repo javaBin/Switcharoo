@@ -2,12 +2,11 @@
 	"use strict";
 
 	var view = Switcharoo.Slide.extend({
-		template: '#slide-info',
 
 		className: 'info',
 
 		animatableElements: function() {
-			return this.$el.find('h1, .body');
+			return this.$el.find('h1, .body, .image');
 			//console.log(this.el);
 			//return $('h1, .body');
 		}

@@ -11,3 +11,12 @@
 	opacity: 0;
 	text-align: center;
 }
+
+.info .image {
+	background-position: center center;
+	background-size: contain;
+	background-repeat: no-repeat;
+	height: 100%;
+	opacity: 0;
+	width: 100%;
+}

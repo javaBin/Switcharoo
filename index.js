@@ -10,6 +10,7 @@ var restful = require('node-restful');
 var mongoose = restful.mongoose;
 var Twitter = new twit(config.twitter);
 var Instagram = require('instagram-node-lib');
+var multer = require('multer');
 Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
 
@@ -22,6 +23,11 @@ app.set('port', config.app.port);
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.use(morgan(config.app.env));
+app.use(multer({dest: './public/uploads', rename: function(fieldname, filename) {
+	console.log("MULTER");
+	console.log(filename);
+	return filename.replace(/\W+/g, '-').toLowerCase() + (new Date().getTime());
+}}));
 
 app.get('/twitter', function(req, res) {
 	Twitter.get('search/tweets', {q: '#JavaZone', count: 10}, function(err, data, response) {
@@ -40,13 +46,20 @@ app.get('/instagram', function(req, res) {
 
 app.get('/program', function(req, res) {
 	res.json(Program.program());
-})
+});
+
+app.post('/image', function(req, res) {
+	console.log(req.headers);
+	console.log(req.files);
+	res.json({filepath: req.files.image.path.replace('public/','')});
+});
 
 var Slide = restful.model('slides', mongoose.Schema({
 	title: 'string',
 	body: 'string',
 	background: 'string',
-	visible: 'boolean'
+	visible: 'boolean',
+	type: 'string'
 })).methods(['get', 'put', 'post', 'delete']);
 Slide.before('put', basicAuth);
 Slide.before('post', basicAuth);
