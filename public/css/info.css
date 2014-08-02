@@ -1,8 +1,15 @@
 .info {
 	display: table-cell;
-	top: -100px;
 	vertical-align: middle;
+}
+
+.info .slide-padding {
 	position: relative;
+	top: -50px;
+}
+
+.info h1 {
+	margin-top: 0;
 }
 
 .info .body {

@@ -31,40 +31,48 @@
 		<div class="slide"></div>
 	</script>
 	<script type="text/x-handlebars-template" id="twitter">
-		<h1>#JavaZone</h1>
-		<ul>
-		{{#each statuses}}
-			<li>
-				<span class="user">{{user.name}}</span> <span class="message">{{text}}</span>
-			</li>
-		{{/each}}
-		</ul>
+		<div class="slide-padding">
+			<h1>#JavaZone</h1>
+			<ul>
+			{{#each statuses}}
+				<li>
+					<span class="user">{{user.name}}</span> <span class="message">{{text}}</span>
+				</li>
+			{{/each}}
+			</ul>
+		</div>
 	</script>
 	<script type="text/x-handlebars-template" id="instagram">
-		<ul>
-		{{#each this}}
-			<li><img src="{{images.low_resolution.url}}" /></li>
-		{{/each}}
-		</ul>
+		<div class="slide-padding">
+			<ul>
+			{{#each this}}
+				<li><img src="{{images.low_resolution.url}}" /></li>
+			{{/each}}
+			</ul>
+		</div>
 	</script>
 	<script type="text/x-handlebars-template" id="slide-text-info">
-		<h1>{{title}}</h1>
-		<div class="body">{{body}}</div>
+		<div class="slide-padding">
+			<h1>{{title}}</h1>
+			<div class="body">{{body}}</div>
+		</div>
 	</script>
 	<script type="text/x-handlebars-template" id="slide-image-info">
 		<div class="image" style="background-image: url({{body}});">
 	</script>
 	<script type="text/x-handlebars-template" id="program">
-		<h1>What&#39;s happening right now?</h1>
-		<ul>
-			{{#each this}}
-			<li>
-				<div class="room">{{room}}</div>
-				<div class="title">{{title}}</div>
-				{{#if speakers}}<div class="speakers">{{speakers}}</div>{{/if}}
-			</li>
-			{{/each}}
-		</ul>
+		<div class="slide-padding">
+			<h1>What&#39;s happening right now?</h1>
+			<ul>
+				{{#each this}}
+				<li>
+					<div class="room">{{room}}</div>
+					<div class="title">{{title}}</div>
+					{{#if speakers}}<div class="speakers">{{speakers}}</div>{{/if}}
+				</li>
+				{{/each}}
+			</ul>
+		</div>
 	</script>
 
 <script type="text/javascript">
