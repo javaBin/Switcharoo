@@ -24,8 +24,6 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.use(morgan(config.app.env));
 app.use(multer({dest: './public/uploads', rename: function(fieldname, filename) {
-	console.log("MULTER");
-	console.log(filename);
 	return filename.replace(/\W+/g, '-').toLowerCase() + (new Date().getTime());
 }}));
 
@@ -49,8 +47,6 @@ app.get('/program', function(req, res) {
 });
 
 app.post('/image', function(req, res) {
-	console.log(req.headers);
-	console.log(req.files);
 	res.json({filepath: req.files.image.path.replace('public/','')});
 });
 
