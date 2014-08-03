@@ -83,13 +83,14 @@
 			this.current = -1;
 			var slide = this.getNext();
 			this.$el.html(slide.html());
-			slide.animatableElements().velocity('transition.slideUpIn');
+			slide.animateIn().velocity('transition.slideUpIn');
+			slide.trigger('visible');
 			Backbone.Events.trigger('render:done');
 		},
 
 		slideInNext: function() {
 			var self = this;
-			this.getSlide().animatableElements().velocity('transition.slideUpOut', {
+			this.getSlide().animateOut().velocity('transition.slideUpOut', {
 				complete: function() {
 					if (self.nextIndex() === 0)
 						self.setNext();
@@ -99,17 +100,20 @@
 						self.collection.fetch();
 
 					self.$el.html(next.html());
-					next.animatableElements().velocity('transition.slideUpIn');
+					next.animateIn().velocity('transition.slideUpIn');
 					Backbone.Events.trigger('slide:next:done');
+					next.trigger('visible');
 				}
 			});
 		},
 
 		setNext: function() {
-			delete this.slides;
-			this.slides = this.newSlides;
+			if (this.newSlides) {
+				delete this.slides;
+				this.slides = this.newSlides;
+			}
 			this.current = -1;
-			delete this.nextSlides;
+			delete this.newSlides;
 		},
 
 		getSlide: function(index) {

@@ -1,7 +1,35 @@
+.instagram {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.instagram ul {
+	font-size: 0;
+	margin: 0;
+	padding: 0;
+}
+
 .instagram li {
 	display: inline-block;
+	margin-top: 20px;
+	text-align: center;
+	width: 25%;
+}
+
+.instagram .images {
+	display: inline-block;
+	height: 306px;
+	position: relative;
+	width: 306px;
 }
 
 .instagram li img {
+	left: 0;
+	opacity: 0;
+	position: absolute;
+	top: 0;
+}
+
+.instagram .second {
 	opacity: 0;
 }

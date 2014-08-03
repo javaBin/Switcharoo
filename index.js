@@ -11,6 +11,7 @@ var mongoose = restful.mongoose;
 var Twitter = new twit(config.twitter);
 var Instagram = require('instagram-node-lib');
 var multer = require('multer');
+var _ = require('lodash');
 Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
 
@@ -28,16 +29,31 @@ app.use(multer({dest: './public/uploads', rename: function(fieldname, filename) 
 }}));
 
 app.get('/twitter', function(req, res) {
-	Twitter.get('search/tweets', {q: '#JavaZone', count: 10}, function(err, data, response) {
+	Twitter.get('search/tweets', {q: 'javazone #javazone', count: 5, result_type: 'mixed'}, function(err, data, response) {
 		if (err)
 			return res.json(500, { err: err.message });
 
+		data = data.statuses.map(function(tweet) {
+			return {
+				text: tweet.text,
+				user: tweet.user.name,
+				image: tweet.user.profile_image_url.replace('_normal', '')
+			};
+		});
 		res.json(data);
 	});
 });
 
 app.get('/instagram', function(req, res) {
-	Instagram.tags.recent({name: 'javazone', complete: function(data) {
+	Instagram.tags.recent({name: 'javazone', count: 16, complete: function(data) {
+		data = _.chain(data).groupBy(function(element, index) {
+			return Math.floor(index / 2);
+		}).map(function(array) {
+			return {
+				'first': array[0].images.low_resolution.url,
+				'second': array[1].images.low_resolution.url
+			};
+		}).value();
 		res.json(data);
 	}});
 });

@@ -4,6 +4,7 @@
 		
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
+			window.slideDuration = 5000;
 		},
 
 		render: function() {
@@ -22,7 +23,7 @@
 		},
 
 		renderProgress: function() {
-			var progress = new Switcharoo.Progress({el: $('.progress'), duration: 4000, shouldAnimate: false});
+			var progress = new Switcharoo.Progress({el: $('.progress'), duration: window.slideDuration, shouldAnimate: false});
 			Backbone.Events.on('render:done', progress.start, progress);
 
 			this.progress = progress;

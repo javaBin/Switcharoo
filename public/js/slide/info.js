@@ -7,8 +7,14 @@
 
 		animatableElements: function() {
 			return this.$el.find('h1, .body, .image');
-			//console.log(this.el);
-			//return $('h1, .body');
+		},
+
+		animateIn: function() {
+			return this.animatableElements();
+		},
+
+		animateOut: function() {
+			return this.animatableElements();
 		}
 	});
 

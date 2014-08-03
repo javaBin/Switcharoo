@@ -9,10 +9,26 @@
 		initialize: function() {
 			this.template = Handlebars.compile($(this.template).html());
 			this.model.on('change', this.render, this);
+			this.on('visible', this.visible, this);
 		},
 
-		animatableElements: function() {
-			return this.$el.find('img');
+		animateIn: function() {
+			return this.$el.find('.first');
+
+		},
+
+		animateOut: function() {
+			return this.$el.find('.second');
+		},
+
+		visible: function() {
+			var self = this;
+			setTimeout(function () { self.swapImages()}, window.slideDuration / 2);
+		},
+
+		swapImages: function() {
+			this.$el.find('.first').velocity('transition.flipXOut');
+			this.$el.find('.second').velocity('transition.flipXIn');
 		}
 	});
 

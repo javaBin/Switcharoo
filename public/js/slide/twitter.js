@@ -13,6 +13,14 @@
 
 		animatableElements: function() {
 			return this.$el.find('h1, li');
+		},
+
+		animateIn: function() {
+			return this.animatableElements();
+		},
+
+		animateOut: function() {
+			return this.animatableElements();
 		}
 	});
 

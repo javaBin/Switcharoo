@@ -34,9 +34,13 @@
 		<div class="slide-padding">
 			<h1>#JavaZone</h1>
 			<ul>
-			{{#each statuses}}
+			{{#each this}}
 				<li>
-					<span class="user">{{user.name}}</span> <span class="message">{{text}}</span>
+					<img src="{{image}}" class="image" />
+					<div class="tweet">
+						<div class="user">{{user}}</div>
+						<div class="message">{{text}}</div>
+					</div>
 				</li>
 			{{/each}}
 			</ul>
@@ -46,7 +50,12 @@
 		<div class="slide-padding">
 			<ul>
 			{{#each this}}
-				<li><img src="{{images.low_resolution.url}}" /></li>
+				<li>
+					<div class="images">
+						<img class="first" src="{{first}}" />
+						<img class="second" src="{{second}}" />
+					</div>
+				</li>
 			{{/each}}
 			</ul>
 		</div>
