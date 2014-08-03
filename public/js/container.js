@@ -1,12 +1,19 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
+	var TEN_MINUTES = 1000 * 60 * 10;
+	var TWO_MINUTES = 1000 * 60 * 2;
+
 	var view = Backbone.View.extend({
 
 		initialize: function(options) {
 			this.animationDuration = options.animationDuration || 500;
 			Backbone.Events.on('slide:next', this.slideInNext, this);
 			this.collection.once('sync', this.render, this);
+			this.getSlides = false;
+			this.getProgram = false;
+			this.getTwitter = false;
+			this.getInstagram = false;
 		},
 
 		render: function() {
@@ -50,31 +57,34 @@
 		},
 
 		program: function() {
-			if (this.program)
-				delete this.program;
+			if (this.programView)
+				delete this.programView;
 
 			var model = new Switcharoo.Program.model();
 			var view = new Switcharoo.Program.view({model: model, template: '#program'});
+			this.programView = view;
 			model.fetch();
 			return view;
 		},
 
 		twitter: function() {
-			if (this.twitter)
-				delete this.twitter;
+			if (this.twitterView)
+				delete this.twitterView;
 
 			var model = new Switcharoo.Twitter.model();
 			var view = new Switcharoo.Twitter.view({model: model, template: '#twitter'});
+			this.twitterView = view;
 			model.fetch();
 			return view;
 		},
 
 		instagram: function() {
-			if (this.instagram)
-				delete this.instagram;
+			if (this.instagramView)
+				delete this.instagramView;
 
 			var model = new Switcharoo.Instagram.model();
 			var view = new Switcharoo.Instagram.view({model: model, template: '#instagram'});
+			this.instagramView = view;
 			model.fetch();
 			return view;
 		},
@@ -86,6 +96,15 @@
 			slide.animateIn().velocity('transition.slideUpIn');
 			slide.trigger('visible');
 			Backbone.Events.trigger('render:done');
+			this.startTimers();
+		},
+
+		startTimers: function() {
+			var self = this;
+			setInterval(function() { self.getSlides = true; }, TWO_MINUTES);
+			setInterval(function() { self.getProgram = true; }, TEN_MINUTES);
+			setInterval(function() { self.getTwitter = true; }, TEN_MINUTES);
+			setInterval(function() { self.getInstagram = true; }, TEN_MINUTES);
 		},
 
 		slideInNext: function() {
@@ -96,8 +115,27 @@
 						self.setNext();
 
 					var next = self.getNext();
-					if (next instanceof Switcharoo.Twitter.view)
+					if (next instanceof Switcharoo.Twitter.view && self.getSlides) {
 						self.collection.fetch();
+						self.getSlides = false;
+					}
+
+					if (self.nextIndex() === 1) {
+						if (self.getProgram) {
+							self.programView.model.fetch();
+							self.getProgram = false;
+						}
+
+						if (self.getTwitter) {
+							self.twitterView.model.fetch();
+							self.getTwitter = false;
+						}
+
+						if (self.getInstagram) {
+							self.instagramView.model.fetch();
+							self.getInstagram = false;
+						}
+					}
 
 					self.$el.html(next.html());
 					next.animateIn().velocity('transition.slideUpIn');
