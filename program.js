@@ -1,10 +1,9 @@
 var cron = require('cron').CronJob;
-var home_folder = process.env.HOME;
-var config = require(home_folder + '/.switcharoo').program;
+var config = require('./config').program;
 var request = require('request');
 var moment = require('moment');
 
-var cronPattern = '0 */10 * * * *';
+var cronPattern = config.cronPattern || '0 */10 * * * *';
 
 var current_program = null;
 
@@ -21,6 +20,8 @@ function getProgram(complete) {
 
 		if (!Array.isArray(body))
 			return console.error("Response from \"" + config.url + "\" was not an array: " + body);
+
+		console.log('Got new program from javazone server');
 
 		var program = body.filter(function(talk) {
 			return moment(talk.start).isBefore(date) && moment(talk.stop).isAfter(date) && talk.format == 'presentation';
