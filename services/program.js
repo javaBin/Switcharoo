@@ -1,5 +1,5 @@
 var cron = require('cron').CronJob;
-var config = require('./config').program;
+var config = require('../config').program;
 var request = require('request');
 var moment = require('moment');
 
