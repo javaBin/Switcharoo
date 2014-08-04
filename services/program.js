@@ -16,7 +16,12 @@ function getProgram(complete) {
 		if (error)
 			return console.error(error);
 
-		body = JSON.parse(body);
+		try {
+			body = JSON.parse(body);
+		} catch (e) {
+			console.error('Error trying to parse response from program:');
+			console.error(e);
+		}
 
 		if (!Array.isArray(body))
 			return console.error("Response from \"" + config.url + "\" was not an array: " + body);
