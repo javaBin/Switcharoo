@@ -21,6 +21,7 @@ function getProgram(complete) {
 		} catch (e) {
 			console.error('Error trying to parse response from program:');
 			console.error(e);
+			return;
 		}
 
 		if (!Array.isArray(body))
