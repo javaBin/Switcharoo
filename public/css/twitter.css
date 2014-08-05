@@ -11,6 +11,12 @@
 	opacity: 0;
 }
 
+.twitter li:after {
+	content: "";
+	clear: both;
+	display: table;
+}
+
 .twitter .image {
 	border-radius: 100%;
 	float: left;
