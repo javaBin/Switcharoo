@@ -7,7 +7,6 @@ Information monitor system
 ### Howto
 - `git clone git@github.com:javaBin/Switcharoo.git`
 - `cd Switcharoo`
-- `cp configuration_example.js configuration.js`
-- Open `configuration.js` and fill in the blanks. All fields need filling.
+- Open `switcharoo_example.json` and fill in the blanks. All fields need filling.
+- `cp switcharoo_example.json ~/.switcharoo.json`
 - `npm start`
-	- Added value: install nodemon globally (`npm install -g nodemon`) and `npm start` will use it to launch Switcharoo

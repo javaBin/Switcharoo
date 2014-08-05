@@ -1,0 +1,32 @@
+{
+	"app": {
+		"admin": "",
+		"port": 1337,
+		"user": "",
+		"pass": "",
+		"env": "dev"
+	},
+
+	"twitter": {
+		"cronPattern": "0 */10 * * * *",
+		"consumer_key": "",
+		"consumer_secret": "",
+		"access_token": "",
+		"access_token_secret": ""
+	},
+
+	"instagram": {
+		"cronPattern": "0 */10 * * * *",
+		"client_id": "",
+		"client_secret": ""
+	},
+
+	"mongodb": {
+		"connection_string": "mongodb://localhost:27017/my_db"
+	},
+
+	"program": {
+		"cronPattern": "0 */10 * * * *",
+		"url": ""
+	}
+}
