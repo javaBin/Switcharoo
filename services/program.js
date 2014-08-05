@@ -2,14 +2,69 @@ var cron = require('cron').CronJob;
 var config = require('../config').program;
 var request = require('request');
 var moment = require('moment');
+var _ = require('underscore');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
 var current_program = null;
 
-var date = moment("2013-09-11T11:41:00Z");
+var date = moment("2013-09-11T14:50:00Z");
 
 var job = new cron(cronPattern, getProgram);
+
+function createSlots(memo, current) {
+	var timestamp = current.timestamp;
+	if (current.format === 'presentation') {
+		var slot = memo[timestamp] || [];
+		slot.push(current);
+		memo[timestamp] = slot;
+	} else {
+		timestamp = _.chain(Object.keys(memo))
+			.filter(function(slot) {
+				return slot <= timestamp;
+			})
+			.last()
+			.value();
+		var slot = memo[timestamp];
+		slot.push(current);
+		memo[timestamp] = slot;
+	}
+
+	return memo;
+}
+
+function parseSession(d) {
+	return {
+		room: d.room.replace('Room ', ''),
+		title: d.title,
+		format: d.format,
+		speakers: _.pluck(d.speakers, 'name').join(', '),
+		start: d.start,
+		stop: d.stop,
+		timestamp: new Date(d.start).getTime(),
+	    names: _.pluck(d.speakers, "name").join(", ")
+	};
+};
+
+function groupSessions(data) {
+	return _.chain(data)
+		.map(parseSession)
+		.sortBy(comparator('format'))
+		.sortBy('start')
+		.reduce(createSlots, {})
+		.value();
+}
+
+function comparator(param, compare_depth) {
+    compare_depth = compare_depth || 10;
+    return function (item) {
+         return String.fromCharCode.apply(String,
+            _.map(item[param].slice(0, compare_depth).split(""), function (c) {
+                return 0xffff - c.charCodeAt();
+            })
+        );
+    };
+}
 
 function getProgram(complete) {
 	request(config.url, function(error, response, body) {
@@ -29,35 +84,7 @@ function getProgram(complete) {
 
 		console.log('Got new program from javazone server');
 
-		var program = body.filter(function(talk) {
-			return moment(talk.start).isBefore(date) && moment(talk.stop).isAfter(date) && talk.format == 'presentation';
-		}).map(function(talk) {
-			return {
-				room: talk.room.replace("Room ", ""),
-				title: talk.title,
-				format: talk.format,
-				speakers: talk.speakers.map(function(speaker) { return speaker.name; }).join(', '),
-				start: talk.start,
-				stop: talk.stop
-			};
-		}).sort(function(a, b) {
-			return a.room > b.room;
-		});
-
-		var start = moment(program[0].start);
-		var stop = moment(program[0].stop);
-
-		var currentLightningTalk = first(body, function(talk) {
-			var talkStart = moment(talk.start);
-			var talkStop = moment(talk.stop);
-			return (talkStart.isAfter(start) && talkStart.isBefore(stop)) || (talkStop.isAfter(start) && talkStop.isBefore(stop));
-		});
-
-		if (currentLightningTalk)
-			program.push({room: currentLightningTalk.room.replace("Room ", ""), title: 'Lightning Talks'})
-
-		current_program = program;
-
+		current_program = groupSessions(body);
 		if (complete)
 			complete();
 	});
@@ -80,7 +107,24 @@ function get() {
 }
 
 function program() {
-	return current_program;
+	var now = date.valueOf();
+	var timestamp = _.chain(Object.keys(current_program))
+		.filter(function(slot) {
+			return slot <= now
+		}).last().value();
+	var slot = current_program[timestamp];
+
+	var presentations = _(slot).reduce(function(memo, cur) {
+		console.log(memo);
+		cur.format === 'presentation'
+			? memo[0].push(cur)
+			: memo[1].push(cur);
+		return memo;
+	}, [[], []]);
+	if (presentations[1].length > 0)
+		presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'})
+
+	return _.sortBy(presentations[0], 'room');
 }
 
 module.exports = {
