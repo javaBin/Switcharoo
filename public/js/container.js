@@ -102,7 +102,7 @@
 		startTimers: function() {
 			var self = this;
 			setInterval(function() { self.getSlides = true; }, TWO_MINUTES);
-			setInterval(function() { self.getProgram = true; }, TEN_MINUTES);
+			setInterval(function() { self.getProgram = true; }, TWO_MINUTES);
 			setInterval(function() { self.getTwitter = true; }, TEN_MINUTES);
 			setInterval(function() { self.getInstagram = true; }, TEN_MINUTES);
 		},
@@ -115,7 +115,7 @@
 						self.setNext();
 
 					var next = self.getNext();
-					if (next instanceof Switcharoo.Twitter.view && self.getSlides) {
+					if (!(next instanceof Switcharoo.Info.view)/*next instanceof Switcharoo.Twitter.view*/ && self.getSlides) {
 						self.collection.fetch();
 						self.getSlides = false;
 					}

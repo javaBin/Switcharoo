@@ -107,7 +107,10 @@ function get() {
 }
 
 function program() {
-	var now = date.valueOf();
+	//var now = date.valueOf();
+	var now = new moment();
+	now.subtract('days', 329);
+	console.log('Returning program for: ' + now);
 	var timestamp = _.chain(Object.keys(current_program))
 		.filter(function(slot) {
 			return slot <= now
