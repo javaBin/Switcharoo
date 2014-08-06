@@ -6,7 +6,7 @@ var _ = require('underscore');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
-var current_program = null;
+var current_program = {};
 
 var date = moment("2013-09-11T14:50:00Z");
 
@@ -106,19 +106,37 @@ function get() {
 	});
 }
 
-function program() {
-	//var now = date.valueOf();
+function now() {
 	var now = new moment();
 	now.subtract('days', 329);
-	console.log('Returning program for: ' + now);
-	var timestamp = _.chain(Object.keys(current_program))
-		.filter(function(slot) {
-			return slot <= now
-		}).last().value();
-	var slot = current_program[timestamp];
+	return now;
+}
 
-	var presentations = _(slot).reduce(function(memo, cur) {
-		console.log(memo);
+function getSlotForTimestamp(time) {
+	console.log('Returning program for: ' + time);
+	var timestamps = Object.keys(current_program).sort();
+	var timestamp = _.chain(timestamps)
+		.filter(function(slot) {
+			return slot <= time
+		}).last().value();
+	var end = new moment(parseInt(timestamp)).add('hours', 1);
+	if (time > end) {
+		var index = timestamps.indexOf(timestamp);
+		return timestamps.length > index
+			? {"heading": "Next up", "presentations": current_program[timestamps[index + 1]]}
+			: {"heading": "No presentations at the moment", "presentations": []};
+	}
+
+	return {"heading": "What's happening right now?", "presentations": current_program[timestamp]};
+}
+
+function program() {
+	if (Object.keys(current_program).length === 0)
+		return {"heading": "No presentations at the moment"};
+
+	var timestamp = now();
+	var slot = getSlotForTimestamp(timestamp);
+	var presentations = _(slot.presentations).reduce(function(memo, cur) {
 		cur.format === 'presentation'
 			? memo[0].push(cur)
 			: memo[1].push(cur);
@@ -127,7 +145,8 @@ function program() {
 	if (presentations[1].length > 0)
 		presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'})
 
-	return _.sortBy(presentations[0], 'room');
+	slot.presentations = _.sortBy(presentations[0], 'room');
+	return slot;
 }
 
 module.exports = {

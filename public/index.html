@@ -71,9 +71,9 @@
 	</script>
 	<script type="text/x-handlebars-template" id="program">
 		<div class="slide-padding">
-			<h1>What&#39;s happening right now?</h1>
+			<h1>{{heading}}</h1>
 			<ul>
-				{{#each this}}
+				{{#each presentations}}
 				<li>
 					<div class="room">{{room}}</div>
 					<div class="title">{{title}}</div>
