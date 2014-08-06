@@ -13,7 +13,7 @@ var job = new cron(cronPattern, getTweets);
 function getTweets(complete) {
 	Twitter.get('search/tweets', {q: 'javazone #javazone', count: 5, result_type: 'mixed'}, function(err, data, response) {
 		if (err) {
-			log.error('Error fetching tweets:');
+			console.error('Error fetching tweets:');
 			console.error(err);
 			return;
 		}
