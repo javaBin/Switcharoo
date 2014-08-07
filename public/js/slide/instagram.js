@@ -8,7 +8,7 @@
 
 		initialize: function() {
 			this.template = Handlebars.compile($(this.template).html());
-			this.model.on('change', this.render, this);
+			this.model.on('sync', this.render, this);
 			this.on('visible', this.visible, this);
 		},
 
@@ -29,6 +29,10 @@
 		swapImages: function() {
 			this.$el.find('.first').velocity('transition.flipXOut');
 			this.$el.find('.second').velocity('transition.flipXIn');
+		},
+
+		shouldShow: function() {
+			return this.model.has(0);
 		}
 	});
 

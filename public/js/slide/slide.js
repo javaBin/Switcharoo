@@ -9,13 +9,16 @@
 
 		render: function() {
 			var model = this.model.toJSON();
-			console.log(model);
 			this.$el.html(this.template(model));
 			return this.el;
 		},
 
 		html: function() {
 			return this.el;
+		},
+
+		shouldShow: function() {
+			return true;
 		}
 		
 	});

@@ -114,8 +114,11 @@
 					if (self.nextIndex() === 0)
 						self.setNext();
 
-					var next = self.getNext();
-					if (!(next instanceof Switcharoo.Info.view)/*next instanceof Switcharoo.Twitter.view*/ && self.getSlides) {
+					var next;// = self.getNext();
+					do {
+						next = self.getNext();
+					} while( next && !next.shouldShow())
+					if (!(next instanceof Switcharoo.Info.view) && self.getSlides) {
 						self.collection.fetch();
 						self.getSlides = false;
 					}

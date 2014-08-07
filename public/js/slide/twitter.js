@@ -8,7 +8,7 @@
 
 		initialize: function() {
 			this.template = Handlebars.compile($(this.template).html());
-			this.model.on('change', this.render, this);
+			this.model.on('sync', this.render, this);
 		},
 
 		animatableElements: function() {
@@ -21,6 +21,10 @@
 
 		animateOut: function() {
 			return this.animatableElements();
+		},
+
+		shouldShow: function() {
+			return this.model.has(0);
 		}
 	});
 
