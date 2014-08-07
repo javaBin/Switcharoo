@@ -32,7 +32,11 @@
 		},
 
 		edit: function(event) {
-			Backbone.Events.trigger('slide:edit', this.model);
+			var e = 'slide:' + (this.model.get('type') === 'image'
+				? 'edit-image'
+				: 'edit-text');
+			console.log(e);
+			Backbone.Events.trigger(e, this.model);
 		},
 
 		remove: function(event) {
@@ -47,7 +51,7 @@
 				event.preventDefault();
 
 			var body = this.model.get('type') === 'image'
-				? this.$el.find('.image-filename').text()
+				? this.$el.find('.image-link').text()
 				: this.$el.find('textarea[name="body"]').val()
 
 			this.model.set({
@@ -74,8 +78,9 @@
 					return myXhr;
 				},
 				success: function(res) {
-					self.$el.find('.image-input').css('display', 'none');
-					self.$el.find('.image-filename').text(res.filepath);
+					self.$el.find('.image-link')
+						.attr('href', res.filepath)
+						.text(res.filepath);
 				},
 				error: function(xhr) {
 					console.log(xhr);

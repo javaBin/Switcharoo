@@ -39,7 +39,7 @@ app.get('/program', function(req, res) {
 });
 
 app.post('/image', function(req, res) {
-	res.json({filepath: req.files.image.path.replace('public/','')});
+	res.json({filepath: '/' + req.files.image.path.replace('public/','')});
 });
 
 var Slide = restful.model('slides', mongoose.Schema({
