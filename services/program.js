@@ -108,13 +108,17 @@ function get() {
 
 function now() {
 	var now = new moment();
-	now.subtract('days', 329);
+	now.subtract('days', 331);
+	console.log(now);
 	return now;
 }
 
 function getSlotForTimestamp(time) {
 	console.log('Returning program for: ' + time);
 	var timestamps = Object.keys(current_program).sort();
+	if (time < timestamps[0])
+		return {"heading": "Next up", "presentations": current_program[timestamps[0]]};
+
 	var timestamp = _.chain(timestamps)
 		.filter(function(slot) {
 			return slot <= time
