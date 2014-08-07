@@ -31,11 +31,12 @@
 }
 
 .program .title {
-	-webkit-line-clamp: 3;
+	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	display: -webkit-box;
 	font-size: 2em;
 	margin-left: 100px;
+	overflow: hidden;
 }
 
 .program .speakers {
