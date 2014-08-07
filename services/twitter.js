@@ -11,7 +11,7 @@ var cronPattern = config.twitter.cronPattern || "0 */10 * * * *";
 var job = new cron(cronPattern, getTweets);
 
 function getTweets(complete) {
-	Twitter.get('search/tweets', {q: 'javazone #javazone', count: 5, result_type: 'mixed'}, function(err, data, response) {
+	Twitter.get('search/tweets', {q: 'javazone exclude:retweets', count: 5, result_type: 'mixed'}, function(err, data, response) {
 		if (err) {
 			console.error('Error fetching tweets:');
 			console.error(err);
