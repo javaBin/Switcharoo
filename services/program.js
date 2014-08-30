@@ -60,6 +60,7 @@ function groupSessions(data) {
 		.value();
 }
 
+// Stolen from javazone frontend. Dunno how it works, so I don't dare to touch it :)
 function comparator(param, compare_depth) {
     compare_depth = compare_depth || 10;
     return function (item) {
@@ -113,7 +114,7 @@ function get() {
 
 function now() {
 	var now = new moment();
-	now.subtract('days', 331);
+	now.add('days', 10);
 	console.log(now);
 	return now;
 }
