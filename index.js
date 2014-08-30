@@ -35,7 +35,8 @@ app.get('/instagram', function(req, res) {
 });
 
 app.get('/program', function(req, res) {
-	res.json(Program.program());
+	var all = (typeof req.query.all !== 'undefined');
+	res.json(Program.program(all));
 });
 
 app.post('/image', function(req, res) {

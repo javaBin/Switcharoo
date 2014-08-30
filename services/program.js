@@ -130,7 +130,11 @@ function getSlotForTimestamp(time) {
 	return {"heading": "What's happening right now?", "presentations": current_program[timestamp]};
 }
 
-function program() {
+function program(all) {
+	if (all) {
+		return current_program;
+	}
+
 	if (Object.keys(current_program).length === 0)
 		return {"heading": "No presentations at the moment"};
 
