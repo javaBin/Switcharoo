@@ -96,16 +96,6 @@ function getProgram(complete) {
 	});
 }
 
-function first(array, fn) {
-	var length = array.length;
-	for (var i = 0; i < length; i++) {
-		if (fn(array[i]))
-			return array[i];
-	}
-
-	return undefined;
-}
-
 function get() {
 	getProgram(function() {
 		job.start();
