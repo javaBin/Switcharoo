@@ -33,6 +33,10 @@ function createSlots(memo, current) {
 	return memo;
 }
 
+function removeWorkshops(d) {
+	return d.format !== 'workshop';
+}
+
 function parseSession(d) {
 	return {
 		room: d.room.replace('Room ', ''),
@@ -48,6 +52,7 @@ function parseSession(d) {
 
 function groupSessions(data) {
 	return _.chain(data)
+		.filter(removeWorkshops)
 		.map(parseSession)
 		.sortBy(comparator('format'))
 		.sortBy('start')
