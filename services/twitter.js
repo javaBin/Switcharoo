@@ -28,7 +28,8 @@ function getTweets(complete) {
 			};
 		});
 
-		current_tweets = data;
+		// Seems we sometimes get more than 5 tweets, so we limit it to 5 here
+		current_tweets = data.slice(0, 5);
 
 		if (complete)
 			complete();
