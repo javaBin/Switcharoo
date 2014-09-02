@@ -104,7 +104,7 @@ function get() {
 
 function now() {
 	var now = new moment();
-	now.add('days', 10);
+	now.add('days', 7);
 	console.log(now);
 	return now;
 }
