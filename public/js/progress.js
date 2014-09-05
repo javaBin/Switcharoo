@@ -4,7 +4,7 @@
 	var Progress = Backbone.View.extend({
 
 		initialize: function(options) {
-			this.duration = options.duration || 10000;
+			this.duration = options.duration || 4000;
 			this.shouldAnimate = options.shouldAnimate;
 			Backbone.Events.on('slide:next:done', this.start, this);
 		},
@@ -30,9 +30,23 @@
 		},
 
 		countdown: function() {
-			setTimeout(function() {
+			this.timeoutID = setTimeout(function() {
 				Backbone.Events.trigger('slide:next');
 			}, this.duration);
+		},
+
+		pause: function() {
+			clearTimeout(this.timeoutID);
+			delete this.timeoutID;
+			console.log('Paused playback');
+		},
+
+		play: function() {
+			if (typeof this.timeoutID !== 'undefined')
+				return;
+
+			this.start();
+			console.log('Continued playback');
 		}
 	});
 

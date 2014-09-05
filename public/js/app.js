@@ -27,6 +27,14 @@
 			Backbone.Events.on('render:done', progress.start, progress);
 
 			this.progress = progress;
+		},
+
+		pause: function() {
+			this.progress.pause();
+		},
+
+		play: function() {
+			this.progress.play();
 		}
 
 	});
