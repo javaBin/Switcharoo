@@ -13,12 +13,12 @@
 		},
 
 		animateIn: function() {
-			return this.$el.find('.first');
+			return this.$el.find('.first, h1');
 
 		},
 
 		animateOut: function() {
-			return this.$el.find('.second');
+			return this.$el.find('.second, h1');
 		},
 
 		visible: function() {
