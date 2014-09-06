@@ -69,7 +69,7 @@ h1 {
 .slide .title {
 }
 
-.slide .body {
+.slide .body, .slide .index {
 	color: #999;
 }
 
@@ -181,6 +181,19 @@ h1 {
 	display: block;
 	margin-bottom: 50px;
 	padding: 10px 0;
+}
+
+label {
+	color: #777;
+}
+
+.text-input {
+	display: inline-block;
+	width: 49%;
+}
+
+label a {
+	display: block;	
 }
 
 .slide-edit-form .save {

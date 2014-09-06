@@ -10,11 +10,8 @@
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
 			this.slides = new Admin.Slides.view({collection: new Admin.Slides.collection(), template: '#slides-template'});
-			this.textSlideEdit = new Admin.Slide.view({template: '#slide-edit-text-template'});
-			this.imageSlideEdit = new Admin.Slide.view({template: '#slide-edit-image-template'});
-			Backbone.Events.on('slide:edit-text', this.edit, this);
-			Backbone.Events.on('slide:edit-image', this.editImage, this);
-			Backbone.Events.on('slide:edit:close', this.closeEdit, this);
+			Backbone.Events.on('slide:edit', this.edit, this);
+			Backbone.Events.on('slide:edit:close', this.close, this);
 			Backbone.Events.on('slide:remove', this.remove, this);
 		},
 
@@ -25,25 +22,28 @@
 		},
 
 		assign: function(view, selector) {
-			view.setElement(this.$(selector)).render();
+			var container = $('<div></div>');
+			$(selector).append(view.setElement(container).render());
 		},
 
 		edit: function(slide) {
-			this.textSlideEdit.model = slide;
-			this.assign(this.textSlideEdit, '.slide-edit');
+			var template = slide.get('type') === 'text'
+				? '#slide-edit-text-template'
+				: '#slide-edit-image-template'
+			this.slideEdit = new Admin.Slide.view({template: template});
+			this.slideEdit.model = slide;
+			this.assign(this.slideEdit, '.slide-edit');
 		},
 
-		closeEdit: function() {
-			this.textSlideEdit.model = undefined;
-			this.$el.find('.slide-edit').empty();
+		close: function() {
+			this.slideEdit.remove();
 			this.slides.collection.fetch();
 		},
 
-		createTextSlide: function() {
-			var model = new Admin.Slide.model();
-			model.set('type', 'text');
-			this.textSlideEdit.model = model;
-			this.assign(this.textSlideEdit, '.slide-edit');
+		editText: function(slide) {
+			this.slideEdit = new Admin.Slide.view({template: '#slide-edit-text-template'});
+			this.slideEdit.model = model;
+			this.assign(this.slideEdit, '.slide-edit');
 		},
 
 		editImage: function(slide) {
@@ -51,17 +51,21 @@
 			this.assign(this.imageSlideEdit, '.slide-edit');
 		},
 
-		closeEditImage: function() {
-			this.imageSlideEdit.model = undefined;
-			this.$el.find('.slide-edit').empty();
-			this.slides.collection.fetch();
+		createTextSlide: function() {
+			this.slideEdit = new Admin.Slide.view({template: '#slide-edit-text-template'});
+			var model = new Admin.Slide.model();
+			model.set('type', 'text');
+			this.slideEdit.model = model;
+			this.assign(this.slideEdit, '.slide-edit');
 		},
 
 		createImageSlide: function() {
+			this.slideEdit = new Admin.Slide.view({template: '#slide-edit-image-template'});
+			console.log('create image');
 			var model = new Admin.Slide.model();
 			model.set('type', 'image');
-			this.imageSlideEdit.model = model;
-			this.assign(this.imageSlideEdit, '.slide-edit');
+			this.slideEdit.model = model;
+			this.assign(this.slideEdit, '.slide-edit');
 		},
 
 		remove: function(slide) {

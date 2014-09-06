@@ -37,6 +37,7 @@
 			<div class="slide-info">
 				<div class="title">{{title}}</div>
 				<div class="body">{{body}}</div>
+				<div class="index">Index: {{index}}</div>
 				<div class="actions">
 					<button class="btn action action-edit">Edit</button>
 					<button class="btn action action-delete">Delete</button>
@@ -48,8 +49,9 @@
 	<script type="text/x-handlebars-template" id="slide-edit-text-template">
 		<div class="slide-edit-form">
 			<form>
-				<input type="text" name="title" value="{{title}}" placeholder="Title" />
-				<textarea name="body" placeholder="Tekst">{{body}}</textarea>
+				<label class="text-input"><span>Tittel</span><input type="text" name="title" value="{{title}}" placeholder="Title" /></label>
+				<label class="text-input"><span>Indeks</span><input type="text" name="index" value="{{index}}" class="index" /></span></label>
+				<label><span>Tekst</span><textarea name="body" placeholder="Tekst">{{body}}</textarea></label>
 				<input type="submit" class="btn save" value="save" />
 			</form>
 
@@ -60,10 +62,11 @@
 	<script type="text/x-handlebars-template" id="slide-edit-image-template">
 		<div class="slide-edit-form">
 			<form>
-				<input type="text" name="title" value="{{title}}" placeholder="Title" />
+				<label class="text-input"><span>Tittel</span><input type="text" name="title" value="{{title}}" placeholder="Title" /></label>
+				<label class="text-input"><span>Indeks</span><input type="text" name="index" value="{{index}}"  class="index" /></label>
 				<input type="submit" class="btn save" value="save" />
 			</form>
-			<a href="#" target="_blank" class="image-link">{{body}}</a>
+			<label><span>Bilde</span><a href="{{body}}" target="_blank" class="image-link">{{body}}</a></label>
 			<form enctype="multipart/form-data" class="upload-form">
 				<input name="image" type="file" class="image-input">
 				<div class="image-filename"></div>

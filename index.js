@@ -14,8 +14,8 @@ var _ = require('lodash');
 mongoose.connect(config.mongodb.connection_string);
 
 Program.get();
-Twitter.get();
-Instagram.get();
+//Twitter.get();
+//Instagram.get();
 
 var app = express();
 app.set('port', config.app.port);
@@ -46,9 +46,9 @@ app.post('/image', function(req, res) {
 var Slide = restful.model('slides', mongoose.Schema({
 	title: 'string',
 	body: 'string',
-	background: 'string',
 	visible: 'boolean',
-	type: 'string'
+	type: 'string',
+	index: 'string'
 })).methods(['get', 'put', 'post', 'delete']);
 Slide.before('put', basicAuth);
 Slide.before('post', basicAuth);

@@ -4,7 +4,7 @@
 		
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
-			window.slideDuration = 15000;
+			//window.slideDuration = 15000;
 		},
 
 		render: function() {

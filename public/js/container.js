@@ -188,6 +188,8 @@
 	var collection = Backbone.Collection.extend({
 		model: model,
 
+		comparator: 'index',
+
 		url: '/slides'
 	});
 

@@ -30,6 +30,7 @@
 
 	var collection = Backbone.Collection.extend({
 		model: Admin.Slide.model,
+		comparator: 'index',
 		url: '/slides'
 	});
 

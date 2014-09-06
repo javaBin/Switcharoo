@@ -7,7 +7,7 @@
 		events: {
 			'click .visible': 'toggleVisible',
 			'click .action-edit': 'edit',
-			'click .action-delete': 'remove',
+			'click .action-delete': 'deleteSlide',
 			'click .save': 'save',
 			'click .close': 'close',
 			'change .image-input': 'uploadImage'
@@ -32,14 +32,10 @@
 		},
 
 		edit: function(event) {
-			var e = 'slide:' + (this.model.get('type') === 'image'
-				? 'edit-image'
-				: 'edit-text');
-			console.log(e);
-			Backbone.Events.trigger(e, this.model);
+			Backbone.Events.trigger('slide:edit', this.model);
 		},
 
-		remove: function(event) {
+		deleteSlide: function(event) {
 			if (!confirm("Do you really want to delete the slide \"" + this.model.get('title') + "\""))
 				return;
 			
@@ -56,13 +52,16 @@
 
 			this.model.set({
 				'title': this.$el.find('input[name="title"]').val(),
-				'body': body
+				'body': body,
+				'index': this.$el.find('input[name=index]').val()
 			});
+			console.log(this.model.toJSON());
 			this.model.save();
 			Backbone.Events.trigger('slide:edit:close');
 		},
 
 		close: function(event) {
+			delete this.model;
 			Backbone.Events.trigger('slide:edit:close');
 		},
 
@@ -102,8 +101,8 @@
 		defaults: {
 			'title': '',
 			'body': '',
-			'background': '',
-			'visible': false
+			'visible': false,
+			'index': 0
 		}
 
 	});
