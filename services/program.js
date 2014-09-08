@@ -104,8 +104,8 @@ function get() {
 
 function now() {
 	var now = new moment();
-	now.add('days', 3);
-	console.log(now);
+	//now.add('days', 3);
+	console.log('Now: ' + now);
 	return now;
 }
 
