@@ -5,6 +5,7 @@ var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
 var Program = require('./services/program')
 var Twitter = require('./services/twitter');
 var Instagram = require('./services/instagram');
+var Status = require('./services/status');
 var morgan = require('morgan');
 var restful = require('node-restful');
 var mongoose = restful.mongoose;
@@ -25,6 +26,11 @@ app.use(morgan(config.app.env));
 app.use(multer({dest: './public/uploads', rename: function(fieldname, filename) {
 	return filename.replace(/\W+/g, '-').toLowerCase() + (new Date().getTime());
 }}));
+
+app.get('/status', function(req, res) {
+	var status = Status.get();
+	res.status(status.statusCode).json(status);
+});
 
 app.get('/twitter', function(req, res) {
 	res.json(Twitter.tweets());

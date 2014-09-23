@@ -153,7 +153,23 @@ function program(all) {
 	return slot;
 }
 
+function status() {
+	var keys = Object.keys(current_program);
+	if (keys.length === 0) {
+		return {
+			error: 'Something wrong with the program',
+			statusCode: 500
+		};
+	}
+	
+	return {
+		slots: keys.length,
+		statusCode: 200
+	};
+}
+
 module.exports = {
 	get: get,
-	program: program
+	program: program,
+	status: status
 };
