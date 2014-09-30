@@ -49,7 +49,24 @@ function media() {
 	return current_media;
 }
 
+function status() {
+	var media = current_media.length;
+	if (media === 0) {
+		return {
+			service: 'instagram',
+			error: 'No media found',
+			statusCode: 500
+		};
+	}
+
+	return {
+		service: 'instagram',
+		statusCode: 200
+	};
+}
+
 module.exports = {
 	get: get,
-	media: media
+	media: media,
+	status: status
 };

@@ -2,7 +2,7 @@ var cron = require('cron').CronJob;
 var config = require('../config').program;
 var request = require('request');
 var moment = require('moment');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
@@ -157,12 +157,14 @@ function status() {
 	var keys = Object.keys(current_program);
 	if (keys.length === 0) {
 		return {
+			service: 'program',
 			error: 'Something wrong with the program',
 			statusCode: 500
 		};
 	}
 	
 	return {
+		service: 'program',
 		slots: keys.length,
 		statusCode: 200
 	};

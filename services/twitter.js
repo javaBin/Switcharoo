@@ -46,7 +46,24 @@ function tweets() {
 	return current_tweets;
 }
 
+function status() {
+	var tweets = current_tweets.length;
+	if (tweets === 0) {
+		return {
+			service: 'twitter',
+			error: 'No tweets found',
+			statusCode: 500
+		};
+	}
+
+	return {
+		service: 'twitter',
+		statusCode: 200
+	}
+}
+
 module.exports = {
 	get: get,
-	tweets: tweets
+	tweets: tweets,
+	status: status
 };
