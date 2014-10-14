@@ -16,7 +16,8 @@
 	<script type="text/javascript" src="lib/velocity.ui.js"></script>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/container.js"></script>
-	<script type="text/javascript" src="js/progress.js"></script>
+	<script type="text/javascript" src="js/timer.js"></script>
+	<script type="text/javascript" src="js/keyhandler.js"></script>
 	<script type="text/javascript" src="js/slide/slide.js"></script>
 	<script type="text/javascript" src="js/slide/program.js"></script>
 	<script type="text/javascript" src="js/slide/instagram.js"></script>
@@ -27,7 +28,7 @@
 	<div class="progress"></div>
 	<div class="container"></div>
 
-	<script type="text/x-handlebars-template" id="container">
+	<script type="text/x-handlebars-template" id="container-template">
 		<div class="slide"></div>
 	</script>
 	<script type="text/x-handlebars-template" id="twitter">
@@ -86,9 +87,12 @@
 	</script>
 
 <script type="text/javascript">
-	var app = new Switcharoo.App({el: '.container', template: '#container'});
+	var app = new Switcharoo.App({el: '.container', template: '#container-template'});
 	app.render();
 	window.app = app;
+
+	var keyHandler = new Switcharoo.Keyhandler($(document));
+	keyHandler.listen();
 </script>
 </body>
 </html>

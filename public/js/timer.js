@@ -1,12 +1,15 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
-	var Progress = Backbone.View.extend({
+	var Timer = Backbone.View.extend({
 
 		initialize: function(options) {
 			this.duration = options.duration || 4000;
 			this.shouldAnimate = options.shouldAnimate;
 			Backbone.Events.on('slide:next:done', this.start, this);
+			Backbone.Events.on('key:left', this.prev, this);
+			Backbone.Events.on('key:right', this.next, this);
+			Backbone.Events.on('key:space', this.toggle, this);
 		},
 
 		start: function() {
@@ -35,9 +38,25 @@
 			}, this.duration);
 		},
 
+		prev: function() {
+			console.log('prev');
+		},
+
+		next: function() {
+			clearTimeout(this.timeoutID);
+			Backbone.Events.trigger('slide:next');
+			console.log('Next slide');
+		},
+
+		toggle: function() {
+			if (typeof this.timeoutID === 'undefined')
+				this.play();
+			else
+				this.pause();
+		},
+
 		pause: function() {
 			clearTimeout(this.timeoutID);
-			delete this.timeoutID;
 			console.log('Paused playback');
 		},
 
@@ -50,6 +69,6 @@
 		}
 	});
 
-	Switcharoo.Progress = Progress;
+	Switcharoo.Timer = Timer;
 
 })(window.Switcharoo = window.Switcharoo || {}, window.Backbone);

@@ -23,7 +23,7 @@
 		},
 
 		renderProgress: function() {
-			var progress = new Switcharoo.Progress({el: $('.progress'), duration: window.slideDuration, shouldAnimate: false});
+			var progress = new Switcharoo.Timer({el: $('.progress'), duration: window.slideDuration, shouldAnimate: false});
 			Backbone.Events.on('render:done', progress.start, progress);
 
 			this.progress = progress;

@@ -114,10 +114,11 @@
 					if (self.nextIndex() === 0)
 						self.setNext();
 
-					var next;// = self.getNext();
+					var next;
 					do {
 						next = self.getNext();
-					} while( next && !next.shouldShow())
+					} while ( next && !next.shouldShow())
+
 					if (!(next instanceof Switcharoo.Info.view) && self.getSlides) {
 						self.collection.fetch();
 						self.getSlides = false;
