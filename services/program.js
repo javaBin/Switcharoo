@@ -38,16 +38,16 @@ function removeWorkshops(d) {
 }
 
 function parseSession(d) {
-	return {
-		room: d.room.replace('Room ', ''),
-		title: d.title,
-		format: d.format,
-		speakers: _.pluck(d.speakers, 'name').join(', '),
-		start: d.start,
-		stop: d.stop,
-		timestamp: new Date(d.start).getTime(),
-	    names: _.pluck(d.speakers, "name").join(", ")
-	};
+    return {
+        room: d.rom.replace('Room ', ''),
+        title: d.tittel,
+        format: d.format,
+        speakers: _.pluck(d.foredragsholdere, 'navn').join(', '),
+        start: d.starter,
+        stop: d.stopper,
+        timestamp: new Date(d.starter).getTime(),
+        names: _.pluck(d.foredragsholdere, 'navn').join(', ')
+    };
 };
 
 function groupSessions(data) {
