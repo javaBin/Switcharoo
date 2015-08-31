@@ -15,8 +15,8 @@ var _ = require('lodash');
 mongoose.connect(config.mongodb.connection_string);
 
 Program.get();
-//Twitter.get();
-//Instagram.get();
+Twitter.get();
+Instagram.get();
 
 var app = express();
 app.set('port', config.app.port);
