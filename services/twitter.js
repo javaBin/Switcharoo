@@ -1,6 +1,7 @@
 var cron = require('cron').CronJob;
 var config = require('../config');
 var twit = require('twit');
+var Setting = require('../models/setting');
 
 var Twitter = new twit(config.twitter);
 
@@ -42,8 +43,13 @@ function get() {
 	});
 }
 
-function tweets() {
-	return current_tweets;
+function tweets(res) {
+    Setting.findOne({key: 'twitter-enabled'}, function(err, setting) {
+        if (err || !setting || !setting.value)
+            res.json([]);
+        else
+            res.json(current_tweets);
+    });
 }
 
 function status() {

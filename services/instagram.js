@@ -2,6 +2,7 @@ var cron = require('cron').CronJob;
 var config = require('../config');
 var Instagram = require('instagram-node-lib');
 var _ = require('lodash');
+var Setting = require('../models/setting');
 
 Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
@@ -45,8 +46,13 @@ function get() {
 	});
 }
 
-function media() {
-	return current_media;
+function media(res) {
+    Setting.findOne({key: 'instagram-enabled'}, function(err, setting) {
+        if (err || !setting || !setting.value)
+            res.json([]);
+        else
+            res.json(current_media);
+    });
 }
 
 function status() {

@@ -11,6 +11,8 @@ var restful = require('node-restful');
 var mongoose = restful.mongoose;
 var multer = require('multer');
 var _ = require('lodash');
+var Slide = require('./models/slide');
+var Setting = require('./models/setting');
 
 mongoose.connect(config.mongodb.connection_string);
 
@@ -33,41 +35,24 @@ app.get('/status', function(req, res) {
 });
 
 app.get('/twitter', function(req, res) {
-	res.json(Twitter.tweets());
+    Twitter.tweets(res);
 });
 
 app.get('/instagram', function(req, res) {
-	res.json(Instagram.media());
+    Instagram.media(res);
 });
 
 app.get('/program', function(req, res) {
 	var all = (typeof req.query.all !== 'undefined');
-	res.json(Program.program(all));
+    Program.program(all, res);
 });
 
 app.post('/image', function(req, res) {
 	res.json({filepath: '/' + req.files.image.path.replace('public/','')});
 });
 
-var Slide = restful.model('slides', mongoose.Schema({
-	title: 'string',
-	body: 'string',
-	visible: 'boolean',
-	type: 'string',
-	index: 'string'
-})).methods(['get', 'put', 'post', 'delete']);
-Slide.before('put', basicAuth);
-Slide.before('post', basicAuth);
-Slide.before('delete', basicAuth);
 Slide.register(app, '/slides');
-
-var Settings = restful.model('settings', mongoose.Schema({
-    key: 'string',
-    value: 'boolean'
-})).methods(['get', 'put', 'post']);
-Settings.before('put', basicAuth);
-Settings.before('post', basicAuth);
-Settings.register(app, '/settings');
+Setting.register(app, '/settings');
 
 app.use(basicAuth);
 app.use('/admin', express.static(__dirname + '/admin'));

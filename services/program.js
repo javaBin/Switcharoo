@@ -3,6 +3,7 @@ var config = require('../config').program;
 var request = require('request');
 var moment = require('moment');
 var _ = require('lodash');
+var Setting = require('../models/setting');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
@@ -130,7 +131,7 @@ function getSlotForTimestamp(time) {
 	return {"heading": "What's happening right now?", "presentations": current_program[timestamp]};
 }
 
-function program(all) {
+function program(all, res) {
 	if (all) {
 		return current_program;
 	}
@@ -150,7 +151,12 @@ function program(all) {
 		presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'})
 
 	slot.presentations = _.sortBy(presentations[0], 'room');
-	return slot;
+    Setting.findOne({key: 'program-enabled'}, function(err, setting) {
+        if (err || !setting || !setting.value)
+            res.json([]);
+        else
+            res.json(slot);
+    });
 }
 
 function status() {
