@@ -10,6 +10,7 @@
 		initialize: function(options) {
 			this.template = Handlebars.compile($(options.template).html());
 			this.slides = new Admin.Slides.view({collection: new Admin.Slides.collection(), template: '#slides-template'});
+            this.settings = new Admin.Settings.view({collection: new Admin.Settings.collection(), template: '#settings-template'});
 			Backbone.Events.on('slide:edit', this.edit, this);
 			Backbone.Events.on('slide:edit:close', this.close, this);
 			Backbone.Events.on('slide:remove', this.remove, this);
@@ -18,6 +19,7 @@
 		render: function() {
 			this.$el.html(this.template());
 			this.assign(this.slides, '.slides');
+            this.assign(this.settings, '.settings');
 			return this.el;
 		},
 

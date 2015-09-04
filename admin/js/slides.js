@@ -13,10 +13,10 @@
 			var self = this;
 			var container = document.createDocumentFragment();
 			this.$el.html(this.template());
-			this.slides = [];
+			this.settings = [];
 			this.collection.each(function(model) {
 				var view = new Admin.Slide.view({model: model, template: '#slide-template'});
-				self.slides.push(view);
+				self.settings.push(view);
 				container.appendChild(view.render());
 			});
 			this.$el.find('ol').append(container);

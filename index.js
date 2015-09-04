@@ -61,6 +61,14 @@ Slide.before('post', basicAuth);
 Slide.before('delete', basicAuth);
 Slide.register(app, '/slides');
 
+var Settings = restful.model('settings', mongoose.Schema({
+    key: 'string',
+    value: 'boolean'
+})).methods(['get', 'put', 'post']);
+Settings.before('put', basicAuth);
+Settings.before('post', basicAuth);
+Settings.register(app, '/settings');
+
 app.use(basicAuth);
 app.use('/admin', express.static(__dirname + '/admin'));
 

@@ -12,6 +12,8 @@
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript" src="js/slide.js"></script>
 	<script type="text/javascript" src="js/slides.js"></script>
+    <script type="text/javascript" src="js/setting.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>
 </head>
 <body>
 	<h1>Switcharoo</h1>
@@ -20,6 +22,7 @@
 	</div>
 
 	<script type="text/x-handlebars-template" id="app-template">
+        <div class="settings"></div>
 		<div class="slides"></div>
 		<div class="slide-edit"></div>
 		<button class="btn text-slide">Text slide</button>
@@ -75,6 +78,20 @@
 			<button class="close">X</button>
 		</div>
 	</script>
+
+    <script type="text/x-handlebars-template" id="settings-template">
+        <ul>
+        </ul>
+    </script>
+
+    <script type="text/x-handlebars-template" id="setting-template">
+        <li>
+            <label>
+                <input type="checkbox" class="enabled" {{#if value}}checked{{/if}} />
+                {{key}}
+            </label>
+        </li>
+    </script>
 
 	<script type="text/javascript">
 		var view = new Admin.App.view({el: $('.container'), template: $('#app-template')});
