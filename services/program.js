@@ -133,11 +133,14 @@ function getSlotForTimestamp(time) {
 
 function program(all, res) {
 	if (all) {
-		return current_program;
+		res.json(current_program);
+        return;
 	}
 
-	if (Object.keys(current_program).length === 0)
-		return {"heading": "No presentations at the moment"};
+	if (Object.keys(current_program).length === 0) {
+		res.json({"heading": "No presentations at the moment"});
+        return;
+    }
 
 	var timestamp = now();
 	var slot = getSlotForTimestamp(timestamp);
@@ -152,6 +155,7 @@ function program(all, res) {
 
 	slot.presentations = _.sortBy(presentations[0], 'room');
     Setting.findOne({key: 'program-enabled'}, function(err, setting) {
+        console.log('Returning program');
         if (err || !setting || !setting.value)
             res.json([]);
         else

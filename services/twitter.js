@@ -45,6 +45,7 @@ function get() {
 
 function tweets(res) {
     Setting.findOne({key: 'twitter-enabled'}, function(err, setting) {
+        console.log('Returning tweets');
         if (err || !setting || !setting.value)
             res.json([]);
         else
