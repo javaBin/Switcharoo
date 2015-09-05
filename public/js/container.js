@@ -107,10 +107,10 @@
 
 		startTimers: function() {
 			var self = this;
-			setInterval(function() { self.getSlides = true; }, TWO_MINUTES);
-			setInterval(function() { self.getProgram = true; }, TWO_MINUTES);
-			setInterval(function() { self.getTwitter = true; }, TEN_MINUTES);
-			setInterval(function() { self.getInstagram = true; }, TEN_MINUTES);
+			setInterval(function() { self.getSlides = true; }, TEN_SECS);
+			setInterval(function() { self.getProgram = true; }, TEN_SECS);
+			setInterval(function() { self.getTwitter = true; }, TEN_SECS);
+			setInterval(function() { self.getInstagram = true; }, TEN_SECS);
 		},
 
 		slideInNext: function() {
