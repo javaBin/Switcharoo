@@ -21,7 +21,11 @@
 
 		animateOut: function() {
 			return this.animatableElements();
-		}
+		},
+
+        shouldShow: function() {
+            return this.model.get('heading') !== 'off';
+        }
 	});
 
 	var model = Backbone.Model.extend({

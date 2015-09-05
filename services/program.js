@@ -132,35 +132,37 @@ function getSlotForTimestamp(time) {
 }
 
 function program(all, res) {
-	if (all) {
-		res.json(current_program);
-        return;
-	}
-
-	if (Object.keys(current_program).length === 0) {
-		res.json({"heading": "No presentations at the moment"});
-        return;
-    }
-
-	var timestamp = now();
-	var slot = getSlotForTimestamp(timestamp);
-	var presentations = _(slot.presentations).reduce(function(memo, cur) {
-		cur.format === 'presentation'
-			? memo[0].push(cur)
-			: memo[1].push(cur);
-		return memo;
-	}, [[], []]);
-	if (presentations[1].length > 0)
-		presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'})
-
-	slot.presentations = _.sortBy(presentations[0], 'room');
     Setting.findOne({key: 'program-enabled'}, function(err, setting) {
-        console.log('Returning program');
-        if (err || !setting || !setting.value)
-            res.json([]);
-        else
-            res.json(slot);
+        if (err || !setting || !setting.value) {
+            res.json({heading: 'off'});
+            return;
+        }
+
+        if (all) {
+            res.json(current_program);
+            return;
+        }
+
+        if (Object.keys(current_program).length === 0) {
+            res.json({"heading": "No presentations at the moment"});
+            return;
+        }
+
+        var timestamp = now();
+        var slot = getSlotForTimestamp(timestamp);
+        var presentations = _(slot.presentations).reduce(function(memo, cur) {
+            cur.format === 'presentation'
+                ? memo[0].push(cur)
+                : memo[1].push(cur);
+            return memo;
+        }, [[], []]);
+        if (presentations[1].length > 0)
+            presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'})
+
+        slot.presentations = _.sortBy(presentations[0], 'room');
+        res.json(slot);
     });
+	
 }
 
 function status() {
