@@ -24,7 +24,7 @@
 		},
 
 		shouldShow: function() {
-			return this.model.has(0);
+			return this.model.has('tweets') && this.model.get('tweets').length > 0;
 		}
 	});
 

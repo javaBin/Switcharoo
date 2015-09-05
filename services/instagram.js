@@ -50,9 +50,9 @@ function media(res) {
     Setting.findOne({key: 'instagram-enabled'}, function(err, setting) {
         console.log('Returning instagram media');
         if (err || !setting || !setting.value)
-            res.json([]);
+            res.json({media: []});
         else
-            res.json(current_media);
+            res.json({media: current_media});
     });
 }
 

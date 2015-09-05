@@ -32,7 +32,7 @@
 		},
 
 		shouldShow: function() {
-			return this.model.has(0);
+			return this.model.has('media') && this.model.get('media').length > 0;
 		}
 	});
 

@@ -132,7 +132,6 @@
 
                 if (self.nextIndex() === 1 || self.numberOfSlides() === 1) {
                     if (self.getProgram) {
-                        console.log('getProgram');
                         self.programView.model.fetch();
                         self.getProgram = false;
                     }
@@ -176,6 +175,13 @@
 			delete this.newSlides;
 		},
 
+        getSpecial: function(index) {
+            var special = _.filter(this.special, function(special) {
+                return special.shouldShow();
+            });
+            return special[index];
+        },
+
 		getSlide: function(index) {
 			if (typeof index === 'undefined')
 				index = this.current;
@@ -183,7 +189,7 @@
 			if (index < this.slides.length)
 				return this.slides[index];
 			
-			return this.special[index - this.slides.length];
+			return this.getSpecial(index - this.slides.length);
 		},
 
 		nextIndex: function() {

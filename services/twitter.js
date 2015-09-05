@@ -47,9 +47,9 @@ function tweets(res) {
     Setting.findOne({key: 'twitter-enabled'}, function(err, setting) {
         console.log('Returning tweets');
         if (err || !setting || !setting.value)
-            res.json([]);
+            res.json({tweets: []});
         else
-            res.json(current_tweets);
+            res.json({tweets:current_tweets});
     });
 }
 
