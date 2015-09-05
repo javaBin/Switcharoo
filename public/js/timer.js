@@ -1,6 +1,8 @@
 (function(Switcharoo, Backbone) {
 	"use strict";
 
+    var ANIMATE_ID = 1337;
+
 	var Timer = Backbone.View.extend({
 
 		initialize: function(options) {
@@ -20,6 +22,7 @@
 		},
 
 		animate: function() {
+            this.timeoutID = ANIMATE_ID;
 			this.$el.velocity({
 				width: '100%'
 			}, {
@@ -56,7 +59,11 @@
 		},
 
 		pause: function() {
+            if (this.timeoutID === ANIMATE_ID)
+                this.$el.velocity('stop');
+
 			clearTimeout(this.timeoutID);
+            this.timeoutID = undefined;
 			console.log('Paused playback');
 		},
 
