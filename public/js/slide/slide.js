@@ -1,28 +1,25 @@
-(function(Switcharoo, Backbone) {
-	"use strict";
+import Backbone from 'backbone';
 
-	var Slide = Backbone.View.extend({
+var Slide = Backbone.View.extend({
 
-		initialize: function(options) {
-			this.template = Handlebars.compile($(options.template).html());
-		},
+	initialize: function(options) {
+		this.template = options.template;//Handlebars.compile($(options.template).html());
+	},
 
-		render: function() {
-			var model = this.model.toJSON();
-			this.$el.html(this.template(model));
-			return this.el;
-		},
+	render: function() {
+		var model = this.model.toJSON();
+		this.$el.html(this.template(model));
+		return this.el;
+	},
 
-		html: function() {
-			return this.el;
-		},
+	html: function() {
+		return this.el;
+	},
 
-		shouldShow: function() {
-			return true;
-		}
-		
-	});
+	shouldShow: function() {
+		return true;
+	}
+	
+});
 
-	Switcharoo.Slide = Slide;
-
-})(window.Switcharoo = window.Switcharoo || {}, window.Backbone, window.Handlebars);
+export default Slide;

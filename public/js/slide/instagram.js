@@ -1,48 +1,52 @@
-(function(Switcharoo, Backbone) {
-	"use strict";
+import Backbone from 'backbone';
+import template from './instagram.hbs';
+import $ from 'jquery';
+import Velocity from 'velocity-animate';
+import _ from 'velocity-animate/velocity.ui';
+import Slide from './slide';
 
-	var view = Switcharoo.Slide.extend({
-		template: '#instagram',
+var view = Slide.extend({
+	template: '#instagram',
 
-		className: 'instagram',
+	className: 'instagram',
 
-		initialize: function() {
-			this.template = Handlebars.compile($(this.template).html());
-			this.model.on('sync', this.render, this);
-			this.on('visible', this.visible, this);
-		},
+	initialize: function() {
+		this.template = template;//Handlebars.compile($(this.template).html());
+		this.model.on('sync', this.render, this);
+		this.on('visible', this.visible, this);
+	},
 
-		animateIn: function() {
-			return this.$el.find('.first, h1');
+	animateIn: function() {
+		return this.$el.find('.first, h1');
 
-		},
+	},
 
-		animateOut: function() {
-			return this.$el.find('.second, h1');
-		},
+	animateOut: function() {
+		return this.$el.find('.second, h1');
+	},
 
-		visible: function() {
-			var self = this;
-			setTimeout(function () { self.swapImages()}, window.slideDuration / 2);
-		},
+	visible: function() {
+		var self = this;
+		setTimeout(function () { self.swapImages()}, window.slideDuration / 2);
+	},
 
-		swapImages: function() {
-			this.$el.find('.first').velocity('transition.flipXOut');
-			this.$el.find('.second').velocity('transition.flipXIn');
-		},
+	swapImages: function() {
+		Velocity(this.$el.find('.first').get(), 'transition.flipXOut');
+		Velocity(this.$el.find('.second').get(), 'transition.flipXIn');
+	},
 
-		shouldShow: function() {
-			return this.model.has('media') && this.model.get('media').length > 0;
-		}
-	});
+	shouldShow: function() {
+		return this.model.has('media') && this.model.get('media').length > 0;
+	}
+});
 
-	var model = Backbone.Model.extend({
-		urlRoot: '/instagram'
-	});
+var model = Backbone.Model.extend({
+	urlRoot: '/instagram'
+});
 
-	Switcharoo.Instagram = {
-		view: view,
-		model: model
-	};
+var Instagram = {
+	view: view,
+	model: model
+};
 
-})(window.Switcharoo = window.Switcharoo || {}, window.Backbone);
+export default Instagram;

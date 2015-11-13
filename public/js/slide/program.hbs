@@ -1,0 +1,12 @@
+<div class="slide-padding">
+    <h1>{{heading}}</h1>
+    <ul>
+        {{#each presentations}}
+        <li>
+            <div class="room">{{room}}</div>
+            <div class="title">{{title}}</div>
+            {{#if speakers}}<div class="speakers">{{speakers}}</div>{{/if}}
+        </li>
+        {{/each}}
+    </ul>
+</div>

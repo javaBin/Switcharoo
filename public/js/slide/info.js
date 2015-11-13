@@ -1,30 +1,30 @@
-(function(Switcharoo, Backbone) {
-	"use strict";
+import Backbone from 'backbone';
+import Slide from './slide';
 
-	var view = Switcharoo.Slide.extend({
+var view = Slide.extend({
 
-		className: 'info',
+	className: 'info',
 
-		animatableElements: function() {
-			return this.$el.find('h1, .body, .image');
-		},
+	animatableElements: function() {
+		return this.$el.find('h1, .body, .image');
+	},
 
-		animateIn: function() {
-			return this.animatableElements();
-		},
+	animateIn: function() {
+		return this.animatableElements();
+	},
 
-		animateOut: function() {
-			return this.animatableElements();
-		}
-	});
+	animateOut: function() {
+		return this.animatableElements();
+	}
+});
 
-	var model = Backbone.Model.extend({
-		urlRoot: '/slides'
-	});
+var model = Backbone.Model.extend({
+	urlRoot: '/slides'
+});
 
-	Switcharoo.Info = {
-		view: view,
-		model: model
-	};
+var Info = {
+	view: view,
+	model: model
+};
 
-})(window.Switcharoo = window.Switcharoo || {}, window.Backbone);
+export default Info;

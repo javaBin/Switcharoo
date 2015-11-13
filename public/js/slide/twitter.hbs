@@ -1,0 +1,14 @@
+<div class="slide-padding">
+    <h1>#JavaZone</h1>
+    <ul>
+    {{#each tweets}}
+        <li>
+            <img src="{{image}}" class="image" />
+            <div class="tweet">
+                <div class="user">{{user}}</div>
+                <div class="message">{{text}}</div>
+            </div>
+        </li>
+    {{/each}}
+    </ul>
+</div>
