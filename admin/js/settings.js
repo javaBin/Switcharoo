@@ -1,41 +1,43 @@
-(function(Admin, Backbone, Handlebars) {
+import Backbone from 'backbone';
+import template from './settings.hbs';
+import Setting from './setting';
 
-    var view = Backbone.View.extend({
+var view = Backbone.View.extend({
 
-        initialize: function(options) {
-            this.template = Handlebars.compile($(options.template).html());
-            this.collection.on('sync', this.render, this);
-            this.collection.fetch();
-            Backbone.Events.on('settings:reload', this.collection.fetch, this);
-        },
+    initialize: function(options) {
+        this.template = template;
+        this.collection.on('sync', this.render, this);
+        this.collection.fetch();
+        Backbone.Events.on('settings:reload', this.collection.fetch, this);
+    },
 
-        render: function() {
-            var self = this;
-            var container = document.createDocumentFragment();
-            this.$el.html(this.template());
-            this.settings = [];
-            this.collection.each(function(model) {
-                var view = new Admin.Setting.view({model: model, template: '#setting-template'});
-                self.settings.push(view);
-                container.appendChild(view.render());
-            });
-            this.$el.find('ul').append(container);
-            return this.el;
-        },
+    render: function() {
+        var self = this;
+        var container = document.createDocumentFragment();
+        this.$el.html(this.template());
+        this.settings = [];
+        this.collection.each(function(model) {
+            var view = new Setting.view({model: model});
+            self.settings.push(view);
+            container.appendChild(view.render());
+        });
+        this.$el.find('ul').append(container);
+        return this.el;
+    },
 
-        assign: function(view, selector) {
-            view.setElement(this.$(selector)).render();
-        }
-    });
+    assign: function(view, selector) {
+        view.setElement(this.$(selector)).render();
+    }
+});
 
-    var collection = Backbone.Collection.extend({
-        model: Admin.Setting.model,
-        url: '/settings'
-    });
+var collection = Backbone.Collection.extend({
+    model: Setting.model,
+    url: '/settings'
+});
 
-    Admin.Settings = {
-        view: view,
-        collection: collection
-    };
+var Settings = {
+    view: view,
+    collection: collection
+};
 
-})(window.Admin = window.Admin || {}, window.Backbone, window.Handlebars);
+export default Settings;

@@ -3,7 +3,7 @@
 <head>
 	<title>Admin</title>
 	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>-->
-	<link rel="stylesheet" type="text/css" href="css/admin.css">
+	<!--<link rel="stylesheet" type="text/css" href="css/admin.css">
 	<script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
 	<script type="text/javascript" src="/lib/underscore-min.js"></script>
 	<script type="text/javascript" src="/lib/backbone.js"></script>
@@ -13,20 +13,15 @@
 	<script type="text/javascript" src="js/slide.js"></script>
 	<script type="text/javascript" src="js/slides.js"></script>
     <script type="text/javascript" src="js/setting.js"></script>
-    <script type="text/javascript" src="js/settings.js"></script>
+    <script type="text/javascript" src="js/settings.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="app.css" />
 </head>
 <body>
 	<h1>Switcharoo</h1>
-	<div class="container">
-		
-	</div>
+	<div class="container"></div>
+    <script type="text/javascript" src="app.js"></script>
 
 	<script type="text/x-handlebars-template" id="app-template">
-        <div class="settings"></div>
-		<div class="slides"></div>
-		<div class="slide-edit"></div>
-		<button class="btn text-slide">Text slide</button>
-		<button class="btn image-slide">Image slide</button>
 	</script>
 
 	<script type="text/x-handlebars-template" id="slides-template">
@@ -94,8 +89,6 @@
     </script>
 
 	<script type="text/javascript">
-		var view = new Admin.App.view({el: $('.container'), template: $('#app-template')});
-		view.render();
 	</script>
 </body>
 </html>

@@ -1,42 +1,45 @@
-(function(Admin, Backbone, Handlebars) {
+import Backbone from 'backbone';
+import template from './slides.hbs';
+import Slide from './slide';
+import slideTemplate from './slide.hbs';
 
-	var view = Backbone.View.extend({
+var view = Backbone.View.extend({
 
-		initialize: function(options) {
-			this.template = Handlebars.compile($(options.template).html());
-			this.collection.on('sync remove', this.render, this);
-			this.collection.fetch();
-			Backbone.Events.on('slides:reload', this.collection.fetch, this);
-		},
+	initialize: function(options) {
+		this.template = template;
+		this.collection.on('sync remove', this.render, this);
+		this.collection.fetch();
+		Backbone.Events.on('slides:reload', this.collection.fetch, this);
+	},
 
-		render: function() {
-			var self = this;
-			var container = document.createDocumentFragment();
-			this.$el.html(this.template());
-			this.settings = [];
-			this.collection.each(function(model) {
-				var view = new Admin.Slide.view({model: model, template: '#slide-template'});
-				self.settings.push(view);
-				container.appendChild(view.render());
-			});
-			this.$el.find('ol').append(container);
-			return this.el;
-		},
+	render: function() {
+		var self = this;
+		var container = document.createDocumentFragment();
+		this.$el.html(this.template());
+		this.settings = [];
+		this.collection.each(function(model) {
+			var view = new Slide.view({model: model, template: slideTemplate});
+			self.settings.push(view);
+			container.appendChild(view.render());
+		});
+		this.$el.find('ol').append(container);
+		return this.el;
+	},
 
-		assign: function(view, selector) {
-			view.setElement(this.$(selector)).render();
-		}
-	});
+	assign: function(view, selector) {
+		view.setElement(this.$(selector)).render();
+	}
+});
 
-	var collection = Backbone.Collection.extend({
-		model: Admin.Slide.model,
-		comparator: 'index',
-		url: '/slides'
-	});
+var collection = Backbone.Collection.extend({
+	model: Slide.model,
+	comparator: 'index',
+	url: '/slides'
+});
 
-	Admin.Slides = {
-		view: view,
-		collection: collection
-	};
+var Slides = {
+	view: view,
+	collection: collection
+};
 
-})(window.Admin = window.Admin || {}, window.Backbone, window.Handlebars);
+export default Slides;

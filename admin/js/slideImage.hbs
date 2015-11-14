@@ -1,0 +1,14 @@
+<div class="slide-edit-form">
+    <form>
+        <label class="text-input"><span>Tittel</span><input type="text" name="title" value="{{title}}" placeholder="Title" /></label>
+        <label class="text-input"><span>Indeks</span><input type="text" name="index" value="{{index}}"  class="index" /></label>
+        <input type="submit" class="btn save" value="save" />
+    </form>
+    <label><span>Bilde</span><a href="{{body}}" target="_blank" class="image-link">{{body}}</a></label>
+    <form enctype="multipart/form-data" class="upload-form">
+        <input name="image" type="file" class="image-input">
+        <div class="image-filename"></div>
+    </form>
+
+    <button class="close">X</button>
+</div>
