@@ -14,7 +14,7 @@ var path = require('path');
 function configure(app, express, basePath) {
     app.set('port', config.app.port);
     app.use(bodyParser.json());
-    app.use(express.static(path.join(basePath, 'public')));
+    app.use(express.static(path.join(basePath, 'dist', 'public')));
     app.use(morgan(config.app.env));
     app.use(multer({dest: './public/uploads', rename: function(fieldname, filename) {
         return filename.replace(/\W+/g, '-').toLowerCase() + (new Date().getTime());
@@ -46,7 +46,7 @@ function configure(app, express, basePath) {
     Setting.register(app, '/settings');
 
     app.use(basicAuth);
-    app.use('/admin', express.static(path.join(basePath, 'admin')));
+    app.use('/admin', express.static(path.join(basePath, 'dist', 'admin')));
 }
 
 module.exports = {

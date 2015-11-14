@@ -4,7 +4,7 @@ import Timer from './timer';
 import Keyhandler from './keyhandler';
 import $ from 'jquery'
 import template from './container.hbs';
-import less from '../css/app.less';
+import less from '../css/public.less';
 
 var app = Backbone.View.extend({
 	

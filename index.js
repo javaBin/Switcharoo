@@ -10,8 +10,8 @@ var basePath = __dirname;
 mongoose.connect(config.mongodb.connection_string);
 
 Program.get();
-// Twitter.get();
-// Instagram.get();
+Twitter.get();
+Instagram.get();
 
 var app = express();
 
