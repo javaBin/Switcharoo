@@ -39,7 +39,13 @@ update msg model =
             (model, Cmd.none)
 
         HideSlide ->
-            ({ model | class = "switcharoo--hidden" }, hideSlide)
+            let
+                nextIndex = Slides.getNextIndex model.index model.slides
+            in
+                if nextIndex == model.index then
+                    (model, Cmd.none)
+                else
+                    ({ model | class = "switcharoo--hidden" }, hideSlide)
 
         NextSlide ->
             ({ model | index = Slides.getNextIndex model.index model.slides }, showSlide)
