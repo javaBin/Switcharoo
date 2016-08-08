@@ -73,7 +73,7 @@ var app = Backbone.View.extend({
 	createImageSlide: function() {
 		this.slideEdit = new Slide.view({template: slideImageTemplate});
 		console.log('create image');
-		var model = new Admin.Slide.model();
+		var model = new Slide.model();
 		model.set('type', 'image');
 		this.slideEdit.model = model;
 		this.assign(this.slideEdit, '.slide-edit');
