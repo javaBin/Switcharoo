@@ -66,11 +66,22 @@ function status() {
 	return {
 		service: 'twitter',
 		statusCode: 200
-	}
+	};
+}
+
+function asJson() {
+    return Setting.findOne({key: 'twitter-enabled'})
+        .then((err, setting) => {
+            if (err || !setting || !setting.value) {
+                return [];
+            }
+            return current_tweets;
+        });
 }
 
 module.exports = {
-	get: get,
-	tweets: tweets,
-	status: status
+    get: get,
+    tweets: tweets,
+	  status: status,
+    asJson: asJson
 };

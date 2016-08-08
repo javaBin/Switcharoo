@@ -27,7 +27,7 @@ function getMedia(complete) {
 					'second': array[1].images.low_resolution.url
 				};
 			}).value();
-			
+
 			current_media = data;
 
 			if (complete)
@@ -72,8 +72,19 @@ function status() {
 	};
 }
 
+function asJson() {
+    return Setting.findOne({key: 'instagram-enabled'})
+        .then((err, setting) => {
+            if (err || !setting || !setting.value) {
+                return [];
+            }
+            return current_media;
+        });
+}
+
 module.exports = {
-	get: get,
-	media: media,
-	status: status
+    get: get,
+    media: media,
+	  status: status,
+    asJson, asJson
 };

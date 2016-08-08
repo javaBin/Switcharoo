@@ -162,7 +162,7 @@ function program(all, res) {
         slot.presentations = _.sortBy(presentations[0], 'room');
         res.json(slot);
     });
-	
+
 }
 
 function status() {
@@ -174,7 +174,7 @@ function status() {
 			statusCode: 500
 		};
 	}
-	
+
 	return {
 		service: 'program',
 		slots: keys.length,
@@ -182,8 +182,36 @@ function status() {
 	};
 }
 
+function asJson() {
+    return Setting.findOne({key: 'program-enabled'})
+        .then((err, setting) => {
+            if (err || !setting || !setting.value) {
+                return [];
+            }
+            if (Object.keys(current_program).length === 0) {
+                return {heading: "No presentations at this moment"};
+            }
+
+            var timestamp = now();
+            var slot = getSlotForTimestamp(timestamp);
+            var presentations = _(slot.presentations).reduce(function(memo, cur) {
+                cur.format === 'presentation'
+                    ? memo[0].push(cur)
+                    : memo[1].push(cur);
+                return memo;
+            }, [[], []]);
+            if (presentations[1].length > 0) {
+                presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'});
+            }
+
+            slot.presentations = _.sortBy(presentations[0], 'room');
+            return slot;
+        });
+}
+
 module.exports = {
-	get: get,
-	program: program,
-	status: status
+    get: get,
+    program: program,
+	  status: status,
+    asJson: asJson
 };

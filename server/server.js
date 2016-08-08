@@ -14,9 +14,9 @@ var path = require('path');
 function configure(app, express, basePath) {
     app.set('port', config.app.port);
     app.use(bodyParser.json());
-    app.use(express.static(path.join(basePath, 'dist', 'public')));
+    app.use(express.static(path.join(basePath, 'dist', 'public2')));
     app.use(morgan(config.app.env));
-    app.use(multer({dest: './public/uploads', rename: function(fieldname, filename) {
+    app.use(multer({dest: './dist/public2/uploads', rename: function(fieldname, filename) {
         return filename.replace(/\W+/g, '-').toLowerCase() + (new Date().getTime());
     }}));
 
@@ -36,6 +36,24 @@ function configure(app, express, basePath) {
     app.get('/program', function(req, res) {
         var all = (typeof req.query.all !== 'undefined');
         Program.program(all, res);
+    });
+
+    app.get('/data', (req, res) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+        Promise.all([
+            Twitter.asJson(),
+            Instagram.asJson(),
+            Program.asJson(),
+            Slide.find({visible: true})
+        ]).then((results) => {
+            res.json({
+                tweets: results[0],
+                media: results[1],
+                program: results[2],
+                info: results[3]
+            });
+        });
     });
 
     app.post('/image', function(req, res) {
