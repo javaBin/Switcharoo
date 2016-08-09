@@ -11,11 +11,11 @@ type alias Model =
     { slides : Slides.Model
     , nextSlides: Maybe Slides.Model
     , index: Int
-    , class: String
+    , switching: Bool
     }
 
 initModel : Model
-initModel = Model (Slides.init) Nothing 0 ""
+initModel = Model (Slides.init) Nothing 0 False
 
 init : (Model, Cmd Msg)
 init = (initModel, getSlides)
@@ -38,7 +38,7 @@ update msg model =
             (model, getSlides)
 
         GetSucceeded slides ->
-            (Model slides Nothing 0 "", Cmd.none)
+            (Model slides Nothing 0 False, Cmd.none)
 
         GetFailed error ->
             (model, Cmd.none)
@@ -61,11 +61,11 @@ update msg model =
                 hasNext = isJust model.nextSlides
             in
                 if hasNext then
-                    ({ model | class = "switcharoo--hidden" }, hideSlide)
+                    ({ model | switching = True }, hideSlide)
                 else if nextIndex == model.index then
                     (model, Cmd.none)
                 else
-                    ({ model | class = "switcharoo--hidden" }, hideSlide)
+                    ({ model | switching = True }, hideSlide)
 
         NextSlide ->
             let
@@ -77,7 +77,7 @@ update msg model =
                     ({ model | index = nextIndex }, showSlide)
 
         ShowSlide ->
-            ({ model | class = "" }, Cmd.none)
+            ({ model | switching = False }, Cmd.none)
 
 isJust : Maybe a -> Bool
 isJust m =
@@ -108,10 +108,17 @@ view : Model -> Html Msg
 view model =
     let
         slides = map (\_ -> GetSlides) (Slides.view model.slides model.index)
-        class' = "switcharoo " ++ model.class
+        class' = containerClass model
     in
         div [ class class' ]
             [ slides ]
+
+containerClass : Model -> String
+containerClass model =
+    if model.switching then
+        "switcharoo switcharoo--hidden"
+    else
+        "switcharoo"
 
 subscription : model -> Sub Msg
 subscription model =
