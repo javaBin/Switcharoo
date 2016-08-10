@@ -1,4 +1,4 @@
-module Slides exposing (Model, view, slides, init, getNextIndex)
+module Models.Slides exposing (Model, view, slides, init, getNextIndex)
 
 import Html.App as App
 import List exposing (length)
@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (class)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, decodeValue, succeed, list, (:=))
-import Slide
+import Models.Slide as Slide
 
 type alias Model =
     { info : List Slide.Model

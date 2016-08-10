@@ -3,7 +3,7 @@ import Html.App exposing (program, map)
 import Html.Attributes exposing (class)
 import Http
 import Task
-import Slides
+import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
 import Process exposing (sleep)
 

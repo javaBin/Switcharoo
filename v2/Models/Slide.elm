@@ -1,4 +1,4 @@
-module Slide exposing (Model, view, slide)
+module Models.Slide exposing (Model, view, slide)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, style)
