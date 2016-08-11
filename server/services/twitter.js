@@ -71,10 +71,11 @@ function status() {
 
 function asJson() {
     return Setting.findOne({key: 'twitter-enabled'})
-        .then((err, setting) => {
-            if (err || !setting || !setting.value) {
+        .then((setting) => {
+            if (!setting || !setting.value) {
                 return [];
             }
+
             return current_tweets;
         });
 }
