@@ -42,17 +42,18 @@ function configure(app, express, basePath) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         Promise.all([
+            Slide.find({visible: true}),
             Twitter.asJson(),
             Instagram.asJson(),
-            Program.asJson(),
-            Slide.find({visible: true})
-        ]).then((results) => {
-            res.json({
-                tweets: results[0],
-                media: results[1],
-                program: results[2],
-                info: results[3]
-            });
+            Program.asJson()
+        ]).then((r) => {
+            // res.json({
+            //     tweets: results[0],
+            //     media: results[1],
+            //     program: results[2],
+            //     info: results[3]
+            // });
+            res.json({slides: r[0].concat(r[1]).concat(r[2]).concat(r[3])});
         });
     });
 

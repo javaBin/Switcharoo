@@ -76,7 +76,7 @@ function asJson() {
                 return [];
             }
 
-            return current_tweets;
+            return {type: 'tweets', tweets: current_tweets};
         });
 }
 
