@@ -4,4 +4,4 @@ npm-debug.log
 node_modules
 dist
 elm-stuff
-v2/index.html
+public-v2/index.html
