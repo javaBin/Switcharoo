@@ -1,4 +1,4 @@
-module Models.Slide exposing (Model, view, slide)
+module Models.Info exposing (Model, view, info)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, style)
@@ -10,20 +10,20 @@ type alias Model =
     { title : String
     , body : String
     , index: Int
-    , slideType : SlideType
+    , slideType : InfoType
     }
 
 type Msg = Update
 
-type SlideType = TextSlide | ImageSlide
+type InfoType = TextInfo | ImageInfo
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
         Update -> model
 
-slide : Decoder Model
-slide =
+info : Decoder Model
+info =
     succeed Model
         |: ("title" := string)
         |: ("body" := string)
@@ -36,14 +36,14 @@ decodeIndex n =
         Ok number -> succeed number
         Err _ -> succeed 0
 
-decodeType : String -> Decoder SlideType
-decodeType t = succeed <| if t == "text" then TextSlide else ImageSlide
+decodeType : String -> Decoder InfoType
+decodeType t = succeed <| if t == "text" then TextInfo else ImageInfo
 
 view : Model -> Html Msg
 view model =
     case model.slideType of
-        TextSlide -> textView model
-        ImageSlide -> imageView model
+        TextInfo -> textView model
+        ImageInfo -> imageView model
 
 textView : Model -> Html Msg
 textView model =
