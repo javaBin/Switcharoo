@@ -1,7 +1,7 @@
 module Models.Info exposing (Model, view, info)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, style, attribute, src)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, decodeValue, succeed, string, int, andThen, maybe, (:=))
 import String exposing (toInt)
@@ -15,7 +15,7 @@ type alias Model =
 
 type Msg = Update
 
-type InfoType = TextInfo | ImageInfo
+type InfoType = TextInfo | ImageInfo | VideoInfo
 
 update : Msg -> Model -> Model
 update msg model =
@@ -37,13 +37,18 @@ decodeIndex n =
         Err _ -> succeed 0
 
 decodeType : String -> Decoder InfoType
-decodeType t = succeed <| if t == "text" then TextInfo else ImageInfo
+decodeType t =
+    case t of
+        "text" -> succeed TextInfo
+        "image" -> succeed ImageInfo
+        _ -> succeed VideoInfo
 
 view : Model -> Html Msg
 view model =
     case model.slideType of
         TextInfo -> textView model
         ImageInfo -> imageView model
+        VideoInfo -> videoView model
 
 textView : Model -> Html Msg
 textView model =
@@ -60,3 +65,10 @@ imageView model =
         div [ class "slides__slide slide slide--image" ]
             [ div [ class "slide__image", style style' ] []
             ]
+
+videoView : Model -> Html Msg
+videoView model =
+    div [ class "slides__slide slide slide--video" ]
+        [ video [ attribute "autoplay" "true", src model.body ]
+                []
+        ]

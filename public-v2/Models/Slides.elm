@@ -38,6 +38,7 @@ slideWrapper t =
     case t of
         "text" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
         "image" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
+        "video" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
         "tweets" -> Tweets.tweets `andThen` (\s -> succeed <| TweetsWrapper s)
         t' -> fail <| "Unknown slideType " ++ t'
 
