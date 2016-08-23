@@ -7,6 +7,7 @@ import Html.Attributes exposing (class)
 import Json.Decode exposing (Decoder, andThen, succeed, list, string, object1, fail, (:=))
 import Models.Info as Info
 import Models.Tweets as Tweets
+import Models.Program as Program
 
 type alias Model =
     { slides : List SlideWrapper
@@ -18,6 +19,7 @@ init = Model []
 type SlideWrapper
     = InfoWrapper Info.Model
     | TweetsWrapper Tweets.Model
+    | ProgramWrapper Program.Model
 
 type Msg
     = Update
@@ -40,6 +42,7 @@ slideWrapper t =
         "image" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
         "video" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
         "tweets" -> Tweets.tweets `andThen` (\s -> succeed <| TweetsWrapper s)
+        "program" -> Program.decoder `andThen` (\s -> succeed <| ProgramWrapper s)
         t' -> fail <| "Unknown slideType " ++ t'
 
 view : Model -> Int -> Html Msg
@@ -56,6 +59,7 @@ viewSlide slide =
     case slide of
         InfoWrapper s -> App.map (\_ -> Update) (Info.view s)
         TweetsWrapper s -> App.map (\_ -> Update) (Tweets.view s)
+        ProgramWrapper s -> App.map (\_ -> Update) (Program.view s)
 
 getAt : Int -> List a -> Maybe a
 getAt idx = List.head << List.drop idx

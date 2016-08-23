@@ -8976,6 +8976,63 @@ var _user$project$Models_Tweets$view = function (model) {
 		tweets);
 };
 
+var _user$project$Models_Slot$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(model.title)
+			]));
+};
+var _user$project$Models_Slot$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return model;
+	});
+var _user$project$Models_Slot$Model = F3(
+	function (a, b, c) {
+		return {room: a, title: b, speakers: c};
+	});
+var _user$project$Models_Slot$decoder = A4(
+	_elm_lang$core$Json_Decode$object3,
+	_user$project$Models_Slot$Model,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'room', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'speakers', _elm_lang$core$Json_Decode$string)));
+var _user$project$Models_Slot$Update = {ctor: 'Update'};
+
+var _user$project$Models_Program$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('program')
+			]));
+};
+var _user$project$Models_Program$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return model;
+	});
+var _user$project$Models_Program$Model = F2(
+	function (a, b) {
+		return {presentations: a, heading: b};
+	});
+var _user$project$Models_Program$decoder = A3(
+	_elm_lang$core$Json_Decode$object2,
+	_user$project$Models_Program$Model,
+	A2(
+		_elm_lang$core$Json_Decode_ops[':='],
+		'presentations',
+		_elm_lang$core$Json_Decode$list(_user$project$Models_Slot$decoder)),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'heading', _elm_lang$core$Json_Decode$string));
+var _user$project$Models_Program$Update = {ctor: 'Update'};
+
 var _user$project$Models_Slides$getNextIndex = F2(
 	function (idx, model) {
 		return _elm_lang$core$Native_Utils.eq(
@@ -8999,6 +9056,9 @@ var _user$project$Models_Slides$Model = function (a) {
 var _user$project$Models_Slides$init = _user$project$Models_Slides$Model(
 	_elm_lang$core$Native_List.fromArray(
 		[]));
+var _user$project$Models_Slides$ProgramWrapper = function (a) {
+	return {ctor: 'ProgramWrapper', _0: a};
+};
 var _user$project$Models_Slides$TweetsWrapper = function (a) {
 	return {ctor: 'TweetsWrapper', _0: a};
 };
@@ -9040,6 +9100,14 @@ var _user$project$Models_Slides$slideWrapper = function (t) {
 					return _elm_lang$core$Json_Decode$succeed(
 						_user$project$Models_Slides$TweetsWrapper(s));
 				});
+		case 'program':
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				_user$project$Models_Program$decoder,
+				function (s) {
+					return _elm_lang$core$Json_Decode$succeed(
+						_user$project$Models_Slides$ProgramWrapper(s));
+				});
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'Unknown slideType ', _p2));
@@ -9057,28 +9125,36 @@ var _user$project$Models_Slides$slides = A2(
 var _user$project$Models_Slides$Update = {ctor: 'Update'};
 var _user$project$Models_Slides$viewSlide = function (slide) {
 	var _p3 = slide;
-	if (_p3.ctor === 'InfoWrapper') {
-		return A2(
-			_elm_lang$html$Html_App$map,
-			function (_p4) {
-				return _user$project$Models_Slides$Update;
-			},
-			_user$project$Models_Info$view(_p3._0));
-	} else {
-		return A2(
-			_elm_lang$html$Html_App$map,
-			function (_p5) {
-				return _user$project$Models_Slides$Update;
-			},
-			_user$project$Models_Tweets$view(_p3._0));
+	switch (_p3.ctor) {
+		case 'InfoWrapper':
+			return A2(
+				_elm_lang$html$Html_App$map,
+				function (_p4) {
+					return _user$project$Models_Slides$Update;
+				},
+				_user$project$Models_Info$view(_p3._0));
+		case 'TweetsWrapper':
+			return A2(
+				_elm_lang$html$Html_App$map,
+				function (_p5) {
+					return _user$project$Models_Slides$Update;
+				},
+				_user$project$Models_Tweets$view(_p3._0));
+		default:
+			return A2(
+				_elm_lang$html$Html_App$map,
+				function (_p6) {
+					return _user$project$Models_Slides$Update;
+				},
+				_user$project$Models_Program$view(_p3._0));
 	}
 };
 var _user$project$Models_Slides$view = F2(
 	function (model, idx) {
 		var slide = A2(_user$project$Models_Slides$getAt, idx, model.slides);
-		var _p6 = slide;
-		if (_p6.ctor === 'Just') {
-			return _user$project$Models_Slides$viewSlide(_p6._0);
+		var _p7 = slide;
+		if (_p7.ctor === 'Just') {
+			return _user$project$Models_Slides$viewSlide(_p7._0);
 		} else {
 			return A2(
 				_elm_lang$html$Html$div,
