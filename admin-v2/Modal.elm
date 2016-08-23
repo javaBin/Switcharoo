@@ -1,7 +1,7 @@
 module Modal exposing (Model, Msg, init, update, subscriptions, view)
 
 import Html exposing (Html, div, button, text, i, input)
-import Html.Attributes exposing (class, attribute, type', id)
+import Html.Attributes exposing (class, classList, attribute, type', id)
 import Html.Events exposing (onClick, on)
 import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
@@ -75,23 +75,17 @@ icon c =
 
 view : Model -> Html Msg
 view model =
-    let
-        modalClass = "modal modal--" ++ if model.show then "visible" else "hidden"
-    in
-        div [ class "slide slide--new-slide", onClick Show ]
-            [ div [ class modalClass ]
-                  [ showModalBackdrop model ]
-            ]
+    div [ class "slide slide--new-slide", onClick Show ]
+        [ div [ classList [ ("modal", True), ("modal--visible", model.show) ] ]
+              [ showModalBackdrop model ]
+        ]
 
 showModalBackdrop : Model -> Html Msg
 showModalBackdrop model =
-    let
-        modalClass = "modal modal--" ++ if model.show then "visible" else "hidden"
-    in
-        div [ class modalClass ]
-            [ div [ class "modal__backdrop", onClickStopPropagation Hide ]
-                  [ showModal model ]
-            ]
+    div [ classList [ ("modal", True), ("modal--visible", model.show) ] ]
+        [ div [ class "modal__backdrop", onClickStopPropagation Hide ]
+              [ showModal model ]
+        ]
 
 showModal : Model -> Html Msg
 showModal model =

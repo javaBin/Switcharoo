@@ -36,6 +36,7 @@ h1 {
     height: 300px;
     justify-content: center;
     margin: 20px;
+    opacity: .4;
     transition: opacity .2s ease-in-out;
     width: 400px;
 }
@@ -50,8 +51,8 @@ h1 {
     background-size: cover;
 }
 
-.slide--hidden {
-    opacity: .4;
+.slide--visible {
+    opacity: 1;
 }
 
 .slide__toggle {

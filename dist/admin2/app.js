@@ -9146,19 +9146,16 @@ var _user$project$Slide$update = F2(
 	});
 var _user$project$Slide$ToggleVisibility = {ctor: 'ToggleVisibility'};
 var _user$project$Slide$viewText = function (model) {
-	var toggleClass = A2(
-		_elm_lang$core$Basics_ops['++'],
-		'slide__toggle slide__toggle--',
-		model.visible ? 'visible' : 'hidden');
-	var slideClass = A2(
-		_elm_lang$core$Basics_ops['++'],
-		'slide slide--',
-		model.visible ? 'visible' : 'hidden');
 	return A2(
 		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class(slideClass),
+				_elm_lang$html$Html_Attributes$classList(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'slide', _1: true},
+						{ctor: '_Tuple2', _0: 'slide--visible', _1: model.visible}
+					])),
 				_elm_lang$html$Html_Events$onClick(_user$project$Slide$ToggleVisibility)
 			]),
 		_elm_lang$core$Native_List.fromArray(
@@ -9186,15 +9183,17 @@ var _user$project$Slide$viewText = function (model) {
 			]));
 };
 var _user$project$Slide$viewImage = function (model) {
-	var slideClass = A2(
-		_elm_lang$core$Basics_ops['++'],
-		'slide slide--image slide--',
-		model.visible ? 'visible' : 'hidden');
 	return A2(
 		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class(slideClass),
+				_elm_lang$html$Html_Attributes$classList(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'slide', _1: true},
+						{ctor: '_Tuple2', _0: 'slide--image', _1: true},
+						{ctor: '_Tuple2', _0: 'slide--visible', _1: model.visible}
+					])),
 				_elm_lang$html$Html_Attributes$style(
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -9213,15 +9212,16 @@ var _user$project$Slide$viewImage = function (model) {
 			[]));
 };
 var _user$project$Slide$viewVideo = function (model) {
-	var slideClass = A2(
-		_elm_lang$core$Basics_ops['++'],
-		'slide slide--image slide--',
-		model.visible ? 'visible' : 'hidden');
 	return A2(
 		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class(slideClass),
+				_elm_lang$html$Html_Attributes$classList(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'slide slide--image', _1: true},
+						{ctor: '_Tuple2', _0: 'slide--visible', _1: model.visible}
+					])),
 				_elm_lang$html$Html_Events$onClick(_user$project$Slide$ToggleVisibility)
 			]),
 		_elm_lang$core$Native_List.fromArray(
@@ -9268,7 +9268,7 @@ var _user$project$Slides$editSlide = F3(
 		}
 	});
 var _user$project$Slides$view = function (model) {
-	var slides = A2(
+	return A2(
 		_elm_lang$core$List$map,
 		function (slide) {
 			return A2(
@@ -9277,7 +9277,6 @@ var _user$project$Slides$view = function (model) {
 				_user$project$Slide$view(slide));
 		},
 		model.slides);
-	return slides;
 };
 var _user$project$Slides$GetFailed = function (a) {
 	return {ctor: 'GetFailed', _0: a};
@@ -9299,34 +9298,39 @@ var _user$project$Slides$init = {
 };
 var _user$project$Slides$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
-			case 'GetSlides':
-				return {ctor: '_Tuple2', _0: model, _1: _user$project$Slides$getSlides};
-			case 'GetSucceeded':
-				return {
-					ctor: '_Tuple2',
-					_0: _user$project$Slides$Model(_p1._0),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'GetFailed':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			default:
-				var _p2 = _elm_lang$core$List$unzip(
-					A2(
-						_elm_lang$core$List$map,
-						A2(_user$project$Slides$editSlide, _p1._0, _p1._1),
-						model.slides));
-				var newModels = _p2._0;
-				var newCmds = _p2._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{slides: newModels}),
-					_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
-				};
-		}
+		return A2(
+			_elm_lang$core$Debug$log,
+			_elm_lang$core$Basics$toString(msg),
+			function () {
+				var _p1 = msg;
+				switch (_p1.ctor) {
+					case 'GetSlides':
+						return {ctor: '_Tuple2', _0: model, _1: _user$project$Slides$getSlides};
+					case 'GetSucceeded':
+						return {
+							ctor: '_Tuple2',
+							_0: _user$project$Slides$Model(_p1._0),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					case 'GetFailed':
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					default:
+						var _p2 = _elm_lang$core$List$unzip(
+							A2(
+								_elm_lang$core$List$map,
+								A2(_user$project$Slides$editSlide, _p1._0, _p1._1),
+								model.slides));
+						var newModels = _p2._0;
+						var newCmds = _p2._1;
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{slides: newModels}),
+							_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
+						};
+				}
+			}());
 	});
 var _user$project$Slides$GetSlides = {ctor: 'GetSlides'};
 
@@ -9557,15 +9561,16 @@ var _user$project$Modal$showModal = function (model) {
 			]));
 };
 var _user$project$Modal$showModalBackdrop = function (model) {
-	var modalClass = A2(
-		_elm_lang$core$Basics_ops['++'],
-		'modal modal--',
-		model.show ? 'visible' : 'hidden');
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class(modalClass)
+				_elm_lang$html$Html_Attributes$classList(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'modal', _1: true},
+						{ctor: '_Tuple2', _0: 'modal--visible', _1: model.show}
+					]))
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -9583,10 +9588,6 @@ var _user$project$Modal$showModalBackdrop = function (model) {
 			]));
 };
 var _user$project$Modal$view = function (model) {
-	var modalClass = A2(
-		_elm_lang$core$Basics_ops['++'],
-		'modal modal--',
-		model.show ? 'visible' : 'hidden');
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9600,7 +9601,12 @@ var _user$project$Modal$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class(modalClass)
+						_elm_lang$html$Html_Attributes$classList(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: 'modal', _1: true},
+								{ctor: '_Tuple2', _0: 'modal--visible', _1: model.show}
+							]))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[

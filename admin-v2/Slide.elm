@@ -1,7 +1,7 @@
 module Slide exposing (Model, Msg, decoder, update, view, createSlide)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, style)
+import Html.Attributes exposing (class, classList, style)
 import Html.Events exposing (onClick)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
@@ -107,31 +107,22 @@ view model =
 
 viewText : Model -> Html Msg
 viewText model =
-    let
-        slideClass = "slide slide--" ++ if model.visible then "visible" else "hidden"
-        toggleClass = "slide__toggle slide__toggle--" ++ if model.visible then "visible" else "hidden"
-    in
-        li [ class slideClass, onClick ToggleVisibility ]
-           [ div [ class "slide__title" ] [ text model.title ]
-           , div [ class "slide__body" ] [ text model.body ]
-           ]
+    li [ classList [ ("slide", True), ("slide--visible", model.visible) ], onClick ToggleVisibility ]
+       [ div [ class "slide__title" ] [ text model.title ]
+       , div [ class "slide__body" ] [ text model.body ]
+       ]
 
 viewImage : Model -> Html Msg
 viewImage model =
-    let
-        slideClass = "slide slide--image slide--" ++ if model.visible then "visible" else "hidden"
-    in
-        li
-           [ class slideClass
-           , style [("background-image", "url(" ++ model.body ++ ")")]
-           , onClick ToggleVisibility
-           ]
-           []
+    li [ classList [ ("slide", True), ("slide--image", True), ("slide--visible", model.visible) ]
+       , style [("background-image", "url(" ++ model.body ++ ")")]
+       , onClick ToggleVisibility
+       ]
+       []
 
 viewVideo : Model -> Html Msg
 viewVideo model =
-    let
-        slideClass = "slide slide--image slide--" ++ if model.visible then "visible" else "hidden"
-    in
-        li [ class slideClass, onClick ToggleVisibility ]
-           [ text "video" ]
+    li [ classList [ ("slide slide--image", True), ("slide--visible", model.visible) ]
+       , onClick ToggleVisibility
+       ]
+       [ text "video" ]

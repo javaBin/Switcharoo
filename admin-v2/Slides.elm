@@ -57,7 +57,4 @@ getSlides = Task.perform GetFailed GetSucceeded <| Http.get decoder "/slides"
 
 view : Model -> List (Html Msg)
 view model =
-    let
-        slides = List.map (\slide -> map (EditSlide slide) (Slide.view slide)) model.slides
-    in
-          slides
+    List.map (\slide -> map (EditSlide slide) (Slide.view slide)) model.slides
