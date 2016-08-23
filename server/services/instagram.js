@@ -6,6 +6,7 @@ var Setting = require('../models/setting');
 
 Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
+Instagram.set('scope', 'public_content');
 
 var current_media = [];
 

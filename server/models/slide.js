@@ -9,7 +9,9 @@ var Slide = restful.model('slides', mongoose.Schema({
     visible: 'boolean',
     type: 'string',
     index: 'string'
-})).methods(['get', 'put', 'post', 'delete']);
+}))
+.methods(['get', 'put', 'post', 'delete'])
+.updateOptions({'new': true});
 Slide.before('put', basicAuth);
 Slide.before('post', basicAuth);
 Slide.before('delete', basicAuth);

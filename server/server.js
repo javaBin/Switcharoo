@@ -16,9 +16,18 @@ function configure(app, express, basePath) {
     app.use(bodyParser.json());
     app.use(express.static(path.join(basePath, 'dist', 'public2')));
     app.use(morgan(config.app.env));
-    app.use(multer({dest: './dist/public2/uploads', rename: function(fieldname, filename) {
-        return filename.replace(/\W+/g, '-').toLowerCase() + (new Date().getTime());
-    }}));
+
+    var storage = multer.diskStorage({
+        destination: function(req, file, cb) {
+            cb(null, path.resolve(basePath, 'dist', 'public2', 'uploads'));
+        },
+        filename: function(req, file, cb) {
+            var f = file.originalname.split('.');
+            cb(null, Date.now() + '.' + f[f.length - 1]);
+        }
+    });
+
+    var upload = multer({storage: storage});
 
     app.get('/status', function(req, res) {
         var status = Status.get();
@@ -47,25 +56,35 @@ function configure(app, express, basePath) {
             Instagram.asJson(),
             Program.asJson()
         ]).then((r) => {
-            // res.json({
-            //     tweets: results[0],
-            //     media: results[1],
-            //     program: results[2],
-            //     info: results[3]
-            // });
             res.json({slides: r[0].concat(r[1]).concat(r[2]).concat(r[3])});
         });
     });
 
-    app.post('/image', function(req, res) {
-        res.json({filepath: '/' + req.files.image.path.replace('public/','')});
+    function getType(mimetype) {
+        if (mimetype.indexOf('image') >= 0) {
+            return 'image';
+        }
+
+        if (mimetype.indexOf('video') >= 0) {
+            return 'video';
+        }
+
+        return 'text';
+    }
+
+    app.post('/image', upload.single('image'), function(req, res) {
+        console.log(req.file);
+        var filename = req.file.filename;
+        var type = getType(req.file.mimetype);
+        res.json({location: '/uploads/' + filename, filetype: type});
     });
 
     Slide.register(app, '/slides');
     Setting.register(app, '/settings');
 
     app.use(basicAuth);
-    app.use('/admin', express.static(path.join(basePath, 'dist', 'admin')));
+    app.use('/admin', express.static(path.join(basePath, 'dist', 'admin2')));
+    app.use('/adminold', express.static(path.join(basePath, 'dist', 'admin')));
 }
 
 module.exports = {
