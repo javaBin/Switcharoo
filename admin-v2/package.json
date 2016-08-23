@@ -1,0 +1,16 @@
+{
+  "name": "admin-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch": "elm-live Main.elm --output=../dist/admin2/app.js",
+    "build" "elm make Main.elm --output=../dist/admin2/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "elm-live": "^2.4.1"
+  }
+}
