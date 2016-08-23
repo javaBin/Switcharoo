@@ -2,6 +2,5 @@ configuration.js
 uploads
 npm-debug.log
 node_modules
-dist
 elm-stuff
 public-v2/index.html
