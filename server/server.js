@@ -53,10 +53,11 @@ function configure(app, express, basePath) {
         Promise.all([
             Slide.find({visible: true}),
             Twitter.asJson(),
-            Instagram.asJson(),
             Program.asJson()
         ]).then((r) => {
-            res.json({slides: r[0].concat(r[1]).concat(r[2]).concat(r[3])});
+            res.json({slides: r[0].concat(r[1]).concat(r[2])});
+        }).catch(() => {
+            res.status(500).send();
         });
     });
 
