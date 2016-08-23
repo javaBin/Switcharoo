@@ -35,7 +35,7 @@ function createSlots(memo, current) {
 }
 
 function removeWorkshops(d) {
-	return d.format !== 'workshop';
+	return d.format !== 'workshop' && d.rom !== null && d.starter !== null;
 }
 
 function parseSession(d) {
@@ -114,7 +114,7 @@ function getSlotForTimestamp(time) {
 	console.log('Returning program for: ' + time);
 	var timestamps = Object.keys(current_program).sort();
 	if (time < timestamps[0])
-		return {"heading": "Next up", "presentations": current_program[timestamps[0]]};
+		return {"heading": "Next up", "presentations": current_program[timestamps[0]], type: 'program'};
 
 	var timestamp = _.chain(timestamps)
 		.filter(function(slot) {
@@ -124,11 +124,11 @@ function getSlotForTimestamp(time) {
 	if (time > end) {
 		var index = timestamps.indexOf(timestamp);
 		return timestamps.length > index
-			? {"heading": "Next up", "presentations": current_program[timestamps[index + 1]]}
-			: {"heading": "No presentations at the moment", "presentations": []};
+			? {"heading": "Next up", "presentations": current_program[timestamps[index + 1]], type: 'program'}
+			: {"heading": "No presentations at the moment", "presentations": [], type: 'program'};
 	}
 
-	return {"heading": "What's happening right now?", "presentations": current_program[timestamp]};
+	return {"heading": "What's happening right now?", "presentations": current_program[timestamp], type: 'program'};
 }
 
 function program(all, res) {
@@ -184,24 +184,26 @@ function status() {
 
 function asJson() {
     return Setting.findOne({key: 'program-enabled'})
-        .then((err, setting) => {
-            if (err || !setting || !setting.value) {
+        .then((setting) => {
+            if (!setting || !setting.value) {
                 return [];
             }
             if (Object.keys(current_program).length === 0) {
                 return {heading: "No presentations at this moment"};
             }
-
             var timestamp = now();
             var slot = getSlotForTimestamp(timestamp);
             var presentations = _(slot.presentations).reduce(function(memo, cur) {
                 cur.format === 'presentation'
-                    ? memo[0].push(cur)
+                    ? memo[0].push({room: cur.room, title: cur.title, speakers: cur.speakers})
                     : memo[1].push(cur);
                 return memo;
             }, [[], []]);
             if (presentations[1].length > 0) {
-                presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'});
+                var lightningTalks = _.groupBy(presentations[1], 'room');
+                Object.keys(lightningTalks).forEach(function(room) {
+                    presentations[0].push({room: room, title: 'Lightning Talks'});
+                });
             }
 
             slot.presentations = _.sortBy(presentations[0], 'room');
@@ -212,6 +214,6 @@ function asJson() {
 module.exports = {
     get: get,
     program: program,
-	  status: status,
+    status: status,
     asJson: asJson
 };
