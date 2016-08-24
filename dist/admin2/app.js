@@ -8987,6 +8987,29 @@ var _user$project$Events$onClickStopPropagation = function (msg) {
 		_elm_lang$core$Json_Decode$succeed(msg));
 };
 
+var _user$project$Slide$icon = function (c) {
+	return A2(
+		_elm_lang$html$Html$i,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'icon-', c))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$Slide$deleteButton = function (model) {
+	return A2(
+		_elm_lang$html$Html$button,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('slide__delete')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Slide$icon('trash')
+			]));
+};
 var _user$project$Slide$encodeSlide = function (model) {
 	return _elm_lang$core$Json_Encode$object(
 		A2(
@@ -9150,12 +9173,7 @@ var _user$project$Slide$viewText = function (model) {
 		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$classList(
-				_elm_lang$core$Native_List.fromArray(
-					[
-						{ctor: '_Tuple2', _0: 'slide', _1: true},
-						{ctor: '_Tuple2', _0: 'slide--visible', _1: model.visible}
-					])),
+				_elm_lang$html$Html_Attributes$class('slide'),
 				_elm_lang$html$Html_Events$onClick(_user$project$Slide$ToggleVisibility)
 			]),
 		_elm_lang$core$Native_List.fromArray(
@@ -9164,22 +9182,37 @@ var _user$project$Slide$viewText = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('slide__title')
+						_elm_lang$html$Html_Attributes$classList(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: 'slide__content', _1: true},
+								{ctor: '_Tuple2', _0: 'slide__content--visible', _1: model.visible}
+							]))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(model.title)
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('slide__title')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(model.title)
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('slide__body')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(model.body)
+							]))
 					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('slide__body')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(model.body)
-					]))
+				_user$project$Slide$deleteButton(model)
 			]));
 };
 var _user$project$Slide$viewImage = function (model) {
@@ -9187,46 +9220,65 @@ var _user$project$Slide$viewImage = function (model) {
 		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$classList(
-				_elm_lang$core$Native_List.fromArray(
-					[
-						{ctor: '_Tuple2', _0: 'slide', _1: true},
-						{ctor: '_Tuple2', _0: 'slide--image', _1: true},
-						{ctor: '_Tuple2', _0: 'slide--visible', _1: model.visible}
-					])),
-				_elm_lang$html$Html_Attributes$style(
-				_elm_lang$core$Native_List.fromArray(
-					[
-						{
-						ctor: '_Tuple2',
-						_0: 'background-image',
-						_1: A2(
-							_elm_lang$core$Basics_ops['++'],
-							'url(',
-							A2(_elm_lang$core$Basics_ops['++'], model.body, ')'))
-					}
-					])),
+				_elm_lang$html$Html_Attributes$class('slide slide--image'),
 				_elm_lang$html$Html_Events$onClick(_user$project$Slide$ToggleVisibility)
 			]),
 		_elm_lang$core$Native_List.fromArray(
-			[]));
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$classList(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: 'slide__content slide__content--image', _1: true},
+								{ctor: '_Tuple2', _0: 'slide__content--visible', _1: model.visible}
+							])),
+						_elm_lang$html$Html_Attributes$style(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{
+								ctor: '_Tuple2',
+								_0: 'background-image',
+								_1: A2(
+									_elm_lang$core$Basics_ops['++'],
+									'url(',
+									A2(_elm_lang$core$Basics_ops['++'], model.body, ')'))
+							}
+							]))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				_user$project$Slide$deleteButton(model)
+			]));
 };
 var _user$project$Slide$viewVideo = function (model) {
 	return A2(
 		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$classList(
-				_elm_lang$core$Native_List.fromArray(
-					[
-						{ctor: '_Tuple2', _0: 'slide slide--image', _1: true},
-						{ctor: '_Tuple2', _0: 'slide--visible', _1: model.visible}
-					])),
+				_elm_lang$html$Html_Attributes$class('slide slide--video'),
 				_elm_lang$html$Html_Events$onClick(_user$project$Slide$ToggleVisibility)
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text('video')
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$classList(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: 'slide__content slide__content--video', _1: true},
+								{ctor: '_Tuple2', _0: 'slide__content--visible', _1: model.visible}
+							]))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('video')
+					])),
+				_user$project$Slide$deleteButton(model)
 			]));
 };
 var _user$project$Slide$view = function (model) {
@@ -9358,6 +9410,14 @@ var _user$project$Ports$FileData = F2(
 		return {location: a, filetype: b};
 	});
 
+var _user$project$Modal$isEmpty = function (m) {
+	var _p0 = m;
+	if (_p0.ctor === 'Just') {
+		return false;
+	} else {
+		return true;
+	}
+};
 var _user$project$Modal$icon = function (c) {
 	return A2(
 		_elm_lang$html$Html$i,
@@ -9438,8 +9498,8 @@ var _user$project$Modal$update = F2(
 			_elm_lang$core$Debug$log,
 			_elm_lang$core$Basics$toString(msg),
 			function () {
-				var _p0 = msg;
-				switch (_p0.ctor) {
+				var _p1 = msg;
+				switch (_p1.ctor) {
 					case 'Show':
 						return {
 							ctor: '_Tuple2',
@@ -9457,21 +9517,21 @@ var _user$project$Modal$update = F2(
 							_1: _user$project$Ports$fileSelected(model.id)
 						};
 					case 'FileUploaded':
-						var _p1 = _p0._0;
+						var _p2 = _p1._0;
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
 								{
 									slide: _elm_lang$core$Maybe$Just(
-										A6(_user$project$Slide$Model, '', _p1.location, _p1.location, true, '0', _p1.filetype))
+										A6(_user$project$Slide$Model, '', _p2.location, _p2.location, true, '0', _p2.filetype))
 								}),
 							_1: _elm_lang$core$Platform_Cmd$none
 						};
 					case 'FileUploadFailed':
 						return A2(
 							_elm_lang$core$Debug$log,
-							_elm_lang$core$Basics$toString(_p0._0),
+							_elm_lang$core$Basics$toString(_p1._0),
 							{
 								ctor: '_Tuple2',
 								_0: _elm_lang$core$Native_Utils.update(
@@ -9480,14 +9540,14 @@ var _user$project$Modal$update = F2(
 								_1: _elm_lang$core$Platform_Cmd$none
 							});
 					case 'CreateSlide':
-						var _p2 = model.slide;
-						if (_p2.ctor === 'Nothing') {
+						var _p3 = model.slide;
+						if (_p3.ctor === 'Nothing') {
 							return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 						} else {
 							return {
 								ctor: '_Tuple2',
 								_0: model,
-								_1: _user$project$Modal$createSlide(_p2._0)
+								_1: _user$project$Modal$createSlide(_p3._0)
 							};
 						}
 					case 'CreateFailed':
@@ -9522,7 +9582,9 @@ var _user$project$Modal$showModalFooter = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$class('button button--ok modal__save'),
-						_user$project$Events$onClickStopPropagation(_user$project$Modal$CreateSlide)
+						_user$project$Events$onClickStopPropagation(_user$project$Modal$CreateSlide),
+						_elm_lang$html$Html_Attributes$disabled(
+						_user$project$Modal$isEmpty(model.slide))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -9592,6 +9654,14 @@ var _user$project$Modal$view = function (model) {
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('slide__content slide__content--new-slide')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(

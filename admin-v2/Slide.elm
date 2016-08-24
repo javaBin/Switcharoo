@@ -98,6 +98,10 @@ edit model = Task.perform EditFailed EditSucceeded <| editSlide model
 create : Model -> Cmd Msg
 create model = Task.perform CreateFailed CreateSucceeded <| createSlide model
 
+icon : String -> Html msg
+icon c =
+    i [ class <| "icon-" ++ c ] []
+
 view : Model -> Html Msg
 view model =
     case model.type' of
@@ -105,24 +109,38 @@ view model =
         "image" -> viewImage model
         _      -> viewVideo model
 
+deleteButton : Model -> Html Msg
+deleteButton model = button [ class "slide__delete" ] [ icon "trash" ]
+
 viewText : Model -> Html Msg
 viewText model =
-    li [ classList [ ("slide", True), ("slide--visible", model.visible) ], onClick ToggleVisibility ]
-       [ div [ class "slide__title" ] [ text model.title ]
-       , div [ class "slide__body" ] [ text model.body ]
+    li [ class "slide", onClick ToggleVisibility ]
+       [ div [ classList [("slide__content", True), ("slide__content--visible", model.visible)] ]
+             [ div [ class "slide__title" ] [ text model.title ]
+             , div [ class "slide__body" ] [ text model.body ]
+             ]
+       , deleteButton model
        ]
 
 viewImage : Model -> Html Msg
 viewImage model =
-    li [ classList [ ("slide", True), ("slide--image", True), ("slide--visible", model.visible) ]
-       , style [("background-image", "url(" ++ model.body ++ ")")]
-       , onClick ToggleVisibility
+    li [ class "slide slide--image", onClick ToggleVisibility ]
+       [ div [ classList [("slide__content slide__content--image", True), ("slide__content--visible", model.visible)]
+             , style [("background-image", "url(" ++ model.body ++ ")")]
+             ]
+             []
+       , deleteButton model
        ]
-       []
 
 viewVideo : Model -> Html Msg
 viewVideo model =
-    li [ classList [ ("slide slide--image", True), ("slide--visible", model.visible) ]
+    li [ class "slide slide--video"
        , onClick ToggleVisibility
        ]
-       [ text "video" ]
+       [ div [ classList [("slide__content slide__content--video", True)
+                         , ("slide__content--visible", model.visible)
+                         ]
+             ]
+             [ text "video" ]
+       , deleteButton model
+       ]

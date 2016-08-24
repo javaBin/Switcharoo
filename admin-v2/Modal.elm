@@ -1,15 +1,12 @@
 module Modal exposing (Model, Msg, init, update, subscriptions, view)
 
 import Html exposing (Html, div, button, text, i, input)
-import Html.Attributes exposing (class, classList, attribute, type', id)
+import Html.Attributes exposing (class, classList, attribute, type', id, disabled)
 import Html.Events exposing (onClick, on)
 import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
 import Json.Decode exposing (succeed)
--- import Http exposing (Request, Response, Body, defaultSettings, send)
--- import HttpBuilder exposing (..)
 import Debug exposing (log)
--- import Task
 import Slide
 import Task
 import Http exposing (Response)
@@ -73,10 +70,17 @@ icon : String -> Html msg
 icon c =
     i [ class <| "icon-" ++ c ] []
 
+isEmpty : Maybe Slide.Model -> Bool
+isEmpty m =
+    case m of
+        Just _ -> False
+        Nothing -> True
+
 view : Model -> Html Msg
 view model =
     div [ class "slide slide--new-slide", onClick Show ]
-        [ div [ classList [ ("modal", True), ("modal--visible", model.show) ] ]
+        [ div [ class "slide__content slide__content--new-slide" ] []
+        , div [ classList [ ("modal", True), ("modal--visible", model.show) ] ]
               [ showModalBackdrop model ]
         ]
 
@@ -108,6 +112,8 @@ showModalFooter model =
     div [ class "modal__footer" ]
         [ button [ class "button button--cancel", onClickStopPropagation Hide ]
                  [ icon "close" ]
-        , button [ class "button button--ok modal__save", onClickStopPropagation CreateSlide ]
+        , button [ class "button button--ok modal__save"
+                 , onClickStopPropagation CreateSlide
+                 , disabled <| isEmpty model.slide ]
                  [ icon "check" ]
         ]
