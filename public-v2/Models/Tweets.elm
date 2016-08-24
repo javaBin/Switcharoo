@@ -26,5 +26,5 @@ view model =
     let
         tweets = List.map (\tweet -> App.map (\_ -> Update) (Tweet.view tweet)) model.tweets
     in
-        div [ class "slides__slide tweets" ]
+        ul [ class "slides__slide tweets" ]
             tweets

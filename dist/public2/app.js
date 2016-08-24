@@ -8880,41 +8880,80 @@ var _user$project$Models_Info$info = A2(
 
 var _user$project$Models_Tweet$view = function (model) {
 	return A2(
-		_elm_lang$html$Html$div,
+		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class('twitter__tweet tweet')
+				_elm_lang$html$Html_Attributes$class('tweets__tweet tweet')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
-				_elm_lang$html$Html$img,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('tweet__img'),
-						_elm_lang$html$Html_Attributes$src(model.image)
+						_elm_lang$html$Html_Attributes$style(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{
+								ctor: '_Tuple2',
+								_0: 'backgroundImage',
+								_1: A2(
+									_elm_lang$core$Basics_ops['++'],
+									'url(\'',
+									A2(_elm_lang$core$Basics_ops['++'], model.image, '\')'))
+							}
+							])),
+						_elm_lang$html$Html_Attributes$class('tweet__img')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
 				A2(
-				_elm_lang$html$Html$span,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('tweet__user')
+						_elm_lang$html$Html_Attributes$class('tweet__info')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(model.user)
-					])),
-				A2(
-				_elm_lang$html$Html$span,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('tweet__body')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(model.text)
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('tweet__user')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$class('tweet__name')
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text(model.user)
+									])),
+								A2(
+								_elm_lang$html$Html$div,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$class('tweet__handle')
+									]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text(model.handle)
+									]))
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('tweet__body')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(model.text)
+							]))
 					]))
 			]));
 };
@@ -8923,9 +8962,9 @@ var _user$project$Models_Tweet$update = F2(
 		var _p0 = msg;
 		return model;
 	});
-var _user$project$Models_Tweet$Model = F3(
-	function (a, b, c) {
-		return {user: a, text: b, image: c};
+var _user$project$Models_Tweet$Model = F4(
+	function (a, b, c, d) {
+		return {user: a, text: b, image: c, handle: d};
 	});
 var _user$project$Models_Tweet$tweet = A2(
 	_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
@@ -8933,10 +8972,13 @@ var _user$project$Models_Tweet$tweet = A2(
 		_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
 		A2(
 			_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
-			_elm_lang$core$Json_Decode$succeed(_user$project$Models_Tweet$Model),
-			A2(_elm_lang$core$Json_Decode_ops[':='], 'user', _elm_lang$core$Json_Decode$string)),
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string)),
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'image', _elm_lang$core$Json_Decode$string));
+			A2(
+				_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
+				_elm_lang$core$Json_Decode$succeed(_user$project$Models_Tweet$Model),
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'user', _elm_lang$core$Json_Decode$string)),
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string)),
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'image', _elm_lang$core$Json_Decode$string)),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'handle', _elm_lang$core$Json_Decode$string));
 var _user$project$Models_Tweet$Update = {ctor: 'Update'};
 
 var _user$project$Models_Tweets$update = F2(
@@ -8968,7 +9010,7 @@ var _user$project$Models_Tweets$view = function (model) {
 		},
 		model.tweets);
 	return A2(
-		_elm_lang$html$Html$div,
+		_elm_lang$html$Html$ul,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html_Attributes$class('slides__slide tweets')

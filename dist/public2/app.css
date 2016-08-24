@@ -93,3 +93,51 @@ body {
     display: flex;
     flex-direction: column;
 }
+
+.tweets {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    height: 100%;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0;
+    width: 700px;
+}
+
+.tweet {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.tweet:not(:last-child) {
+    margin-bottom: 30px;
+}
+
+.tweet__img {
+    border-radius: 100%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    height: 100px;
+    margin-right: 20px;
+    width: 100px;
+}
+
+.tweet__user {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.tweet__name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-right: 20px;
+}
+
+.tweet__handle {
+    font-size: 1.2rem;
+}

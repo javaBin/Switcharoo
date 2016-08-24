@@ -9298,39 +9298,34 @@ var _user$project$Slides$init = {
 };
 var _user$project$Slides$update = F2(
 	function (msg, model) {
-		return A2(
-			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(msg),
-			function () {
-				var _p1 = msg;
-				switch (_p1.ctor) {
-					case 'GetSlides':
-						return {ctor: '_Tuple2', _0: model, _1: _user$project$Slides$getSlides};
-					case 'GetSucceeded':
-						return {
-							ctor: '_Tuple2',
-							_0: _user$project$Slides$Model(_p1._0),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					case 'GetFailed':
-						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-					default:
-						var _p2 = _elm_lang$core$List$unzip(
-							A2(
-								_elm_lang$core$List$map,
-								A2(_user$project$Slides$editSlide, _p1._0, _p1._1),
-								model.slides));
-						var newModels = _p2._0;
-						var newCmds = _p2._1;
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{slides: newModels}),
-							_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
-						};
-				}
-			}());
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'GetSlides':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Slides$getSlides};
+			case 'GetSucceeded':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Slides$Model(_p1._0),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'GetFailed':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				var _p2 = _elm_lang$core$List$unzip(
+					A2(
+						_elm_lang$core$List$map,
+						A2(_user$project$Slides$editSlide, _p1._0, _p1._1),
+						model.slides));
+				var newModels = _p2._0;
+				var newCmds = _p2._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{slides: newModels}),
+					_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
+				};
+		}
 	});
 var _user$project$Slides$GetSlides = {ctor: 'GetSlides'};
 

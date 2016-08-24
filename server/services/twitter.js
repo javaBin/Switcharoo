@@ -12,77 +12,93 @@ var cronPattern = config.twitter.cronPattern || "0 */10 * * * *";
 var job = new cron(cronPattern, getTweets);
 
 function getTweets(complete) {
-	Twitter.get('search/tweets', {q: 'javazone exclude:retweets', count: 5, result_type: 'mixed'}, function(err, data, response) {
-		if (err) {
-			console.error('Error fetching tweets:');
-			console.error(err);
-			return;
-		}
+    Twitter.get('search/tweets', {
+        q: 'javazone exclude:retweets',
+        count: 5,
+        result_type: 'mixed'
+    }, function(err, data, response) {
+        if (err) {
+            console.error('Error fetching tweets:');
+            console.error(err);
+            return;
+        }
 
-		console.log('Got new tweets from twitter');
+        console.log('Got new tweets from twitter');
 
-		data = data.statuses.map(function(tweet) {
-			return {
-				text: tweet.text,
-				user: tweet.user.name,
-				image: tweet.user.profile_image_url.replace('_normal', '')
-			};
-		});
+        data = data.statuses.map(function(tweet) {
+            return {
+                text: tweet.text,
+                user: tweet.user.name,
+                image: tweet.user.profile_image_url.replace('_normal', ''),
+                handle: tweet.user.screen_name
+            };
+        });
 
-		// Seems we sometimes get more than 5 tweets, so we limit it to 5 here
-		current_tweets = data.slice(0, 5);
+        // Seems we sometimes get more than 5 tweets, so we limit it to 5 here
+        current_tweets = data.slice(0, 5);
 
-		if (complete)
-			complete();
-	});
+        if (complete)
+            complete();
+    });
 }
 
 function get() {
-	getTweets(function() {
-		job.start();
-	});
+    getTweets(function() {
+        job.start();
+    });
 }
 
 function tweets(res) {
-    Setting.findOne({key: 'twitter-enabled'}, function(err, setting) {
+    Setting.findOne({
+        key: 'twitter-enabled'
+    }, function(err, setting) {
         console.log('Returning tweets');
         if (err || !setting || !setting.value)
-            res.json({tweets: []});
+            res.json({
+                tweets: []
+            });
         else
-            res.json({tweets:current_tweets});
+            res.json({
+                tweets: current_tweets
+            });
     });
 }
 
 function status() {
-	var tweets = current_tweets.length;
-	if (tweets === 0) {
-		return {
-			service: 'twitter',
-			error: 'No tweets found',
-			statusCode: 500
-		};
-	}
+    var tweets = current_tweets.length;
+    if (tweets === 0) {
+        return {
+            service: 'twitter',
+            error: 'No tweets found',
+            statusCode: 500
+        };
+    }
 
-	return {
-		service: 'twitter',
-		statusCode: 200
-	};
+    return {
+        service: 'twitter',
+        statusCode: 200
+    };
 }
 
 function asJson() {
-    return Setting.findOne({key: 'twitter-enabled'})
+    return Setting.findOne({
+            key: 'twitter-enabled'
+        })
         .then((setting) => {
             if (!setting || !setting.value) {
                 return [];
             }
 
-            return {type: 'tweets', tweets: current_tweets};
+            return {
+                type: 'tweets',
+                tweets: current_tweets
+            };
         });
 }
 
 module.exports = {
     get: get,
     tweets: tweets,
-	  status: status,
+    status: status,
     asJson: asJson
 };
