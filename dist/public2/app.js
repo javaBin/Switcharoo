@@ -8976,19 +8976,68 @@ var _user$project$Models_Tweets$view = function (model) {
 		tweets);
 };
 
+var _user$project$Models_Slot$unwrapMaybe = function (m) {
+	var _p0 = m;
+	if (_p0.ctor === 'Just') {
+		return _p0._0;
+	} else {
+		return '';
+	}
+};
 var _user$project$Models_Slot$view = function (model) {
 	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
+		_elm_lang$html$Html$li,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text(model.title)
+				_elm_lang$html$Html_Attributes$class('program__entry entry')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('entry__room')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.room)
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('entry__info')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('entry__title')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(model.title)
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('entry__speakers')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(
+								_user$project$Models_Slot$unwrapMaybe(model.speakers))
+							]))
+					]))
 			]));
 };
 var _user$project$Models_Slot$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
+		var _p1 = msg;
 		return model;
 	});
 var _user$project$Models_Slot$Model = F3(
@@ -9004,16 +9053,6 @@ var _user$project$Models_Slot$decoder = A4(
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'speakers', _elm_lang$core$Json_Decode$string)));
 var _user$project$Models_Slot$Update = {ctor: 'Update'};
 
-var _user$project$Models_Program$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html$text('program')
-			]));
-};
 var _user$project$Models_Program$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -9032,6 +9071,44 @@ var _user$project$Models_Program$decoder = A3(
 		_elm_lang$core$Json_Decode$list(_user$project$Models_Slot$decoder)),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'heading', _elm_lang$core$Json_Decode$string));
 var _user$project$Models_Program$Update = {ctor: 'Update'};
+var _user$project$Models_Program$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('slides__slide program')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('program__header')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.heading)
+					])),
+				A2(
+				_elm_lang$html$Html$ul,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('program__program')
+					]),
+				A2(
+					_elm_lang$core$List$map,
+					function (entry) {
+						return A2(
+							_elm_lang$html$Html_App$map,
+							function (_p1) {
+								return _user$project$Models_Program$Update;
+							},
+							_user$project$Models_Slot$view(entry));
+					},
+					model.presentations))
+			]));
+};
 
 var _user$project$Models_Slides$getNextIndex = F2(
 	function (idx, model) {

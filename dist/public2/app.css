@@ -57,3 +57,39 @@ body {
     height: 100%;
     width: 100%;
 }
+
+.program__header {
+    text-align: center;
+}
+
+.program__program {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.entry {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 30px;
+    width: 50%;
+}
+
+.entry__room {
+    font-size: 3rem;
+    margin-right: 20px;
+}
+
+.entry__title {
+    font-size: 3rem;
+    margin-bottom: 5px;
+}
+
+.entry__speakers {
+    font-size: 1.3rem;
+}
+
+.entry__info {
+    display: flex;
+    flex-direction: column;
+}
