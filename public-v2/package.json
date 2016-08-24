@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch-elm": "elm-live Main.elm --output=../dist/public2/app.js --open",
+    "watch": "elm-live Main.elm --output=../dist/public2/app.js",
     "build": "elm make Main.elm --output=../dist/public2/app.js"
   },
   "keywords": [],
