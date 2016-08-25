@@ -75,6 +75,7 @@ h1 {
     font-size: 1rem;
     left: 0;
     opacity: 1;
+    outline: none;
     position: absolute;
     top: 0;
 }
