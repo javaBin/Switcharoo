@@ -18,7 +18,7 @@ type Msg
     = GetSlides
     | GetSucceeded ( List Slide.Model )
     | GetFailed Http.Error
-    | EditSlide Slide.Model Slide.Msg
+    | Slide Slide.Model Slide.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -32,7 +32,7 @@ update msg model =
         GetFailed error ->
             (model, Cmd.none)
 
-        EditSlide slide msg ->
+        Slide slide msg ->
             let
                 (newModels, newCmds) = List.unzip (List.map (editSlide slide msg) model.slides)
             in
@@ -44,7 +44,7 @@ editSlide newModel msg currentModel =
         let
             (newSlide, newCmd) = Slide.update msg newModel
         in
-            (newSlide, Cmd.map (EditSlide newSlide) newCmd)
+            (newSlide, Cmd.map (Slide newSlide) newCmd)
     else
         (currentModel, Cmd.none)
 
@@ -57,4 +57,4 @@ getSlides = Task.perform GetFailed GetSucceeded <| Http.get decoder "/slides"
 
 view : Model -> List (Html Msg)
 view model =
-    List.map (\slide -> map (EditSlide slide) (Slide.view slide)) model.slides
+    List.map (\slide -> map (Slide slide) (Slide.view slide)) model.slides

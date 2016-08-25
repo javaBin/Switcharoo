@@ -9331,9 +9331,9 @@ var _user$project$Slides$decoder = _elm_lang$core$Json_Decode$list(_user$project
 var _user$project$Slides$Model = function (a) {
 	return {slides: a};
 };
-var _user$project$Slides$EditSlide = F2(
+var _user$project$Slides$Slide = F2(
 	function (a, b) {
-		return {ctor: 'EditSlide', _0: a, _1: b};
+		return {ctor: 'Slide', _0: a, _1: b};
 	});
 var _user$project$Slides$editSlide = F3(
 	function (newModel, msg, currentModel) {
@@ -9346,7 +9346,7 @@ var _user$project$Slides$editSlide = F3(
 				_0: newSlide,
 				_1: A2(
 					_elm_lang$core$Platform_Cmd$map,
-					_user$project$Slides$EditSlide(newSlide),
+					_user$project$Slides$Slide(newSlide),
 					newCmd)
 			};
 		} else {
@@ -9359,7 +9359,7 @@ var _user$project$Slides$view = function (model) {
 		function (slide) {
 			return A2(
 				_elm_lang$html$Html_App$map,
-				_user$project$Slides$EditSlide(slide),
+				_user$project$Slides$Slide(slide),
 				_user$project$Slide$view(slide));
 		},
 		model.slides);
