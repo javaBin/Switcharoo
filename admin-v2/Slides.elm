@@ -36,7 +36,7 @@ update msg model =
             let
                 (newModels, newCmds) = List.unzip (List.map (editSlide slide msg) model.slides)
             in
-                ({model | slides = newModels}, Cmd.batch newCmds)
+                ({model | slides = newModels}, Cmd.batch <| [getSlides] ++ newCmds)
 
 editSlide : Slide.Model -> Slide.Msg -> Slide.Model -> (Slide.Model, Cmd Msg)
 editSlide newModel msg currentModel =

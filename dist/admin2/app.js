@@ -9409,7 +9409,12 @@ var _user$project$Slides$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{slides: newModels}),
-					_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
+					_1: _elm_lang$core$Platform_Cmd$batch(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Native_List.fromArray(
+								[_user$project$Slides$getSlides]),
+							newCmds))
 				};
 		}
 	});
