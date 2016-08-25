@@ -9265,6 +9265,20 @@ var _user$project$Slide$delete = function (model) {
 				body: _evancz$elm_http$Http$empty
 			}));
 };
+var _user$project$Slide$Edit = {ctor: 'Edit'};
+var _user$project$Slide$editButton = function (model) {
+	return A2(
+		_elm_lang$html$Html$button,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('slide__edit'),
+				_user$project$Events$onClickStopPropagation(_user$project$Slide$Edit)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Slide$icon('pencil')
+			]));
+};
 var _user$project$Slide$Delete = {ctor: 'Delete'};
 var _user$project$Slide$deleteButton = function (model) {
 	return A2(
@@ -9334,6 +9348,8 @@ var _user$project$Slide$update = F2(
 					_0: model,
 					_1: _user$project$Slide$delete(model)
 				};
+			case 'Edit':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'DeleteSucceeded':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'DeleteFailed':
@@ -9434,7 +9450,8 @@ var _user$project$Slide$viewText = function (model) {
 								_elm_lang$html$Html$text(model.body)
 							]))
 					])),
-				_user$project$Slide$deleteButton(model)
+				_user$project$Slide$deleteButton(model),
+				_user$project$Slide$editButton(model)
 			]));
 };
 var _user$project$Slide$viewImage = function (model) {
@@ -9472,7 +9489,8 @@ var _user$project$Slide$viewImage = function (model) {
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
-				_user$project$Slide$deleteButton(model)
+				_user$project$Slide$deleteButton(model),
+				_user$project$Slide$editButton(model)
 			]));
 };
 var _user$project$Slide$viewVideo = function (model) {
@@ -9500,7 +9518,8 @@ var _user$project$Slide$viewVideo = function (model) {
 					[
 						_elm_lang$html$Html$text('video')
 					])),
-				_user$project$Slide$deleteButton(model)
+				_user$project$Slide$deleteButton(model),
+				_user$project$Slide$editButton(model)
 			]));
 };
 var _user$project$Slide$view = function (model) {
@@ -9574,7 +9593,10 @@ var _user$project$Slides$update = F2(
 	function (msg, model) {
 		return A2(
 			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(msg),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Slides: ',
+				_elm_lang$core$Basics$toString(msg)),
 			function () {
 				var _p1 = msg;
 				switch (_p1.ctor) {
@@ -9589,14 +9611,15 @@ var _user$project$Slides$update = F2(
 					case 'GetFailed':
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 					default:
+						var _p3 = _p1._1;
 						var _p2 = _elm_lang$core$List$unzip(
 							A2(
 								_elm_lang$core$List$map,
-								A2(_user$project$Slides$editSlide, _p1._0, _p1._1),
+								A2(_user$project$Slides$editSlide, _p1._0, _p3),
 								model.slides));
 						var newModels = _p2._0;
 						var newCmds = _p2._1;
-						return {
+						return _elm_lang$core$Native_Utils.eq(_p3, _user$project$Slide$Delete) ? {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
@@ -9607,6 +9630,12 @@ var _user$project$Slides$update = F2(
 									_elm_lang$core$Native_List.fromArray(
 										[_user$project$Slides$getSlides]),
 									newCmds))
+						} : {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{slides: newModels}),
+							_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
 						};
 				}
 			}());
@@ -9679,7 +9708,10 @@ var _user$project$Modal$update = F2(
 	function (msg, model) {
 		return A2(
 			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(msg),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Modal: ',
+				_elm_lang$core$Basics$toString(msg)),
 			function () {
 				var _p0 = msg;
 				switch (_p0.ctor) {
@@ -9882,7 +9914,10 @@ var _user$project$Main$update = F2(
 	function (msg, model) {
 		return A2(
 			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(msg),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Main: ',
+				_elm_lang$core$Basics$toString(msg)),
 			function () {
 				var _p2 = msg;
 				if (_p2.ctor === 'SlideList') {

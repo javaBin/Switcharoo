@@ -80,6 +80,18 @@ h1 {
     top: 0;
 }
 
+.slide__edit {
+    background: white;
+    border: 0;
+    bottom: 0;
+    border-bottom-left-radius: 2px;
+    font-size: 1rem;
+    left: 0;
+    opacity: 1;
+    outline: none;
+    position: absolute;
+}
+
 .modal {
     cursor: auto;
     height: 100%;

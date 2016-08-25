@@ -1,4 +1,5 @@
-module Slide exposing (Model, Msg, decoder, update, view, createOrEditSlide, editView, initModel, subscriptions)
+-- module Slide exposing (Model, Msg, decoder, update, view, createOrEditSlide, editView, initModel, subscriptions)
+module Slide exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type', id)
@@ -33,6 +34,7 @@ type Msg
     | CreateFailed Http.RawError
     | CreateSucceeded Response
     | Delete
+    | Edit
     | DeleteSucceeded Http.RawError
     | DeleteFailed Response
     | Title String
@@ -66,6 +68,9 @@ update msg model =
 
         Delete ->
             (model, delete model)
+
+        Edit ->
+            (model, Cmd.none)
 
         DeleteSucceeded _ ->
             (model, Cmd.none)
@@ -111,13 +116,13 @@ encodeSlide model =
             []
         else
             [("_id", Encode.string model.id)] )
-        `List.append`
-        [ ("title", Encode.string model.title)
-        , ("body", Encode.string model.body)
-        , ("visible", Encode.bool model.visible)
-        , ("index", Encode.string model.index)
-        , ("type", Encode.string model.type')
-        ]
+            `List.append`
+            [ ("title", Encode.string model.title)
+            , ("body", Encode.string model.body)
+            , ("visible", Encode.bool model.visible)
+            , ("index", Encode.string model.index)
+            , ("type", Encode.string model.type')
+            ]
 
 editSlide : Model -> Platform.Task Http.RawError Response
 editSlide model =
@@ -177,6 +182,9 @@ view model =
 deleteButton : Model -> Html Msg
 deleteButton model = button [ class "slide__delete", onClickStopPropagation Delete ] [ icon "trash" ]
 
+editButton : Model -> Html Msg
+editButton model = button [ class "slide__edit", onClickStopPropagation Edit ] [ icon "pencil" ]
+
 viewText : Model -> Html Msg
 viewText model =
     li [ class "slide", onClick ToggleVisibility ]
@@ -185,6 +193,7 @@ viewText model =
              , div [ class "slide__body" ] [ text model.body ]
              ]
        , deleteButton model
+       , editButton model
        ]
 
 viewImage : Model -> Html Msg
@@ -195,6 +204,7 @@ viewImage model =
              ]
              []
        , deleteButton model
+       , editButton model
        ]
 
 viewVideo : Model -> Html Msg
@@ -208,6 +218,7 @@ viewVideo model =
              ]
              [ text "video" ]
        , deleteButton model
+       , editButton model
        ]
 
 editView : Model -> Html Msg

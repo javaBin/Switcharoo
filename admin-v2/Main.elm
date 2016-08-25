@@ -30,7 +30,7 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    log (toString msg) <|
+    log ("Main: " ++ toString msg) <|
     case msg of
         SlideList msg ->
             let

@@ -24,7 +24,7 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    log (toString msg) <|
+    log ("Slides: " ++ toString msg) <|
     case msg of
         GetSlides ->
             (model, getSlides)
@@ -39,7 +39,10 @@ update msg model =
             let
                 (newModels, newCmds) = List.unzip (List.map (editSlide slide msg) model.slides)
             in
-                ({model | slides = newModels}, Cmd.batch <| [getSlides] ++ newCmds)
+                if msg == Slide.Delete then
+                    ({model | slides = newModels}, Cmd.batch <| [getSlides] ++ newCmds)
+                else
+                    ({model | slides = newModels}, Cmd.batch newCmds)
 
 editSlide : Slide.Model -> Slide.Msg -> Slide.Model -> (Slide.Model, Cmd Msg)
 editSlide newModel msg currentModel =
