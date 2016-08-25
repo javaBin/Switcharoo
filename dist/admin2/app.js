@@ -8987,6 +8987,35 @@ var _user$project$Events$onClickStopPropagation = function (msg) {
 		_elm_lang$core$Json_Decode$succeed(msg));
 };
 
+var _user$project$Ports$fileSelected = _elm_lang$core$Native_Platform.outgoingPort(
+	'fileSelected',
+	function (v) {
+		return v;
+	});
+var _user$project$Ports$fileUploadSucceeded = _elm_lang$core$Native_Platform.incomingPort(
+	'fileUploadSucceeded',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'location', _elm_lang$core$Json_Decode$string),
+		function (location) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'filetype', _elm_lang$core$Json_Decode$string),
+				function (filetype) {
+					return _elm_lang$core$Json_Decode$succeed(
+						{location: location, filetype: filetype});
+				});
+		}));
+var _user$project$Ports$fileUploadFailed = _elm_lang$core$Native_Platform.incomingPort('fileUploadFailed', _elm_lang$core$Json_Decode$string);
+var _user$project$Ports$MediaPortData = F2(
+	function (a, b) {
+		return {contents: a, filename: b};
+	});
+var _user$project$Ports$FileData = F2(
+	function (a, b) {
+		return {location: a, filetype: b};
+	});
+
 var _user$project$Slide$icon = function (c) {
 	return A2(
 		_elm_lang$html$Html$i,
@@ -9080,11 +9109,8 @@ var _user$project$Slide$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {id: a, title: b, body: c, visible: d, index: e, type$: f};
 	});
-var _user$project$Slide$init = {
-	ctor: '_Tuple2',
-	_0: A6(_user$project$Slide$Model, '', '', '', false, '', ''),
-	_1: _elm_lang$core$Platform_Cmd$none
-};
+var _user$project$Slide$initModel = A6(_user$project$Slide$Model, '', '', '', false, '', '');
+var _user$project$Slide$init = {ctor: '_Tuple2', _0: _user$project$Slide$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Slide$decoder = A2(
 	_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
 	A2(
@@ -9104,6 +9130,116 @@ var _user$project$Slide$decoder = A2(
 			A2(_elm_lang$core$Json_Decode_ops[':='], 'visible', _elm_lang$core$Json_Decode$bool)),
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'index', _elm_lang$core$Json_Decode$string)),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'type', _elm_lang$core$Json_Decode$string));
+var _user$project$Slide$FileUploadFailed = function (a) {
+	return {ctor: 'FileUploadFailed', _0: a};
+};
+var _user$project$Slide$FileUploaded = function (a) {
+	return {ctor: 'FileUploaded', _0: a};
+};
+var _user$project$Slide$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Ports$fileUploadSucceeded(_user$project$Slide$FileUploaded),
+				_user$project$Ports$fileUploadFailed(_user$project$Slide$FileUploadFailed)
+			]));
+};
+var _user$project$Slide$FileSelected = {ctor: 'FileSelected'};
+var _user$project$Slide$MediaSlide = {ctor: 'MediaSlide'};
+var _user$project$Slide$TextSlide = {ctor: 'TextSlide'};
+var _user$project$Slide$editMediaView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('button button--ok'),
+						_user$project$Events$onClickStopPropagation(_user$project$Slide$TextSlide)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Text slide')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('file'),
+								_elm_lang$html$Html_Attributes$id('MediaInputId'),
+								A2(
+								_elm_lang$html$Html_Events$on,
+								'change',
+								_elm_lang$core$Json_Decode$succeed(_user$project$Slide$FileSelected))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
+					]))
+			]));
+};
+var _user$project$Slide$Body = function (a) {
+	return {ctor: 'Body', _0: a};
+};
+var _user$project$Slide$Title = function (a) {
+	return {ctor: 'Title', _0: a};
+};
+var _user$project$Slide$editTextView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('button button--ok'),
+						_user$project$Events$onClickStopPropagation(_user$project$Slide$MediaSlide)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Media slide')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('text'),
+								_elm_lang$html$Html_Events$onInput(_user$project$Slide$Title)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$textarea,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Events$onInput(_user$project$Slide$Body)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
+					]))
+			]));
+};
+var _user$project$Slide$editView = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.type$, 'text') ? _user$project$Slide$editTextView(model) : _user$project$Slide$editMediaView(model);
+};
 var _user$project$Slide$DeleteFailed = function (a) {
 	return {ctor: 'DeleteFailed', _0: a};
 };
@@ -9197,8 +9333,57 @@ var _user$project$Slide$update = F2(
 				};
 			case 'DeleteSucceeded':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			default:
+			case 'DeleteFailed':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Title':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{title: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Body':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{body: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'TextSlide':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{type$: 'text'}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'MediaSlide':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{type$: 'media'}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FileSelected':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Ports$fileSelected('MediaInputId')
+				};
+			case 'FileUploaded':
+				var _p1 = _p0._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{title: _p1.location, body: _p1.location, type$: _p1.filetype}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: _user$project$Slide$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$Slide$ToggleVisibility = {ctor: 'ToggleVisibility'};
@@ -9316,8 +9501,8 @@ var _user$project$Slide$viewVideo = function (model) {
 			]));
 };
 var _user$project$Slide$view = function (model) {
-	var _p1 = model.type$;
-	switch (_p1) {
+	var _p2 = model.type$;
+	switch (_p2) {
 		case 'text':
 			return _user$project$Slide$viewText(model);
 		case 'image':
@@ -9420,42 +9605,8 @@ var _user$project$Slides$update = F2(
 	});
 var _user$project$Slides$GetSlides = {ctor: 'GetSlides'};
 
-var _user$project$Ports$fileSelected = _elm_lang$core$Native_Platform.outgoingPort(
-	'fileSelected',
-	function (v) {
-		return v;
-	});
-var _user$project$Ports$fileUploadSucceeded = _elm_lang$core$Native_Platform.incomingPort(
-	'fileUploadSucceeded',
-	A2(
-		_elm_lang$core$Json_Decode$andThen,
-		A2(_elm_lang$core$Json_Decode_ops[':='], 'location', _elm_lang$core$Json_Decode$string),
-		function (location) {
-			return A2(
-				_elm_lang$core$Json_Decode$andThen,
-				A2(_elm_lang$core$Json_Decode_ops[':='], 'filetype', _elm_lang$core$Json_Decode$string),
-				function (filetype) {
-					return _elm_lang$core$Json_Decode$succeed(
-						{location: location, filetype: filetype});
-				});
-		}));
-var _user$project$Ports$fileUploadFailed = _elm_lang$core$Native_Platform.incomingPort('fileUploadFailed', _elm_lang$core$Json_Decode$string);
-var _user$project$Ports$MediaPortData = F2(
-	function (a, b) {
-		return {contents: a, filename: b};
-	});
-var _user$project$Ports$FileData = F2(
-	function (a, b) {
-		return {location: a, filetype: b};
-	});
-
 var _user$project$Modal$isEmpty = function (m) {
-	var _p0 = m;
-	if (_p0.ctor === 'Just') {
-		return false;
-	} else {
-		return true;
-	}
+	return _elm_lang$core$Native_Utils.eq(m.body, '') ? true : false;
 };
 var _user$project$Modal$icon = function (c) {
 	return A2(
@@ -9474,8 +9625,32 @@ var _user$project$Modal$Model = F3(
 	});
 var _user$project$Modal$init = {
 	ctor: '_Tuple2',
-	_0: A3(_user$project$Modal$Model, false, 'MediaInputId', _elm_lang$core$Maybe$Nothing),
+	_0: A3(_user$project$Modal$Model, false, 'MediaInputId', _user$project$Slide$initModel),
 	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Modal$CurrentSlide = function (a) {
+	return {ctor: 'CurrentSlide', _0: a};
+};
+var _user$project$Modal$subscriptions = function (model) {
+	return A2(
+		_elm_lang$core$Platform_Sub$map,
+		_user$project$Modal$CurrentSlide,
+		_user$project$Slide$subscriptions(model.slide));
+};
+var _user$project$Modal$showModalContent = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('modal__content')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html_App$map,
+				_user$project$Modal$CurrentSlide,
+				_user$project$Slide$editView(model.slide))
+			]));
 };
 var _user$project$Modal$CreateSucceeded = function (a) {
 	return {ctor: 'CreateSucceeded', _0: a};
@@ -9491,45 +9666,6 @@ var _user$project$Modal$createSlide = function (model) {
 		_user$project$Slide$createSlide(model));
 };
 var _user$project$Modal$CreateSlide = {ctor: 'CreateSlide'};
-var _user$project$Modal$FileUploadFailed = function (a) {
-	return {ctor: 'FileUploadFailed', _0: a};
-};
-var _user$project$Modal$FileUploaded = function (a) {
-	return {ctor: 'FileUploaded', _0: a};
-};
-var _user$project$Modal$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Ports$fileUploadSucceeded(_user$project$Modal$FileUploaded),
-				_user$project$Ports$fileUploadFailed(_user$project$Modal$FileUploadFailed)
-			]));
-};
-var _user$project$Modal$FileSelected = {ctor: 'FileSelected'};
-var _user$project$Modal$showModalContent = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('modal__content')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('file'),
-						_elm_lang$html$Html_Attributes$id(model.id),
-						A2(
-						_elm_lang$html$Html_Events$on,
-						'change',
-						_elm_lang$core$Json_Decode$succeed(_user$project$Modal$FileSelected))
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[]))
-			]));
-};
 var _user$project$Modal$Hide = {ctor: 'Hide'};
 var _user$project$Modal$update = F2(
 	function (msg, model) {
@@ -9537,8 +9673,8 @@ var _user$project$Modal$update = F2(
 			_elm_lang$core$Debug$log,
 			_elm_lang$core$Basics$toString(msg),
 			function () {
-				var _p1 = msg;
-				switch (_p1.ctor) {
+				var _p0 = msg;
+				switch (_p0.ctor) {
 					case 'Show':
 						return {
 							ctor: '_Tuple2',
@@ -9549,50 +9685,27 @@ var _user$project$Modal$update = F2(
 						};
 					case 'Hide':
 						return _user$project$Modal$init;
-					case 'FileSelected':
+					case 'CreateSlide':
 						return {
 							ctor: '_Tuple2',
 							_0: model,
-							_1: _user$project$Ports$fileSelected(model.id)
+							_1: _user$project$Modal$createSlide(model.slide)
 						};
-					case 'FileUploaded':
-						var _p2 = _p1._0;
+					case 'CreateFailed':
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					case 'CreateSucceeded':
+						return A2(_user$project$Modal$update, _user$project$Modal$Hide, model);
+					default:
+						var _p1 = A2(_user$project$Slide$update, _p0._0, model.slide);
+						var newSlide = _p1._0;
+						var newCmd = _p1._1;
 						return {
 							ctor: '_Tuple2',
 							_0: _elm_lang$core$Native_Utils.update(
 								model,
-								{
-									slide: _elm_lang$core$Maybe$Just(
-										A6(_user$project$Slide$Model, '', _p2.location, _p2.location, true, '0', _p2.filetype))
-								}),
-							_1: _elm_lang$core$Platform_Cmd$none
+								{slide: newSlide}),
+							_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Modal$CurrentSlide, newCmd)
 						};
-					case 'FileUploadFailed':
-						return A2(
-							_elm_lang$core$Debug$log,
-							_elm_lang$core$Basics$toString(_p1._0),
-							{
-								ctor: '_Tuple2',
-								_0: _elm_lang$core$Native_Utils.update(
-									model,
-									{slide: _elm_lang$core$Maybe$Nothing}),
-								_1: _elm_lang$core$Platform_Cmd$none
-							});
-					case 'CreateSlide':
-						var _p3 = model.slide;
-						if (_p3.ctor === 'Nothing') {
-							return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-						} else {
-							return {
-								ctor: '_Tuple2',
-								_0: model,
-								_1: _user$project$Modal$createSlide(_p3._0)
-							};
-						}
-					case 'CreateFailed':
-						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-					default:
-						return A2(_user$project$Modal$update, _user$project$Modal$Hide, model);
 				}
 			}());
 	});

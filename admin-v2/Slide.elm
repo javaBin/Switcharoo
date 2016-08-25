@@ -1,14 +1,15 @@
-module Slide exposing (Model, Msg, decoder, update, view, createSlide)
+module Slide exposing (Model, Msg, decoder, update, view, createSlide, editView, initModel, subscriptions)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, classList, style)
-import Html.Events exposing (onClick)
+import Html.Attributes exposing (class, classList, style, type', id)
+import Html.Events exposing (onClick, onInput, on)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
 import Http exposing (Request, Response, Body, defaultSettings, send, empty)
 import Json.Encode as Encode exposing (Value, encode)
 import Events exposing (onClickStopPropagation)
 import Task
+import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
 
 type alias Model =
     { id : String
@@ -19,8 +20,11 @@ type alias Model =
     , type' : String
     }
 
+initModel : Model
+initModel = Model "" "" "" False "" ""
+
 init : (Model, Cmd Msg)
-init = (Model "" "" "" False "" "", Cmd.none)
+init = (initModel, Cmd.none)
 
 type Msg
     = ToggleVisibility
@@ -31,6 +35,13 @@ type Msg
     | Delete
     | DeleteSucceeded Http.RawError
     | DeleteFailed Response
+    | Title String
+    | Body String
+    | TextSlide
+    | MediaSlide
+    | FileSelected
+    | FileUploaded FileData
+    | FileUploadFailed String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -61,6 +72,27 @@ update msg model =
 
         DeleteFailed _ ->
             (model, Cmd.none)
+
+        Title newTitle ->
+            ({model | title = newTitle}, Cmd.none)
+
+        Body newBody ->
+            ({model | body = newBody}, Cmd.none)
+
+        TextSlide ->
+            ({model | type' = "text"}, Cmd.none)
+
+        MediaSlide ->
+            ({model | type' = "media"}, Cmd.none)
+
+        FileSelected ->
+            (model, fileSelected "MediaInputId")
+
+        FileUploaded fileData ->
+            ({model | title = fileData.location, body = fileData.location, type' = fileData.filetype}, Cmd.none)
+
+        FileUploadFailed error ->
+            (initModel, Cmd.none)
 
 decoder : Decoder Model
 decoder =
@@ -121,6 +153,9 @@ edit model = Task.perform EditFailed EditSucceeded <| editSlide model
 create : Model -> Cmd Msg
 create model = Task.perform CreateFailed CreateSucceeded <| createSlide model
 
+subscriptions : Model -> Sub Msg
+subscriptions model = Sub.batch [fileUploadSucceeded FileUploaded, fileUploadFailed FileUploadFailed]
+
 icon : String -> Html msg
 icon c =
     i [ class <| "icon-" ++ c ] []
@@ -167,3 +202,28 @@ viewVideo model =
              [ text "video" ]
        , deleteButton model
        ]
+
+editView : Model -> Html Msg
+editView model =
+    if model.type' == "text" then
+        editTextView model
+    else
+        editMediaView model
+
+editMediaView : Model -> Html Msg
+editMediaView model =
+    div []
+        [ button [ class "button button--ok", onClickStopPropagation TextSlide ] [ text "Text slide" ]
+        , div []
+              [ input [type' "file", id "MediaInputId", on "change" (succeed FileSelected)] []
+              ]
+        ]
+
+editTextView : Model -> Html Msg
+editTextView model =
+    div []
+        [ button [ class "button button--ok", onClickStopPropagation MediaSlide ] [ text "Media slide" ]
+        , div [] [ input [ type' "text", onInput Title ] []
+                 , textarea [ onInput Body ] []
+                 ]
+        ]
