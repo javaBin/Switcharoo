@@ -1,4 +1,4 @@
-module Slide exposing (Model, Msg, decoder, update, view, createSlide, editView, initModel, subscriptions)
+module Slide exposing (Model, Msg, decoder, update, view, createOrEditSlide, editView, initModel, subscriptions)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type', id)
@@ -136,6 +136,13 @@ createSlide model =
         , url = "/slides"
         , body = Http.string <| encode 0 <| encodeSlide model
         }
+
+createOrEditSlide : Model -> Platform.Task Http.RawError Response
+createOrEditSlide model =
+    if model.id == "" then
+        createSlide model
+    else
+        editSlide model
 
 delete : Model -> Cmd Msg
 delete model =

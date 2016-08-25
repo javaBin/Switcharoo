@@ -3,6 +3,7 @@ import Html.Attributes exposing (class)
 import Html.App exposing (program, map)
 import Slides
 import Modal
+import Debug exposing (log)
 
 type alias Model =
     { slides : Slides.Model
@@ -29,6 +30,7 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
+    log (toString msg) <|
     case msg of
         SlideList msg ->
             let
@@ -40,7 +42,20 @@ update msg model =
             let
                 (newSlide, newSlideCmd) = Modal.update msg model.newSlide
             in
-                ({model | newSlide = newSlide}, Cmd.map NewSlide newSlideCmd)
+                case msg of
+                    Modal.CreateSucceeded _ ->
+                        let
+                            (_, newSlideCmd') = Slides.update Slides.GetSlides model.slides
+                        in
+                            ({model | newSlide = newSlide}
+                            , Cmd.batch [ Cmd.map SlideList newSlideCmd'
+                                        , Cmd.map NewSlide newSlideCmd
+                                        ]
+                        )
+                    _ ->
+                        ({model | newSlide = newSlide}
+                        , Cmd.map NewSlide newSlideCmd
+                        )
 
 view : Model -> Html Msg
 view model =

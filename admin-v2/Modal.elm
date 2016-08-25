@@ -1,4 +1,5 @@
-module Modal exposing (Model, Msg, init, update, subscriptions, view)
+-- module Modal exposing (Model, Msg, init, update, subscriptions, view)
+module Modal exposing (..)
 
 import Html exposing (Html, div, button, text, i, input)
 import Html.App as App
@@ -56,7 +57,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model = Sub.map CurrentSlide <| Slide.subscriptions model.slide
 
 createSlide : Slide.Model -> Cmd Msg
-createSlide model = Task.perform CreateFailed CreateSucceeded <| Slide.createSlide model
+createSlide model = Task.perform CreateFailed CreateSucceeded <| Slide.createOrEditSlide model
 
 icon : String -> Html msg
 icon c =
@@ -92,13 +93,6 @@ showModal model =
         , showModalContent model
         , showModalFooter model
         ]
-
--- showImageModalContent : Model -> Html Msg
--- showImageModalContent model =
---     div [ class "modal__content" ]
---         [ input [type' "file", id model.id, on "change" (succeed FileSelected) ]
---                 []
---         ]
 
 showModalContent : Model -> Html Msg
 showModalContent model =

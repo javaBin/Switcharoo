@@ -1,4 +1,5 @@
-module Slides exposing (Model, Msg, init, update, view)
+-- module Slides exposing (Model, Msg, init, update, view, getSlides, GetSlides)
+module Slides exposing (..)
 
 import Html exposing (Html, text, ul)
 import Html.App exposing (map)
@@ -6,6 +7,7 @@ import Json.Decode exposing (Decoder, list)
 import Http
 import Task
 import Slide
+import Debug exposing (log)
 
 type alias Model =
     { slides : List Slide.Model
@@ -22,6 +24,7 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
+    log (toString msg) <|
     case msg of
         GetSlides ->
             (model, getSlides)
