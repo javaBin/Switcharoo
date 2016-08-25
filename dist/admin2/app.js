@@ -8998,18 +8998,6 @@ var _user$project$Slide$icon = function (c) {
 		_elm_lang$core$Native_List.fromArray(
 			[]));
 };
-var _user$project$Slide$deleteButton = function (model) {
-	return A2(
-		_elm_lang$html$Html$button,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('slide__delete')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Slide$icon('trash')
-			]));
-};
 var _user$project$Slide$encodeSlide = function (model) {
 	return _elm_lang$core$Json_Encode$object(
 		A2(
@@ -9116,6 +9104,42 @@ var _user$project$Slide$decoder = A2(
 			A2(_elm_lang$core$Json_Decode_ops[':='], 'visible', _elm_lang$core$Json_Decode$bool)),
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'index', _elm_lang$core$Json_Decode$string)),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'type', _elm_lang$core$Json_Decode$string));
+var _user$project$Slide$DeleteFailed = function (a) {
+	return {ctor: 'DeleteFailed', _0: a};
+};
+var _user$project$Slide$DeleteSucceeded = function (a) {
+	return {ctor: 'DeleteSucceeded', _0: a};
+};
+var _user$project$Slide$delete = function (model) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Slide$DeleteSucceeded,
+		_user$project$Slide$DeleteFailed,
+		A2(
+			_evancz$elm_http$Http$send,
+			_evancz$elm_http$Http$defaultSettings,
+			{
+				verb: 'DELETE',
+				headers: _elm_lang$core$Native_List.fromArray(
+					[]),
+				url: A2(_elm_lang$core$Basics_ops['++'], '/slides/', model.id),
+				body: _evancz$elm_http$Http$empty
+			}));
+};
+var _user$project$Slide$Delete = {ctor: 'Delete'};
+var _user$project$Slide$deleteButton = function (model) {
+	return A2(
+		_elm_lang$html$Html$button,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('slide__delete'),
+				_user$project$Events$onClickStopPropagation(_user$project$Slide$Delete)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Slide$icon('trash')
+			]));
+};
 var _user$project$Slide$CreateSucceeded = function (a) {
 	return {ctor: 'CreateSucceeded', _0: a};
 };
@@ -9162,6 +9186,16 @@ var _user$project$Slide$update = F2(
 			case 'EditSucceeded':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'CreateFailed':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'CreateSucceeded':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'Delete':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Slide$delete(model)
+				};
+			case 'DeleteSucceeded':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};

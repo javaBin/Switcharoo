@@ -5,8 +5,9 @@ import Html.Attributes exposing (class, classList, style)
 import Html.Events exposing (onClick)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
-import Http exposing (Request, Response, Body, defaultSettings, send)
+import Http exposing (Request, Response, Body, defaultSettings, send, empty)
 import Json.Encode as Encode exposing (Value, encode)
+import Events exposing (onClickStopPropagation)
 import Task
 
 type alias Model =
@@ -27,6 +28,9 @@ type Msg
     | EditSucceeded Response
     | CreateFailed Http.RawError
     | CreateSucceeded Response
+    | Delete
+    | DeleteSucceeded Http.RawError
+    | DeleteFailed Response
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -47,7 +51,16 @@ update msg model =
             (model, Cmd.none)
 
         CreateSucceeded _ ->
-             (model, Cmd.none)
+            (model, Cmd.none)
+
+        Delete ->
+            (model, delete model)
+
+        DeleteSucceeded _ ->
+            (model, Cmd.none)
+
+        DeleteFailed _ ->
+            (model, Cmd.none)
 
 decoder : Decoder Model
 decoder =
@@ -92,6 +105,16 @@ createSlide model =
         , body = Http.string <| encode 0 <| encodeSlide model
         }
 
+delete : Model -> Cmd Msg
+delete model =
+    Task.perform DeleteSucceeded DeleteFailed <|
+    send defaultSettings
+        { verb = "DELETE"
+        , headers = []
+        , url = "/slides/" ++ model.id
+        , body = empty
+        }
+
 edit : Model -> Cmd Msg
 edit model = Task.perform EditFailed EditSucceeded <| editSlide model
 
@@ -110,7 +133,7 @@ view model =
         _      -> viewVideo model
 
 deleteButton : Model -> Html Msg
-deleteButton model = button [ class "slide__delete" ] [ icon "trash" ]
+deleteButton model = button [ class "slide__delete", onClickStopPropagation Delete ] [ icon "trash" ]
 
 viewText : Model -> Html Msg
 viewText model =
