@@ -23,6 +23,7 @@ init = (Model False "MediaInputId" Slide.initModel, Cmd.none)
 type Msg
     = Show
     | Hide
+    | Edit Slide.Model
     | CreateSlide
     | CreateFailed Http.RawError
     | CreateSucceeded Response
@@ -37,6 +38,12 @@ update msg model =
 
         Hide ->
             init
+
+        Edit editSlide ->
+            let
+                newModel = {model | slide = editSlide}
+            in
+                update Show newModel
 
         CreateSlide ->
             (model, createSlide model.slide)

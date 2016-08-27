@@ -44,12 +44,15 @@ update msg model =
 
         Slide slide msg ->
             let
-                (newModels, newCmds) = List.unzip (List.map (editSlide slide msg) model.slides)
+                (newModels, newCmds) = List.unzip (List.map (updateSlide slide msg) model.slides)
             in
-                if msg == Slide.Delete then
-                    ({model | slides = newModels}, Cmd.batch <| [getSlides] ++ newCmds)
-                else
-                    ({model | slides = newModels}, Cmd.batch newCmds)
+                case msg of
+                    Slide.Delete ->
+                        ({model | slides = newModels}, Cmd.batch <| [getSlides] ++ newCmds)
+                    Slide.Edit ->
+                        editSlide model newModels slide
+                    _ ->
+                        ({model | slides = newModels}, Cmd.batch newCmds)
 
         NewSlideModal msg ->
             let
@@ -65,8 +68,8 @@ update msg model =
                         , Cmd.map NewSlideModal newModalCmd
                         )
 
-editSlide : Slide.Model -> Slide.Msg -> Slide.Model -> (Slide.Model, Cmd Msg)
-editSlide newModel msg currentModel =
+updateSlide : Slide.Model -> Slide.Msg -> Slide.Model -> (Slide.Model, Cmd Msg)
+updateSlide newModel msg currentModel =
     if newModel.id == currentModel.id then
         let
             (newSlide, newCmd) = Slide.update msg newModel
@@ -74,6 +77,13 @@ editSlide newModel msg currentModel =
             (newSlide, Cmd.map (Slide newSlide) newCmd)
     else
         (currentModel, Cmd.none)
+
+editSlide : Model -> List Slide.Model -> Slide.Model -> (Model, Cmd Msg)
+editSlide model newSlides slide =
+    let
+        (newModal, newModalCmd) = Modal.update (Modal.Edit slide) model.modal
+    in
+        ({model | slides = newSlides, modal = newModal}, Cmd.map NewSlideModal newModalCmd)
 
 decoder : Decoder (List Slide.Model)
 decoder = list Slide.decoder

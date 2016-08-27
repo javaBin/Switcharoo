@@ -2,7 +2,7 @@
 module Slide exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, classList, style, type', id)
+import Html.Attributes exposing (class, classList, style, type', id, value)
 import Html.Events exposing (onClick, onInput, on)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
@@ -241,7 +241,7 @@ editTextView : Model -> Html Msg
 editTextView model =
     div []
         [ button [ class "button button--ok", onClickStopPropagation MediaSlide ] [ text "Media slide" ]
-        , div [] [ input [ type' "text", onInput Title ] []
-                 , textarea [ onInput Body ] []
+        , div [] [ input [ type' "text", onInput Title, value model.title ] []
+                 , textarea [ onInput Body, value model.body ] []
                  ]
         ]
