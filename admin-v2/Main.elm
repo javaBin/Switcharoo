@@ -2,31 +2,24 @@ import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.App exposing (program, map)
 import Slides
-import Modal
 import Debug exposing (log)
 
 type alias Model =
     { slides : Slides.Model
-    , newSlide : Modal.Model
     }
 
 init : (Model, Cmd Msg)
 init =
     let
         (slides, slidesCmd) = Slides.init
-        (newSlide, newSlideCmd) = Modal.init
     in
-        ( Model slides newSlide
-        , Cmd.batch
-            [ Cmd.map SlideList slidesCmd
-            , Cmd.map NewSlide newSlideCmd
-            ]
+        ( Model slides
+        , Cmd.map SlideList slidesCmd
         )
-
 
 type Msg
     = SlideList Slides.Msg
-    | NewSlide Modal.Msg
+    -- | NewSlide Modal.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -38,41 +31,19 @@ update msg model =
             in
                 ({model | slides = slides}, Cmd.map SlideList cmd)
 
-        NewSlide msg ->
-            let
-                (newSlide, newSlideCmd) = Modal.update msg model.newSlide
-            in
-                case msg of
-                    Modal.CreateSucceeded _ ->
-                        let
-                            (_, newSlideCmd') = Slides.update Slides.GetSlides model.slides
-                        in
-                            ({model | newSlide = newSlide}
-                            , Cmd.batch [ Cmd.map SlideList newSlideCmd'
-                                        , Cmd.map NewSlide newSlideCmd
-                                        ]
-                        )
-                    _ ->
-                        ({model | newSlide = newSlide}
-                        , Cmd.map NewSlide newSlideCmd
-                        )
-
 view : Model -> Html Msg
 view model =
     let
-        newSlide = map NewSlide <| Modal.view model.newSlide
         slides = List.map (\slide -> map SlideList slide) <| Slides.view model.slides
     in
         div []
             [ h1 [] [ text "Switcharoo" ]
             , ul [ class "slides" ]
-                <| newSlide :: slides
+                <| slides
             ]
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ Sub.map NewSlide <| Modal.subscriptions model.newSlide ]
+subscriptions model = Sub.map SlideList <| Slides.subscriptions model.slides
 
 main : Program Never
 main = program {init = init, view = view, update = update, subscriptions = subscriptions}

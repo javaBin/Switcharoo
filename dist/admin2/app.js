@@ -9534,114 +9534,6 @@ var _user$project$Slide$view = function (model) {
 	}
 };
 
-var _user$project$Slides$decoder = _elm_lang$core$Json_Decode$list(_user$project$Slide$decoder);
-var _user$project$Slides$Model = function (a) {
-	return {slides: a};
-};
-var _user$project$Slides$Slide = F2(
-	function (a, b) {
-		return {ctor: 'Slide', _0: a, _1: b};
-	});
-var _user$project$Slides$editSlide = F3(
-	function (newModel, msg, currentModel) {
-		if (_elm_lang$core$Native_Utils.eq(newModel.id, currentModel.id)) {
-			var _p0 = A2(_user$project$Slide$update, msg, newModel);
-			var newSlide = _p0._0;
-			var newCmd = _p0._1;
-			return {
-				ctor: '_Tuple2',
-				_0: newSlide,
-				_1: A2(
-					_elm_lang$core$Platform_Cmd$map,
-					_user$project$Slides$Slide(newSlide),
-					newCmd)
-			};
-		} else {
-			return {ctor: '_Tuple2', _0: currentModel, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
-var _user$project$Slides$view = function (model) {
-	return A2(
-		_elm_lang$core$List$map,
-		function (slide) {
-			return A2(
-				_elm_lang$html$Html_App$map,
-				_user$project$Slides$Slide(slide),
-				_user$project$Slide$view(slide));
-		},
-		model.slides);
-};
-var _user$project$Slides$GetFailed = function (a) {
-	return {ctor: 'GetFailed', _0: a};
-};
-var _user$project$Slides$GetSucceeded = function (a) {
-	return {ctor: 'GetSucceeded', _0: a};
-};
-var _user$project$Slides$getSlides = A3(
-	_elm_lang$core$Task$perform,
-	_user$project$Slides$GetFailed,
-	_user$project$Slides$GetSucceeded,
-	A2(_evancz$elm_http$Http$get, _user$project$Slides$decoder, '/slides'));
-var _user$project$Slides$init = {
-	ctor: '_Tuple2',
-	_0: _user$project$Slides$Model(
-		_elm_lang$core$Native_List.fromArray(
-			[])),
-	_1: _user$project$Slides$getSlides
-};
-var _user$project$Slides$update = F2(
-	function (msg, model) {
-		return A2(
-			_elm_lang$core$Debug$log,
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				'Slides: ',
-				_elm_lang$core$Basics$toString(msg)),
-			function () {
-				var _p1 = msg;
-				switch (_p1.ctor) {
-					case 'GetSlides':
-						return {ctor: '_Tuple2', _0: model, _1: _user$project$Slides$getSlides};
-					case 'GetSucceeded':
-						return {
-							ctor: '_Tuple2',
-							_0: _user$project$Slides$Model(_p1._0),
-							_1: _elm_lang$core$Platform_Cmd$none
-						};
-					case 'GetFailed':
-						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-					default:
-						var _p3 = _p1._1;
-						var _p2 = _elm_lang$core$List$unzip(
-							A2(
-								_elm_lang$core$List$map,
-								A2(_user$project$Slides$editSlide, _p1._0, _p3),
-								model.slides));
-						var newModels = _p2._0;
-						var newCmds = _p2._1;
-						return _elm_lang$core$Native_Utils.eq(_p3, _user$project$Slide$Delete) ? {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{slides: newModels}),
-							_1: _elm_lang$core$Platform_Cmd$batch(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Native_List.fromArray(
-										[_user$project$Slides$getSlides]),
-									newCmds))
-						} : {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{slides: newModels}),
-							_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
-						};
-				}
-			}());
-	});
-var _user$project$Slides$GetSlides = {ctor: 'GetSlides'};
-
 var _user$project$Modal$isEmpty = function (m) {
 	return _elm_lang$core$Native_Utils.eq(m.body, '') ? true : false;
 };
@@ -9872,42 +9764,187 @@ var _user$project$Modal$view = function (model) {
 			]));
 };
 
-var _user$project$Main$Model = F2(
+var _user$project$Slides$decoder = _elm_lang$core$Json_Decode$list(_user$project$Slide$decoder);
+var _user$project$Slides$Model = F2(
 	function (a, b) {
-		return {slides: a, newSlide: b};
+		return {slides: a, modal: b};
 	});
-var _user$project$Main$NewSlide = function (a) {
-	return {ctor: 'NewSlide', _0: a};
+var _user$project$Slides$NewSlideModal = function (a) {
+	return {ctor: 'NewSlideModal', _0: a};
 };
-var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$core$Platform_Sub$map,
-				_user$project$Main$NewSlide,
-				_user$project$Modal$subscriptions(model.newSlide))
-			]));
+var _user$project$Slides$subscriptions = function (model) {
+	return A2(
+		_elm_lang$core$Platform_Sub$map,
+		_user$project$Slides$NewSlideModal,
+		_user$project$Modal$subscriptions(model.modal));
+};
+var _user$project$Slides$Slide = F2(
+	function (a, b) {
+		return {ctor: 'Slide', _0: a, _1: b};
+	});
+var _user$project$Slides$editSlide = F3(
+	function (newModel, msg, currentModel) {
+		if (_elm_lang$core$Native_Utils.eq(newModel.id, currentModel.id)) {
+			var _p0 = A2(_user$project$Slide$update, msg, newModel);
+			var newSlide = _p0._0;
+			var newCmd = _p0._1;
+			return {
+				ctor: '_Tuple2',
+				_0: newSlide,
+				_1: A2(
+					_elm_lang$core$Platform_Cmd$map,
+					_user$project$Slides$Slide(newSlide),
+					newCmd)
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: currentModel, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Slides$view = function (model) {
+	var newSlide = A2(
+		_elm_lang$html$Html_App$map,
+		_user$project$Slides$NewSlideModal,
+		_user$project$Modal$view(model.modal));
+	return A2(
+		_elm_lang$core$List_ops['::'],
+		newSlide,
+		A2(
+			_elm_lang$core$List$map,
+			function (slide) {
+				return A2(
+					_elm_lang$html$Html_App$map,
+					_user$project$Slides$Slide(slide),
+					_user$project$Slide$view(slide));
+			},
+			model.slides));
+};
+var _user$project$Slides$GetFailed = function (a) {
+	return {ctor: 'GetFailed', _0: a};
+};
+var _user$project$Slides$GetSucceeded = function (a) {
+	return {ctor: 'GetSucceeded', _0: a};
+};
+var _user$project$Slides$getSlides = A3(
+	_elm_lang$core$Task$perform,
+	_user$project$Slides$GetFailed,
+	_user$project$Slides$GetSucceeded,
+	A2(_evancz$elm_http$Http$get, _user$project$Slides$decoder, '/slides'));
+var _user$project$Slides$init = function () {
+	var _p1 = _user$project$Modal$init;
+	var newModal = _p1._0;
+	var newModalCmd = _p1._1;
+	return {
+		ctor: '_Tuple2',
+		_0: A2(
+			_user$project$Slides$Model,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			newModal),
+		_1: _elm_lang$core$Platform_Cmd$batch(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(_elm_lang$core$Platform_Cmd$map, _user$project$Slides$NewSlideModal, newModalCmd),
+					_user$project$Slides$getSlides
+				]))
+	};
+}();
+var _user$project$Slides$update = F2(
+	function (msg, model) {
+		return A2(
+			_elm_lang$core$Debug$log,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'Slides: ',
+				_elm_lang$core$Basics$toString(msg)),
+			function () {
+				var _p2 = msg;
+				switch (_p2.ctor) {
+					case 'GetSlides':
+						return {ctor: '_Tuple2', _0: model, _1: _user$project$Slides$getSlides};
+					case 'GetSucceeded':
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{slides: _p2._0}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					case 'GetFailed':
+						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					case 'Slide':
+						var _p4 = _p2._1;
+						var _p3 = _elm_lang$core$List$unzip(
+							A2(
+								_elm_lang$core$List$map,
+								A2(_user$project$Slides$editSlide, _p2._0, _p4),
+								model.slides));
+						var newModels = _p3._0;
+						var newCmds = _p3._1;
+						return _elm_lang$core$Native_Utils.eq(_p4, _user$project$Slide$Delete) ? {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{slides: newModels}),
+							_1: _elm_lang$core$Platform_Cmd$batch(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Native_List.fromArray(
+										[_user$project$Slides$getSlides]),
+									newCmds))
+						} : {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{slides: newModels}),
+							_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
+						};
+					default:
+						var _p7 = _p2._0;
+						var _p5 = A2(_user$project$Modal$update, _p7, model.modal);
+						var newModal = _p5._0;
+						var newModalCmd = _p5._1;
+						var _p6 = _p7;
+						if (_p6.ctor === 'CreateSucceeded') {
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{modal: newModal}),
+								_1: _elm_lang$core$Platform_Cmd$batch(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											A2(_elm_lang$core$Platform_Cmd$map, _user$project$Slides$NewSlideModal, newModalCmd),
+											_user$project$Slides$getSlides
+										]))
+							};
+						} else {
+							return {
+								ctor: '_Tuple2',
+								_0: _elm_lang$core$Native_Utils.update(
+									model,
+									{modal: newModal}),
+								_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Slides$NewSlideModal, newModalCmd)
+							};
+						}
+				}
+			}());
+	});
+var _user$project$Slides$GetSlides = {ctor: 'GetSlides'};
+
+var _user$project$Main$Model = function (a) {
+	return {slides: a};
 };
 var _user$project$Main$SlideList = function (a) {
 	return {ctor: 'SlideList', _0: a};
 };
 var _user$project$Main$init = function () {
-	var _p0 = _user$project$Modal$init;
-	var newSlide = _p0._0;
-	var newSlideCmd = _p0._1;
-	var _p1 = _user$project$Slides$init;
-	var slides = _p1._0;
-	var slidesCmd = _p1._1;
+	var _p0 = _user$project$Slides$init;
+	var slides = _p0._0;
+	var slidesCmd = _p0._1;
 	return {
 		ctor: '_Tuple2',
-		_0: A2(_user$project$Main$Model, slides, newSlide),
-		_1: _elm_lang$core$Platform_Cmd$batch(
-			_elm_lang$core$Native_List.fromArray(
-				[
-					A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, slidesCmd),
-					A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$NewSlide, newSlideCmd)
-				]))
+		_0: _user$project$Main$Model(slides),
+		_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, slidesCmd)
 	};
 }();
 var _user$project$Main$update = F2(
@@ -9919,49 +9956,17 @@ var _user$project$Main$update = F2(
 				'Main: ',
 				_elm_lang$core$Basics$toString(msg)),
 			function () {
-				var _p2 = msg;
-				if (_p2.ctor === 'SlideList') {
-					var _p3 = A2(_user$project$Slides$update, _p2._0, model.slides);
-					var slides = _p3._0;
-					var cmd = _p3._1;
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{slides: slides}),
-						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, cmd)
-					};
-				} else {
-					var _p7 = _p2._0;
-					var _p4 = A2(_user$project$Modal$update, _p7, model.newSlide);
-					var newSlide = _p4._0;
-					var newSlideCmd = _p4._1;
-					var _p5 = _p7;
-					if (_p5.ctor === 'CreateSucceeded') {
-						var _p6 = A2(_user$project$Slides$update, _user$project$Slides$GetSlides, model.slides);
-						var newSlideCmd$ = _p6._1;
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{newSlide: newSlide}),
-							_1: _elm_lang$core$Platform_Cmd$batch(
-								_elm_lang$core$Native_List.fromArray(
-									[
-										A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, newSlideCmd$),
-										A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$NewSlide, newSlideCmd)
-									]))
-						};
-					} else {
-						return {
-							ctor: '_Tuple2',
-							_0: _elm_lang$core$Native_Utils.update(
-								model,
-								{newSlide: newSlide}),
-							_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$NewSlide, newSlideCmd)
-						};
-					}
-				}
+				var _p1 = msg;
+				var _p2 = A2(_user$project$Slides$update, _p1._0, model.slides);
+				var slides = _p2._0;
+				var cmd = _p2._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{slides: slides}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, cmd)
+				};
 			}());
 	});
 var _user$project$Main$view = function (model) {
@@ -9971,10 +9976,6 @@ var _user$project$Main$view = function (model) {
 			return A2(_elm_lang$html$Html_App$map, _user$project$Main$SlideList, slide);
 		},
 		_user$project$Slides$view(model.slides));
-	var newSlide = A2(
-		_elm_lang$html$Html_App$map,
-		_user$project$Main$NewSlide,
-		_user$project$Modal$view(model.newSlide));
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -9995,8 +9996,14 @@ var _user$project$Main$view = function (model) {
 					[
 						_elm_lang$html$Html_Attributes$class('slides')
 					]),
-				A2(_elm_lang$core$List_ops['::'], newSlide, slides))
+				slides)
 			]));
+};
+var _user$project$Main$subscriptions = function (model) {
+	return A2(
+		_elm_lang$core$Platform_Sub$map,
+		_user$project$Main$SlideList,
+		_user$project$Slides$subscriptions(model.slides));
 };
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(
