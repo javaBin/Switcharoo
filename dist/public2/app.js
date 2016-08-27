@@ -8746,8 +8746,10 @@ var _user$project$Models_Info$videoView = function (model) {
 				_elm_lang$html$Html$video,
 				_elm_lang$core$Native_List.fromArray(
 					[
+						_elm_lang$html$Html_Attributes$src(model.body),
 						A2(_elm_lang$html$Html_Attributes$attribute, 'autoplay', 'true'),
-						_elm_lang$html$Html_Attributes$src(model.body)
+						A2(_elm_lang$html$Html_Attributes$attribute, 'loop', 'true'),
+						_elm_lang$html$Html_Attributes$class('slide__video')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[]))

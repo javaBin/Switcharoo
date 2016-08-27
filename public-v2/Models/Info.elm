@@ -69,6 +69,10 @@ imageView model =
 videoView : Model -> Html Msg
 videoView model =
     div [ class "slides__slide slide slide--video" ]
-        [ video [ attribute "autoplay" "true", src model.body ]
+        [ video [ src model.body
+                , attribute "autoplay" "true"
+                , attribute "loop" "true"
+                , class "slide__video"
+                ]
                 []
         ]
