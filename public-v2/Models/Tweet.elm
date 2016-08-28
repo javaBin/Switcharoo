@@ -36,7 +36,7 @@ view model =
                     [ div [ class "tweet__name" ]
                           [ text model.user ]
                     , div [ class "tweet__handle" ]
-                          [ text model.handle ]
+                          [ text <| "@" ++ model.handle ]
                     ]
               , div [ class "tweet__body" ] [ text model.text ]
               ]

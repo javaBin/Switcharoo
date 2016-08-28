@@ -8943,7 +8943,8 @@ var _user$project$Models_Tweet$view = function (model) {
 									]),
 								_elm_lang$core$Native_List.fromArray(
 									[
-										_elm_lang$html$Html$text(model.handle)
+										_elm_lang$html$Html$text(
+										A2(_elm_lang$core$Basics_ops['++'], '@', model.handle))
 									]))
 							])),
 						A2(
