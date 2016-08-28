@@ -68,6 +68,11 @@ h1 {
     background-size: cover;
 }
 
+.slide__video {
+    height: 100%;
+    width: 100%;
+}
+
 .slide__delete {
     background: white;
     border: 0;

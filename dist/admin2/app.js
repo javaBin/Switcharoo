@@ -9601,7 +9601,17 @@ var _user$project$Slide$viewVideo = function (model) {
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('video')
+						A2(
+						_elm_lang$html$Html$video,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(model.body),
+								A2(_elm_lang$html$Html_Attributes$attribute, 'autoplay', 'true'),
+								A2(_elm_lang$html$Html_Attributes$attribute, 'loop', 'true'),
+								_elm_lang$html$Html_Attributes$class('slide__video')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
 					])),
 				_user$project$Slide$deleteButton(model),
 				_user$project$Slide$editButton(model)

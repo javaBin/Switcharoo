@@ -2,7 +2,7 @@
 module Slide exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, classList, style, type', id, value, draggable, placeholder, disabled)
+import Html.Attributes exposing (class, classList, style, type', id, value, draggable, placeholder, disabled, attribute, src)
 import Html.Events exposing (onClick, onInput, on)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
@@ -229,7 +229,13 @@ viewVideo model =
                          , ("slide__content--visible", model.visible)
                          ]
              ]
-             [ text "video" ]
+             [ video [ src model.body
+                     , attribute "autoplay" "true"
+                     , attribute "loop" "true"
+                     , class "slide__video"
+                     ]
+                     []
+             ]
        , deleteButton model
        , editButton model
        ]
