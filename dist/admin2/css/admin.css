@@ -30,7 +30,6 @@ h1 {
 
 .slide {
     background: transparent;
-    box-shadow: 0 0 40px rgba(0, 0, 0, .5);
     height: 225px;
     margin: 20px;
     position: relative;
@@ -41,6 +40,7 @@ h1 {
     align-items: center;
     background: #111;
     border-radius: 2px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, .5);
     color: white;
     cursor: pointer;
     display: flex;
@@ -48,9 +48,13 @@ h1 {
     flex-shrink: 0;
     height: 100%;
     justify-content: center;
-    opacity: .4;
+    opacity: .2;
     transition: opacity .2s ease-in-out;
     width: 100%;
+}
+
+.slide__content:not(.slide__content--visible):hover {
+    opacity: .5;
 }
 
 .slide__content--visible,
