@@ -2,7 +2,7 @@
 module Slide exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, classList, style, type', id, value)
+import Html.Attributes exposing (class, classList, style, type', id, value, draggable, placeholder, disabled)
 import Html.Events exposing (onClick, onInput, on)
 import Json.Decode.Extra exposing((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
@@ -39,6 +39,7 @@ type Msg
     | DeleteFailed Response
     | Title String
     | Body String
+    | Index String
     | TextSlide
     | MediaSlide
     | FileSelected
@@ -83,6 +84,9 @@ update msg model =
 
         Body newBody ->
             ({model | body = newBody}, Cmd.none)
+
+        Index newIndex ->
+            ({model | index = newIndex}, Cmd.none)
 
         TextSlide ->
             ({model | type' = "text"}, Cmd.none)
@@ -187,8 +191,13 @@ editButton model = button [ class "slide__edit", onClickStopPropagation Edit ] [
 
 viewText : Model -> Html Msg
 viewText model =
-    li [ class "slide", onClick ToggleVisibility ]
-       [ div [ classList [("slide__content", True), ("slide__content--visible", model.visible)] ]
+    li [ class "slide"
+       , onClick ToggleVisibility
+       ]
+       [ div [ classList [ ("slide__content", True)
+                         , ("slide__content--visible", model.visible)
+                         ]
+             ]
              [ div [ class "slide__title" ] [ text model.title ]
              , div [ class "slide__body" ] [ text model.body ]
              ]
@@ -198,8 +207,12 @@ viewText model =
 
 viewImage : Model -> Html Msg
 viewImage model =
-    li [ class "slide slide--image", onClick ToggleVisibility ]
-       [ div [ classList [("slide__content slide__content--image", True), ("slide__content--visible", model.visible)]
+    li [ class "slide slide--image"
+       , onClick ToggleVisibility
+       ]
+       [ div [ classList [ ("slide__content slide__content--image", True)
+                         , ("slide__content--visible", model.visible)
+                         ]
              , style [("background-image", "url(" ++ model.body ++ ")")]
              ]
              []
@@ -231,17 +244,65 @@ editView model =
 editMediaView : Model -> Html Msg
 editMediaView model =
     div []
-        [ button [ class "button button--ok", onClickStopPropagation TextSlide ] [ text "Text slide" ]
-        , div []
-              [ input [type' "file", id "MediaInputId", on "change" (succeed FileSelected)] []
+        [ div [ class "tabs" ]
+              [ button [ class "tabs__tab tabs__tab--active"
+                       , disabled True
+                       ]
+                       [ text "Media" ]
+              , button [ class "tabs__tab"
+                       , onClickStopPropagation TextSlide
+                       ]
+                       [ text "Text"]
+              ]
+        , div [ class "modal__slide" ]
+              [ input [ type' "text"
+                      , class "input modal__index"
+                      , onInput Index
+                      , value model.index
+                      , placeholder "Index"
+                      ]
+                      []
+              , input [ type' "file"
+                      , id "MediaInputId"
+                      , on "change" (succeed FileSelected)
+                      ]
+                      []
               ]
         ]
 
 editTextView : Model -> Html Msg
 editTextView model =
     div []
-        [ button [ class "button button--ok", onClickStopPropagation MediaSlide ] [ text "Media slide" ]
-        , div [] [ input [ type' "text", onInput Title, value model.title ] []
-                 , textarea [ onInput Body, value model.body ] []
-                 ]
+        [ div [ class "tabs" ]
+              [ button [ class "tabs__tab"
+                       , onClickStopPropagation MediaSlide
+                       ]
+                       [ text "Media" ]
+              , button [ class "tabs__tab tabs__tab--active"
+                       , disabled True
+                       ]
+                       [ text "Text"]
+              ]
+        , div [ class "modal__slide" ]
+              [ input [ type' "text"
+                      , class "input modal__index"
+                      , onInput Index
+                      , value model.index
+                      , placeholder "Index"
+                      ]
+                      []
+              , input [ type' "text"
+                      , class "input modal__title"
+                      , onInput Title
+                      , value model.title
+                      , placeholder "Title"
+                      ]
+                      []
+              , textarea [ onInput Body
+                        , class "input modal__body"
+                        , value model.body
+                        , placeholder "Body"
+                        ]
+                        []
+              ]
         ]

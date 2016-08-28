@@ -125,23 +125,34 @@ h1 {
     color: #111;
     display: flex;
     flex-direction: column;
-    height: 350px;
+    height: 450px;
     width: 500px;
 }
 
 .modal__header {
-    padding: 24px;
+    background: #ddd;
+    padding: 24px 34px;;
 }
 
 .modal__content {
     flex-grow: 1;
-    padding: 24px;
+}
+
+.modal__slide {
+    padding: 24px 34px;
+}
+
+.modal__index,
+.modal__title,
+.modal__body {
+    display: block;
+    margin-top: 10px;
 }
 
 .modal__footer {
     display: flex;
     justify-content: flex-end;
-    padding: 24px;
+    padding: 24px 34px;
 }
 
 .modal__save {
@@ -171,4 +182,41 @@ h1 {
 
 .button--cancel {
     background: #ddd;
+}
+
+.input {
+    background: #fff;
+    border: 0;
+    border-radius: 2px;
+    min-height: 32px;
+    padding: 10px;
+    width: 100%;
+}
+
+.tabs {
+    background: #ddd;
+    border-bottom: 1px solid #aaa;
+    padding: 0 14px;
+}
+
+.tabs__tab {
+    border: 1px solid transparent;
+    cursor: pointer;
+    position: relative;
+    top: 1px;
+    outline: none;
+}
+
+.tabs__tab {
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    color: black;
+    font-weight: 500;
+    padding: 10px 20px;
+}
+
+.tabs__tab--active {
+    background: #eee;
+    border: 1px solid #aaa;
+    border-bottom-color: #eee;
 }

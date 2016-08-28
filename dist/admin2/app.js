@@ -9150,6 +9150,9 @@ var _user$project$Slide$subscriptions = function (model) {
 var _user$project$Slide$FileSelected = {ctor: 'FileSelected'};
 var _user$project$Slide$MediaSlide = {ctor: 'MediaSlide'};
 var _user$project$Slide$TextSlide = {ctor: 'TextSlide'};
+var _user$project$Slide$Index = function (a) {
+	return {ctor: 'Index', _0: a};
+};
 var _user$project$Slide$editMediaView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9158,22 +9161,56 @@ var _user$project$Slide$editMediaView = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
-				_elm_lang$html$Html$button,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('button button--ok'),
-						_user$project$Events$onClickStopPropagation(_user$project$Slide$TextSlide)
+						_elm_lang$html$Html_Attributes$class('tabs')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Text slide')
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('tabs__tab tabs__tab--active'),
+								_elm_lang$html$Html_Attributes$disabled(true)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Media')
+							])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('tabs__tab'),
+								_user$project$Events$onClickStopPropagation(_user$project$Slide$TextSlide)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Text')
+							]))
 					])),
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
-					[]),
+					[
+						_elm_lang$html$Html_Attributes$class('modal__slide')
+					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('text'),
+								_elm_lang$html$Html_Attributes$class('input modal__index'),
+								_elm_lang$html$Html_Events$onInput(_user$project$Slide$Index),
+								_elm_lang$html$Html_Attributes$value(model.index),
+								_elm_lang$html$Html_Attributes$placeholder('Index')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
 						A2(
 						_elm_lang$html$Html$input,
 						_elm_lang$core$Native_List.fromArray(
@@ -9204,20 +9241,42 @@ var _user$project$Slide$editTextView = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
-				_elm_lang$html$Html$button,
+				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('button button--ok'),
-						_user$project$Events$onClickStopPropagation(_user$project$Slide$MediaSlide)
+						_elm_lang$html$Html_Attributes$class('tabs')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Media slide')
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('tabs__tab'),
+								_user$project$Events$onClickStopPropagation(_user$project$Slide$MediaSlide)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Media')
+							])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('tabs__tab tabs__tab--active'),
+								_elm_lang$html$Html_Attributes$disabled(true)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Text')
+							]))
 					])),
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
-					[]),
+					[
+						_elm_lang$html$Html_Attributes$class('modal__slide')
+					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						A2(
@@ -9225,8 +9284,22 @@ var _user$project$Slide$editTextView = function (model) {
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html_Attributes$type$('text'),
+								_elm_lang$html$Html_Attributes$class('input modal__index'),
+								_elm_lang$html$Html_Events$onInput(_user$project$Slide$Index),
+								_elm_lang$html$Html_Attributes$value(model.index),
+								_elm_lang$html$Html_Attributes$placeholder('Index')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('text'),
+								_elm_lang$html$Html_Attributes$class('input modal__title'),
 								_elm_lang$html$Html_Events$onInput(_user$project$Slide$Title),
-								_elm_lang$html$Html_Attributes$value(model.title)
+								_elm_lang$html$Html_Attributes$value(model.title),
+								_elm_lang$html$Html_Attributes$placeholder('Title')
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[])),
@@ -9235,7 +9308,9 @@ var _user$project$Slide$editTextView = function (model) {
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html_Events$onInput(_user$project$Slide$Body),
-								_elm_lang$html$Html_Attributes$value(model.body)
+								_elm_lang$html$Html_Attributes$class('input modal__body'),
+								_elm_lang$html$Html_Attributes$value(model.body),
+								_elm_lang$html$Html_Attributes$placeholder('Body')
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[]))
@@ -9370,6 +9445,14 @@ var _user$project$Slide$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{body: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Index':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{index: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'TextSlide':
