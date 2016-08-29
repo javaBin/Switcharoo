@@ -9411,6 +9411,19 @@ var _user$project$Slide$edit = function (model) {
 		_user$project$Slide$EditSucceeded,
 		_user$project$Slide$editSlide(model));
 };
+var _user$project$Slide$ToggleSucceeded = function (a) {
+	return {ctor: 'ToggleSucceeded', _0: a};
+};
+var _user$project$Slide$ToggleFailed = function (a) {
+	return {ctor: 'ToggleFailed', _0: a};
+};
+var _user$project$Slide$toggle = function (model) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Slide$ToggleFailed,
+		_user$project$Slide$ToggleSucceeded,
+		_user$project$Slide$editSlide(model));
+};
 var _user$project$Slide$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -9424,8 +9437,12 @@ var _user$project$Slide$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: newModel,
-					_1: _user$project$Slide$edit(newModel)
+					_1: _user$project$Slide$toggle(newModel)
 				};
+			case 'ToggleFailed':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'ToggleSucceeded':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'EditFailed':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'EditSucceeded':
@@ -9441,7 +9458,11 @@ var _user$project$Slide$update = F2(
 					_1: _user$project$Slide$delete(model)
 				};
 			case 'Edit':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Slide$edit(model)
+				};
 			case 'DeleteSucceeded':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'DeleteFailed':

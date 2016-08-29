@@ -29,6 +29,8 @@ init = (initModel, Cmd.none)
 
 type Msg
     = ToggleVisibility
+    | ToggleFailed Http.RawError
+    | ToggleSucceeded Response
     | EditFailed Http.RawError
     | EditSucceeded Response
     | CreateFailed Http.RawError
@@ -53,7 +55,13 @@ update msg model =
             let
                 newModel = {model | visible = not model.visible}
             in
-                (newModel, edit newModel)
+                (newModel, toggle newModel)
+
+        ToggleFailed _ ->
+            (model, Cmd.none)
+
+        ToggleSucceeded _ ->
+            (model, Cmd.none)
 
         EditFailed _ ->
             (model, Cmd.none)
@@ -71,7 +79,7 @@ update msg model =
             (model, delete model)
 
         Edit ->
-            (model, Cmd.none)
+            (model, edit model)
 
         DeleteSucceeded _ ->
             (model, Cmd.none)
@@ -167,6 +175,9 @@ delete model = Task.perform DeleteFailed DeleteSucceeded <| deleteSlide model
 
 edit : Model -> Cmd Msg
 edit model = Task.perform EditFailed EditSucceeded <| editSlide model
+
+toggle : Model -> Cmd Msg
+toggle model = Task.perform ToggleFailed ToggleSucceeded <| editSlide model
 
 create : Model -> Cmd Msg
 create model = Task.perform CreateFailed CreateSucceeded <| createSlide model
