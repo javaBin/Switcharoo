@@ -10020,7 +10020,7 @@ var _user$project$Slides$update = F2(
 						var newCmds = _p4._1;
 						var _p5 = _p6;
 						switch (_p5.ctor) {
-							case 'Delete':
+							case 'DeleteSucceeded':
 								return {
 									ctor: '_Tuple2',
 									_0: _elm_lang$core$Native_Utils.update(
@@ -10033,7 +10033,7 @@ var _user$project$Slides$update = F2(
 												[_user$project$Slides$getSlides]),
 											newCmds))
 								};
-							case 'Edit':
+							case 'EditSucceeded':
 								return A3(_user$project$Slides$editSlide, model, newModels, _p7);
 							default:
 								return {

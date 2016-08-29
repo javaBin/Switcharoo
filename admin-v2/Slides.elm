@@ -47,9 +47,9 @@ update msg model =
                 (newModels, newCmds) = List.unzip (List.map (updateSlide slide msg) model.slides)
             in
                 case msg of
-                    Slide.Delete ->
+                    Slide.DeleteSucceeded _ ->
                         ({model | slides = newModels}, Cmd.batch <| [getSlides] ++ newCmds)
-                    Slide.Edit ->
+                    Slide.EditSucceeded _ ->
                         editSlide model newModels slide
                     _ ->
                         ({model | slides = newModels}, Cmd.batch newCmds)
