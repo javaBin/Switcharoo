@@ -35,8 +35,8 @@ type Msg
     | CreateSucceeded Response
     | Delete
     | Edit
-    | DeleteSucceeded Http.RawError
-    | DeleteFailed Response
+    | DeleteFailed Http.RawError
+    | DeleteSucceeded Response
     | Title String
     | Body String
     | Index String
@@ -153,15 +153,17 @@ createOrEditSlide model =
     else
         editSlide model
 
-delete : Model -> Cmd Msg
-delete model =
-    Task.perform DeleteSucceeded DeleteFailed <|
+deleteSlide : Model -> Platform.Task Http.RawError Response
+deleteSlide model =
     send defaultSettings
         { verb = "DELETE"
         , headers = []
         , url = "/slides/" ++ model.id
         , body = empty
         }
+
+delete : Model -> Cmd Msg
+delete model = Task.perform DeleteFailed DeleteSucceeded <| deleteSlide model
 
 edit : Model -> Cmd Msg
 edit model = Task.perform EditFailed EditSucceeded <| editSlide model

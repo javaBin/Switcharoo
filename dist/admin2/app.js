@@ -9039,6 +9039,18 @@ var _user$project$Slide$icon = function (c) {
 		_elm_lang$core$Native_List.fromArray(
 			[]));
 };
+var _user$project$Slide$deleteSlide = function (model) {
+	return A2(
+		_evancz$elm_http$Http$send,
+		_evancz$elm_http$Http$defaultSettings,
+		{
+			verb: 'DELETE',
+			headers: _elm_lang$core$Native_List.fromArray(
+				[]),
+			url: A2(_elm_lang$core$Basics_ops['++'], '/slides/', model.id),
+			body: _evancz$elm_http$Http$empty
+		});
+};
 var _user$project$Slide$encodeSlide = function (model) {
 	return _elm_lang$core$Json_Encode$object(
 		A2(
@@ -9332,27 +9344,18 @@ var _user$project$Slide$editTextView = function (model) {
 var _user$project$Slide$editView = function (model) {
 	return _elm_lang$core$Native_Utils.eq(model.type$, 'text') ? _user$project$Slide$editTextView(model) : _user$project$Slide$editMediaView(model);
 };
-var _user$project$Slide$DeleteFailed = function (a) {
-	return {ctor: 'DeleteFailed', _0: a};
-};
 var _user$project$Slide$DeleteSucceeded = function (a) {
 	return {ctor: 'DeleteSucceeded', _0: a};
+};
+var _user$project$Slide$DeleteFailed = function (a) {
+	return {ctor: 'DeleteFailed', _0: a};
 };
 var _user$project$Slide$delete = function (model) {
 	return A3(
 		_elm_lang$core$Task$perform,
-		_user$project$Slide$DeleteSucceeded,
 		_user$project$Slide$DeleteFailed,
-		A2(
-			_evancz$elm_http$Http$send,
-			_evancz$elm_http$Http$defaultSettings,
-			{
-				verb: 'DELETE',
-				headers: _elm_lang$core$Native_List.fromArray(
-					[]),
-				url: A2(_elm_lang$core$Basics_ops['++'], '/slides/', model.id),
-				body: _evancz$elm_http$Http$empty
-			}));
+		_user$project$Slide$DeleteSucceeded,
+		_user$project$Slide$deleteSlide(model));
 };
 var _user$project$Slide$Edit = {ctor: 'Edit'};
 var _user$project$Slide$editButton = function (model) {
