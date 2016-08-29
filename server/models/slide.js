@@ -15,5 +15,13 @@ var Slide = restful.model('slides', mongoose.Schema({
 Slide.before('put', basicAuth);
 Slide.before('post', basicAuth);
 Slide.before('delete', basicAuth);
+Slide.after('get', (req, res, next) => {
+    const program = res.locals.bundle;
+    if (Array.isArray(program)) {
+        res.locals.bundle = res.locals.bundle.sort((a, b) => parseInt(a.index) > parseInt(b.index));
+    }
+
+    next();
+});
 
 module.exports = Slide;

@@ -1,6 +1,6 @@
 var express = require('express');
 var config = require('./server/config');
-var Program = require('./server/services/program')
+var Program = require('./server/services/program');
 var Twitter = require('./server/services/twitter');
 var Instagram = require('./server/services/instagram');
 var mongoose = require('node-restful').mongoose;

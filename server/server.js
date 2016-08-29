@@ -55,7 +55,8 @@ function configure(app, express, basePath) {
             Twitter.asJson(),
             Program.asJson()
         ]).then((r) => {
-            res.json({slides: r[0].concat(r[1]).concat(r[2])});
+            const program = r[0].sort((a, b) => parseInt(a.index) > parseInt(b.index));
+            res.json({slides: program.concat(r[1]).concat(r[2])});
         }).catch(() => {
             res.status(500).send();
         });
