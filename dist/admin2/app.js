@@ -9016,6 +9016,18 @@ var _user$project$Ports$FileData = F2(
 		return {location: a, filetype: b};
 	});
 
+var _user$project$Slide$slideIndex = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('slide__index')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(model.index)
+			]));
+};
 var _user$project$Slide$icon = function (c) {
 	return A2(
 		_elm_lang$html$Html$i,
@@ -9536,7 +9548,8 @@ var _user$project$Slide$viewText = function (model) {
 							]))
 					])),
 				_user$project$Slide$deleteButton(model),
-				_user$project$Slide$editButton(model)
+				_user$project$Slide$editButton(model),
+				_user$project$Slide$slideIndex(model)
 			]));
 };
 var _user$project$Slide$viewImage = function (model) {
@@ -9575,7 +9588,8 @@ var _user$project$Slide$viewImage = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[])),
 				_user$project$Slide$deleteButton(model),
-				_user$project$Slide$editButton(model)
+				_user$project$Slide$editButton(model),
+				_user$project$Slide$slideIndex(model)
 			]));
 };
 var _user$project$Slide$viewVideo = function (model) {
@@ -9614,7 +9628,8 @@ var _user$project$Slide$viewVideo = function (model) {
 							[]))
 					])),
 				_user$project$Slide$deleteButton(model),
-				_user$project$Slide$editButton(model)
+				_user$project$Slide$editButton(model),
+				_user$project$Slide$slideIndex(model)
 			]));
 };
 var _user$project$Slide$view = function (model) {

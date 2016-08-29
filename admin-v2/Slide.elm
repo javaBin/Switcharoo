@@ -189,6 +189,9 @@ deleteButton model = button [ class "slide__delete", onClickStopPropagation Dele
 editButton : Model -> Html Msg
 editButton model = button [ class "slide__edit", onClickStopPropagation Edit ] [ icon "pencil" ]
 
+slideIndex : Model -> Html Msg
+slideIndex model = div [ class "slide__index" ] [ text model.index ]
+
 viewText : Model -> Html Msg
 viewText model =
     li [ class "slide"
@@ -203,6 +206,7 @@ viewText model =
              ]
        , deleteButton model
        , editButton model
+       , slideIndex model
        ]
 
 viewImage : Model -> Html Msg
@@ -218,6 +222,7 @@ viewImage model =
              []
        , deleteButton model
        , editButton model
+       , slideIndex model
        ]
 
 viewVideo : Model -> Html Msg
@@ -238,6 +243,7 @@ viewVideo model =
              ]
        , deleteButton model
        , editButton model
+       , slideIndex model
        ]
 
 editView : Model -> Html Msg
