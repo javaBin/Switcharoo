@@ -72,6 +72,10 @@ h1 {
     background-size: cover;
 }
 
+.slide__body {
+    text-align: center;
+}
+
 .slide__video {
     height: 100%;
     width: 100%;
