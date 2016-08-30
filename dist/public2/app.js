@@ -9366,13 +9366,13 @@ var _user$project$Main$subscription = function (model) {
 			[
 				A2(
 				_elm_lang$core$Time$every,
-				5 * _elm_lang$core$Time$second,
+				10 * _elm_lang$core$Time$second,
 				function (_p6) {
 					return _user$project$Main$HideSlide;
 				}),
 				A2(
 				_elm_lang$core$Time$every,
-				10 * _elm_lang$core$Time$second,
+				60 * _elm_lang$core$Time$second,
 				function (_p7) {
 					return _user$project$Main$Refetch;
 				})

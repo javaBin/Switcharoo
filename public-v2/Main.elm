@@ -123,8 +123,8 @@ containerClass model =
 subscription : model -> Sub Msg
 subscription model =
     Sub.batch
-        [ Time.every (5 * second) (\_ -> HideSlide)
-        , Time.every (10 * second) (\_ -> Refetch)
+        [ Time.every (10 * second) (\_ -> HideSlide)
+        , Time.every (60 * second) (\_ -> Refetch)
         ]
 
 main : Program Never
