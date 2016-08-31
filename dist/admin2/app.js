@@ -10098,20 +10098,279 @@ var _user$project$Slides$update = F2(
 	});
 var _user$project$Slides$GetSlides = {ctor: 'GetSlides'};
 
-var _user$project$Main$Model = function (a) {
-	return {slides: a};
+var _user$project$Setting$icon = function (c) {
+	return A2(
+		_elm_lang$html$Html$i,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'setting__icon icon-', c))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _user$project$Setting$label = function (model) {
+	var _p0 = model.key;
+	switch (_p0) {
+		case 'twitter-enabled':
+			return 'Twitter';
+		case 'instagram-enabled':
+			return 'Instagram';
+		case 'program-enabled':
+			return 'Program';
+		default:
+			return 'Error';
+	}
+};
+var _user$project$Setting$encoder = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{
+				ctor: '_Tuple2',
+				_0: '_id',
+				_1: _elm_lang$core$Json_Encode$string(model.id)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'key',
+				_1: _elm_lang$core$Json_Encode$string(model.key)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'value',
+				_1: _elm_lang$core$Json_Encode$bool(model.value)
+			}
+			]));
+};
+var _user$project$Setting$toggleRequest = function (model) {
+	return A2(
+		_evancz$elm_http$Http$send,
+		_evancz$elm_http$Http$defaultSettings,
+		{
+			verb: 'PUT',
+			headers: _elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 'Content-Type', _1: 'application/json'}
+				]),
+			url: A2(_elm_lang$core$Basics_ops['++'], '/settings/', model.id),
+			body: _evancz$elm_http$Http$string(
+				A2(
+					_elm_lang$core$Json_Encode$encode,
+					0,
+					_user$project$Setting$encoder(model)))
+		});
+};
+var _user$project$Setting$Model = F3(
+	function (a, b, c) {
+		return {id: a, key: b, value: c};
+	});
+var _user$project$Setting$init = {
+	ctor: '_Tuple2',
+	_0: A3(_user$project$Setting$Model, '', '', false),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Setting$decoder = A2(
+	_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
+	A2(
+		_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
+		A2(
+			_elm_community$json_extra$Json_Decode_Extra_ops['|:'],
+			_elm_lang$core$Json_Decode$succeed(_user$project$Setting$Model),
+			A2(_elm_lang$core$Json_Decode_ops[':='], '_id', _elm_lang$core$Json_Decode$string)),
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'key', _elm_lang$core$Json_Decode$string)),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'value', _elm_lang$core$Json_Decode$bool));
+var _user$project$Setting$ToggleSucceeded = function (a) {
+	return {ctor: 'ToggleSucceeded', _0: a};
+};
+var _user$project$Setting$ToggleFailed = function (a) {
+	return {ctor: 'ToggleFailed', _0: a};
+};
+var _user$project$Setting$toggleSetting = function (model) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$Setting$ToggleFailed,
+		_user$project$Setting$ToggleSucceeded,
+		_user$project$Setting$toggleRequest(model));
+};
+var _user$project$Setting$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'Toggle':
+				var newModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						value: _elm_lang$core$Basics$not(model.value)
+					});
+				return {
+					ctor: '_Tuple2',
+					_0: newModel,
+					_1: _user$project$Setting$toggleSetting(newModel)
+				};
+			case 'ToggleFailed':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							value: _elm_lang$core$Basics$not(model.value)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Setting$Toggle = {ctor: 'Toggle'};
+var _user$project$Setting$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$li,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('settings__setting')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$classList(
+						_elm_lang$core$Native_List.fromArray(
+							[
+								{ctor: '_Tuple2', _0: 'settings__toggle', _1: true},
+								{ctor: '_Tuple2', _0: 'settings__toggle--enabled', _1: model.value}
+							])),
+						_elm_lang$html$Html_Events$onClick(_user$project$Setting$Toggle)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Setting$icon(
+						model.value ? 'check' : 'close'),
+						_elm_lang$html$Html$text(
+						_user$project$Setting$label(model))
+					]))
+			]));
+};
+
+var _user$project$Settings$decoder = _elm_lang$core$Json_Decode$list(_user$project$Setting$decoder);
+var _user$project$Settings$Model = function (a) {
+	return {settings: a};
+};
+var _user$project$Settings$GetSucceeded = function (a) {
+	return {ctor: 'GetSucceeded', _0: a};
+};
+var _user$project$Settings$GetFailed = function (a) {
+	return {ctor: 'GetFailed', _0: a};
+};
+var _user$project$Settings$getSettings = A3(
+	_elm_lang$core$Task$perform,
+	_user$project$Settings$GetFailed,
+	_user$project$Settings$GetSucceeded,
+	A2(_evancz$elm_http$Http$get, _user$project$Settings$decoder, '/settings'));
+var _user$project$Settings$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$Settings$Model(
+		_elm_lang$core$Native_List.fromArray(
+			[])),
+	_1: _user$project$Settings$getSettings
+};
+var _user$project$Settings$SettingMsg = F2(
+	function (a, b) {
+		return {ctor: 'SettingMsg', _0: a, _1: b};
+	});
+var _user$project$Settings$updateSetting = F3(
+	function (newModel, msg, currentModel) {
+		if (_elm_lang$core$Native_Utils.eq(newModel.id, currentModel.id)) {
+			var _p0 = A2(_user$project$Setting$update, msg, newModel);
+			var newSetting = _p0._0;
+			var newCmd = _p0._1;
+			return {
+				ctor: '_Tuple2',
+				_0: newSetting,
+				_1: A2(
+					_elm_lang$core$Platform_Cmd$map,
+					_user$project$Settings$SettingMsg(newSetting),
+					newCmd)
+			};
+		} else {
+			return {ctor: '_Tuple2', _0: currentModel, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Settings$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'SettingMsg':
+				var _p2 = _elm_lang$core$List$unzip(
+					A2(
+						_elm_lang$core$List$map,
+						A2(_user$project$Settings$updateSetting, _p1._0, _p1._1),
+						model.settings));
+				var newSettings = _p2._0;
+				var newCmds = _p2._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{settings: newSettings}),
+					_1: _elm_lang$core$Platform_Cmd$batch(newCmds)
+				};
+			case 'GetFailed':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Settings$Model(_p1._0),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Settings$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('settings')
+			]),
+		A2(
+			_elm_lang$core$List$map,
+			function (setting) {
+				return A2(
+					_elm_lang$html$Html_App$map,
+					_user$project$Settings$SettingMsg(setting),
+					_user$project$Setting$view(setting));
+			},
+			model.settings));
+};
+
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {slides: a, settings: b};
+	});
+var _user$project$Main$SettingsMsg = function (a) {
+	return {ctor: 'SettingsMsg', _0: a};
 };
 var _user$project$Main$SlideList = function (a) {
 	return {ctor: 'SlideList', _0: a};
 };
 var _user$project$Main$init = function () {
-	var _p0 = _user$project$Slides$init;
-	var slides = _p0._0;
-	var slidesCmd = _p0._1;
+	var _p0 = _user$project$Settings$init;
+	var settings = _p0._0;
+	var settingsCmd = _p0._1;
+	var _p1 = _user$project$Slides$init;
+	var slides = _p1._0;
+	var slidesCmd = _p1._1;
 	return {
 		ctor: '_Tuple2',
-		_0: _user$project$Main$Model(slides),
-		_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, slidesCmd)
+		_0: A2(_user$project$Main$Model, slides, settings),
+		_1: _elm_lang$core$Platform_Cmd$batch(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, slidesCmd),
+					A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SettingsMsg, settingsCmd)
+				]))
 	};
 }();
 var _user$project$Main$update = F2(
@@ -10123,20 +10382,37 @@ var _user$project$Main$update = F2(
 				'Main: ',
 				_elm_lang$core$Basics$toString(msg)),
 			function () {
-				var _p1 = msg;
-				var _p2 = A2(_user$project$Slides$update, _p1._0, model.slides);
-				var slides = _p2._0;
-				var cmd = _p2._1;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{slides: slides}),
-					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, cmd)
-				};
+				var _p2 = msg;
+				if (_p2.ctor === 'SlideList') {
+					var _p3 = A2(_user$project$Slides$update, _p2._0, model.slides);
+					var slides = _p3._0;
+					var cmd = _p3._1;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{slides: slides}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlideList, cmd)
+					};
+				} else {
+					var _p4 = A2(_user$project$Settings$update, _p2._0, model.settings);
+					var settings = _p4._0;
+					var cmd = _p4._1;
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{settings: settings}),
+						_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SettingsMsg, cmd)
+					};
+				}
 			}());
 	});
 var _user$project$Main$view = function (model) {
+	var settings = A2(
+		_elm_lang$html$Html_App$map,
+		_user$project$Main$SettingsMsg,
+		_user$project$Settings$view(model.settings));
 	var slides = A2(
 		_elm_lang$core$List$map,
 		function (slide) {
@@ -10157,6 +10433,7 @@ var _user$project$Main$view = function (model) {
 					[
 						_elm_lang$html$Html$text('Switcharoo')
 					])),
+				settings,
 				A2(
 				_elm_lang$html$Html$ul,
 				_elm_lang$core$Native_List.fromArray(

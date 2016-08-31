@@ -241,3 +241,35 @@ h1 {
     border: 1px solid #aaa;
     border-bottom-color: #eee;
 }
+
+.settings {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.settings__setting {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.settings__toggle {
+    background: rgba(0, 0, 0, .5);
+    border: 0;
+    border-radius: 2px;
+    color: #eee;
+    cursor: pointer;
+    font-size: 1rem;
+    outline: none;
+    padding: 10px 20px;
+    transition: background .2s ease-in-out;
+}
+
+.settings__toggle--enabled {
+    background: #149089;
+}
+
+.setting__icon {
+    margin-right: 10px;
+}
