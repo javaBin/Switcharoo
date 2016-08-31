@@ -15,7 +15,7 @@ function configure(app, express, basePath) {
     app.set('port', config.app.port);
     app.use(bodyParser.json());
     app.use(express.static(path.join(basePath, 'dist', 'public2')));
-    app.use(morgan(config.app.env));
+    app.use(morgan('combined'));
 
     var storage = multer.diskStorage({
         destination: function(req, file, cb) {
