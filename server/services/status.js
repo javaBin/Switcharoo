@@ -7,7 +7,6 @@ function get() {
 	var services = [
 		Program.status(),
 		Twitter.status(),
-		Instagram.status(),
 	];
 
 	var errors = _(services).any(function(service) { return service.statusCode !== 200; });
