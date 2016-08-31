@@ -1,0 +1,153 @@
+html, body {
+    // cursor: none;
+    font-size: 16px;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+body {
+    background: #101010;
+    color: white;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, 'sans serif';
+    overflow: hidden;
+}
+
+*, *:before, *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.switcharoo {
+    height: 100%;
+    transition: opacity .4s ease-in-out;
+}
+
+.switcharoo--hidden {
+    opacity: 0;
+}
+
+.slides {
+    height: 100%;
+}
+
+.slide {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.slide__title {
+    font-size: 3rem;
+    margin: 0 0 40px 0;
+}
+
+.slide__body {
+    font-size: 4em;
+    padding: 0 100px;
+    text-align: center;
+}
+
+.slide__image {
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 100%;
+    width: 100%;
+}
+
+.slide__video {
+    height: 100%;
+    width: 100%;
+}
+
+.program__header {
+    font-size: 3rem;
+    text-align: center;
+}
+
+.program__program {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.entry {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 30px;
+    width: 50%;
+}
+
+.entry__room {
+    font-size: 3rem;
+    margin-right: 20px;
+}
+
+.entry__title {
+    font-size: 3rem;
+    margin-bottom: 5px;
+}
+
+.entry__speakers {
+    font-size: 1.3rem;
+}
+
+.entry__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.tweets {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    height: 100%;
+    justify-content: center;
+    margin: 0 auto;
+    padding: 0;
+    width: 700px;
+}
+
+.tweet {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.tweet:not(:last-child) {
+    margin-bottom: 30px;
+}
+
+.tweet__img {
+    border-radius: 100%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    height: 100px;
+    margin-right: 20px;
+    width: 100px;
+}
+
+.tweet__user {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+}
+
+.tweet__name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-right: 20px;
+}
+
+.tweet__handle {
+    font-size: 1.2rem;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Admin</title>
+	<script type="text/javascript" src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/admin.css" />
+    <link rel="stylesheet" type="text/css" href="simple-line-icons.css">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,300,700' rel='stylesheet' type='text/css'>
+</head>
+<body>
+	<script type="text/javascript">
+            var app = Elm.Main.fullscreen();
+
+            function checkStatus(response) {
+                if (response.status >= 200 && response.status < 300) {
+                    return response;
+                } else {
+                    var error = new Error(response.statusText);
+                    error.response = response;
+                    throw error;
+                }
+            }
+
+            function parseJson(response) {
+                return response.json();
+            }
+
+            app.ports.fileSelected.subscribe(function(id) {
+                var input = document.getElementById(id);
+                if (input == null) {
+                    return;
+                }
+                console.log('FILE_SELECTED');
+
+                var data = new FormData();
+                data.append('image', input.files[0]);
+
+                fetch('/image', {
+                    method: 'POST',
+                    body: data
+                })
+                .then(checkStatus)
+                .then(parseJson)
+                .then(function(data) {
+                    app.ports.fileUploadSucceeded.send(data);
+                })
+                .catch(function(error) {
+                    app.ports.fileUploadFailed.send(error.message);
+                });
+                // var file = node.files[0];
+                // var reader = new FileReader();
+
+                // reader.onload = function(event) {
+                //     var base64Encoded = event.target.result;
+
+                //     var portData = {
+                //         contents: base64Encoded,
+                //         filename: file.name
+                //     };
+
+                //     app.ports.fileContentUploaded.send(portData);
+                // };
+
+                // reader.readAsDataURL(file);
+            });
+
+	</script>
+</body>
+</html>

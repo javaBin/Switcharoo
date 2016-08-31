@@ -1,2 +1,6 @@
 configuration.js
 uploads
+npm-debug.log
+node_modules
+elm-stuff
+public-v2/index.html
