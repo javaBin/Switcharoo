@@ -116,7 +116,7 @@ body {
     justify-content: center;
     margin: 0 auto;
     padding: 0;
-    width: 700px;
+    width: 900px;
 }
 
 .tweet {
@@ -126,7 +126,7 @@ body {
 }
 
 .tweet:not(:last-child) {
-    margin-bottom: 30px;
+    margin-bottom: 50px;
 }
 
 .tweet__img {
@@ -134,9 +134,9 @@ body {
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
-    height: 100px;
-    margin-right: 20px;
-    width: 100px;
+    height: 140px;
+    margin: 10px 40px 0 0;
+    width: 140px;
 }
 
 .tweet__user {
@@ -146,11 +146,18 @@ body {
 }
 
 .tweet__name {
-    font-size: 1.2rem;
-    font-weight: 600;
+    font-size: 1.9rem;
+    font-weight: 400;
     margin-right: 20px;
 }
 
 .tweet__handle {
-    font-size: 1.2rem;
+    color: rgba(255, 255, 255, .5);
+    font-size: 1.9rem;
+    font-weight: 100;
+}
+
+.tweet__body {
+    font-size: 1.8rem;
+    font-weight: 100;
 }
