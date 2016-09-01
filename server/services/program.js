@@ -157,7 +157,7 @@ function program(all, res) {
             return memo;
         }, [[], []]);
         if (presentations[1].length > 0)
-            presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'})
+            presentations[0].push({room: presentations[1][0].room, title: 'Lightning Talks'});
 
         slot.presentations = _.sortBy(presentations[0], 'room');
         res.json(slot);
@@ -202,7 +202,11 @@ function asJson() {
             if (presentations[1].length > 0) {
                 var lightningTalks = _.groupBy(presentations[1], 'room');
                 Object.keys(lightningTalks).forEach(function(room) {
-                    presentations[0].push({room: room, title: 'Lightning Talks'});
+                    presentations[0].push({
+                        room: room,
+                        title: 'Lightning Talks',
+                        speakers: 'Multiple Speakers'
+                    });
                 });
             }
 

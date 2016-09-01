@@ -68,8 +68,9 @@ body {
 }
 
 .program__header {
-    font-size: 3rem;
+    font-size: 4rem;
     text-align: center;
+    text-transform: uppercase;
 }
 
 .program__program {
@@ -86,17 +87,19 @@ body {
 }
 
 .entry__room {
-    font-size: 3rem;
-    margin-right: 20px;
+    font-size: 7rem;
+    font-weight: 100;
+    margin: -22px 40px 0 0;
 }
 
 .entry__title {
     font-size: 3rem;
+    font-weight: 100;
     margin-bottom: 5px;
 }
 
 .entry__speakers {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
 }
 
 .entry__info {
