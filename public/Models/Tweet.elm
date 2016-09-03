@@ -4,6 +4,8 @@ import Html exposing (..)
 import Html.Attributes exposing (class, style)
 import Json.Decode.Extra exposing ((|:))
 import Json.Decode exposing (Decoder, succeed, string, (:=))
+import Combine as C
+import Debug exposing (log)
 
 type alias Model =
     { user : String
@@ -27,17 +29,67 @@ tweet =
         |: ("image" := string)
         |: ("handle" := string)
 
+type T
+    = Text String
+    | At String
+    | Hash String
+
+tText : C.Parser T
+tText = C.map Text (C.regex "[^@#]+")
+
+tAt : C.Parser T
+tAt = C.map At (C.regex "@\\w+")
+
+tHash : C.Parser T
+tHash = C.map Hash (C.regex "#\\w+")
+
+tTweet : C.Parser (List T)
+tTweet = C.rec <| \() -> C.many (C.choice [tText, tAt, tHash])
+
+-- tweetParser : String -> (Result (List T), C.Context)
+-- tweetParser = C.parse tTweet
+
 view : Model -> Html Msg
 view model =
-    li [ class "tweets__tweet tweet" ]
-        [ div [ style [("backgroundImage", "url('" ++ model.image ++ "')")], class "tweet__img" ] []
-        , div [ class "tweet__info" ]
-              [ div [ class "tweet__user" ]
-                    [ div [ class "tweet__name" ]
-                          [ text model.user ]
-                    , div [ class "tweet__handle" ]
-                          [ text <| "@" ++ model.handle ]
-                    ]
-              , div [ class "tweet__body" ] [ text model.text ]
-              ]
-        ]
+    case C.parse tTweet model.text of
+        (Ok t, _) ->
+            log (toString t) <|
+            tweetView model t
+
+        (_, _) ->
+            div [] []
+
+tweetView : Model -> List T -> Html Msg
+tweetView model t =
+    log (toString t) <|
+    let
+        body = List.map toHtml t
+    in
+        li [ class "tweets__tweet tweet" ]
+            [ div [ style [("backgroundImage", "url('" ++ model.image ++ "')")], class "tweet__img" ] []
+            , div [ class "tweet__info" ]
+                  [ div [ class "tweet__user" ]
+                        [ div [ class "tweet__name" ]
+                              [ text model.user ]
+                        , div [ class "tweet__handle" ]
+                              [ text <| "@" ++ model.handle ]
+                        ]
+                  , div [ class "tweet__body" ] body
+                  ]
+            ]
+
+toHtml : T -> Html Msg
+toHtml t =
+    case t of
+        Text s -> textView s
+        At s   -> atView s
+        Hash s -> hashView s
+
+textView : String -> Html Msg
+textView s = span [ class "tweet__text" ] [ text s ]
+
+atView : String -> Html Msg
+atView s = span [ class "tweet__at" ] [ text s ]
+
+hashView : String -> Html Msg
+hashView s = span [ class "tweet__hash" ] [ text s ]

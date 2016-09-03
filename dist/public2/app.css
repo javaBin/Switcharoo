@@ -161,3 +161,8 @@ body {
     font-size: 1.8rem;
     font-weight: 100;
 }
+
+.tweet__at,
+.tweet__hash {
+    color: #149089;
+}
