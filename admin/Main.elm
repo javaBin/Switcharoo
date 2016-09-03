@@ -3,7 +3,6 @@ import Html.Attributes exposing (class)
 import Html.App exposing (program, map)
 import Slides
 import Settings
-import Debug exposing (log)
 
 type alias Model =
     { slides : Slides.Model
@@ -28,7 +27,6 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    log ("Main: " ++ toString msg) <|
     case msg of
         SlideList msg ->
             let

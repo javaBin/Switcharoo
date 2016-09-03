@@ -6,7 +6,6 @@ import Html.App as App
 import Html.Attributes exposing (class, classList, attribute, type', id, disabled)
 import Html.Events exposing (onClick, on, onInput)
 import Events exposing (onClickStopPropagation)
-import Debug exposing (log)
 import Slide
 import Task
 import Http exposing (Response)
@@ -31,7 +30,6 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    log ("Modal: " ++ toString msg) <|
     case msg of
         Show ->
             ({model | show = True}, Cmd.none)

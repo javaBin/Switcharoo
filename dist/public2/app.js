@@ -9931,16 +9931,40 @@ var _user$project$Models_Tweet$toHtml = function (t) {
 };
 var _user$project$Models_Tweet$tweetView = F2(
 	function (model, t) {
+		var body = A2(_elm_lang$core$List$map, _user$project$Models_Tweet$toHtml, t);
 		return A2(
-			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(t),
-			function () {
-				var body = A2(_elm_lang$core$List$map, _user$project$Models_Tweet$toHtml, t);
-				return A2(
-					_elm_lang$html$Html$li,
+			_elm_lang$html$Html$li,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('tweets__tweet tweet')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html_Attributes$class('tweets__tweet tweet')
+							_elm_lang$html$Html_Attributes$style(
+							_elm_lang$core$Native_List.fromArray(
+								[
+									{
+									ctor: '_Tuple2',
+									_0: 'backgroundImage',
+									_1: A2(
+										_elm_lang$core$Basics_ops['++'],
+										'url(\'',
+										A2(_elm_lang$core$Basics_ops['++'], model.image, '\')'))
+								}
+								])),
+							_elm_lang$html$Html_Attributes$class('tweet__img')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tweet__info')
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
@@ -9948,70 +9972,41 @@ var _user$project$Models_Tweet$tweetView = F2(
 							_elm_lang$html$Html$div,
 							_elm_lang$core$Native_List.fromArray(
 								[
-									_elm_lang$html$Html_Attributes$style(
-									_elm_lang$core$Native_List.fromArray(
-										[
-											{
-											ctor: '_Tuple2',
-											_0: 'backgroundImage',
-											_1: A2(
-												_elm_lang$core$Basics_ops['++'],
-												'url(\'',
-												A2(_elm_lang$core$Basics_ops['++'], model.image, '\')'))
-										}
-										])),
-									_elm_lang$html$Html_Attributes$class('tweet__img')
+									_elm_lang$html$Html_Attributes$class('tweet__user')
 								]),
 							_elm_lang$core$Native_List.fromArray(
-								[])),
+								[
+									A2(
+									_elm_lang$html$Html$div,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Attributes$class('tweet__name')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text(model.user)
+										])),
+									A2(
+									_elm_lang$html$Html$div,
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html_Attributes$class('tweet__handle')
+										]),
+									_elm_lang$core$Native_List.fromArray(
+										[
+											_elm_lang$html$Html$text(
+											A2(_elm_lang$core$Basics_ops['++'], '@', model.handle))
+										]))
+								])),
 							A2(
 							_elm_lang$html$Html$div,
 							_elm_lang$core$Native_List.fromArray(
 								[
-									_elm_lang$html$Html_Attributes$class('tweet__info')
+									_elm_lang$html$Html_Attributes$class('tweet__body')
 								]),
-							_elm_lang$core$Native_List.fromArray(
-								[
-									A2(
-									_elm_lang$html$Html$div,
-									_elm_lang$core$Native_List.fromArray(
-										[
-											_elm_lang$html$Html_Attributes$class('tweet__user')
-										]),
-									_elm_lang$core$Native_List.fromArray(
-										[
-											A2(
-											_elm_lang$html$Html$div,
-											_elm_lang$core$Native_List.fromArray(
-												[
-													_elm_lang$html$Html_Attributes$class('tweet__name')
-												]),
-											_elm_lang$core$Native_List.fromArray(
-												[
-													_elm_lang$html$Html$text(model.user)
-												])),
-											A2(
-											_elm_lang$html$Html$div,
-											_elm_lang$core$Native_List.fromArray(
-												[
-													_elm_lang$html$Html_Attributes$class('tweet__handle')
-												]),
-											_elm_lang$core$Native_List.fromArray(
-												[
-													_elm_lang$html$Html$text(
-													A2(_elm_lang$core$Basics_ops['++'], '@', model.handle))
-												]))
-										])),
-									A2(
-									_elm_lang$html$Html$div,
-									_elm_lang$core$Native_List.fromArray(
-										[
-											_elm_lang$html$Html_Attributes$class('tweet__body')
-										]),
-									body)
-								]))
-						]));
-			}());
+							body)
+						]))
+				]));
 	});
 var _user$project$Models_Tweet$update = F2(
 	function (msg, model) {
@@ -10068,11 +10063,7 @@ var _user$project$Models_Tweet$tTweet = _Bogdanp$elm_combine$Combine$rec(
 var _user$project$Models_Tweet$view = function (model) {
 	var _p4 = A2(_Bogdanp$elm_combine$Combine$parse, _user$project$Models_Tweet$tTweet, model.text);
 	if (_p4._0.ctor === 'Ok') {
-		var _p5 = _p4._0._0;
-		return A2(
-			_elm_lang$core$Debug$log,
-			_elm_lang$core$Basics$toString(_p5),
-			A2(_user$project$Models_Tweet$tweetView, model, _p5));
+		return A2(_user$project$Models_Tweet$tweetView, model, _p4._0._0);
 	} else {
 		return A2(
 			_elm_lang$html$Html$div,

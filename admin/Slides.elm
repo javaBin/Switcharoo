@@ -8,7 +8,6 @@ import Http
 import Task
 import Slide
 import Modal
-import Debug exposing (log)
 
 type alias Model =
     { slides : List Slide.Model
@@ -31,7 +30,6 @@ type Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-    log ("Slides: " ++ toString msg) <|
     case msg of
         GetSlides ->
             (model, getSlides)

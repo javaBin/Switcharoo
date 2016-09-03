@@ -5,7 +5,6 @@ import Html.Attributes exposing (class, style)
 import Json.Decode.Extra exposing ((|:))
 import Json.Decode exposing (Decoder, succeed, string, (:=))
 import Combine as C
-import Debug exposing (log)
 
 type alias Model =
     { user : String
@@ -46,14 +45,10 @@ tHash = C.map Hash (C.regex "#\\w+")
 tTweet : C.Parser (List T)
 tTweet = C.rec <| \() -> C.many (C.choice [tText, tAt, tHash])
 
--- tweetParser : String -> (Result (List T), C.Context)
--- tweetParser = C.parse tTweet
-
 view : Model -> Html Msg
 view model =
     case C.parse tTweet model.text of
         (Ok t, _) ->
-            log (toString t) <|
             tweetView model t
 
         (_, _) ->
@@ -61,7 +56,6 @@ view model =
 
 tweetView : Model -> List T -> Html Msg
 tweetView model t =
-    log (toString t) <|
     let
         body = List.map toHtml t
     in
