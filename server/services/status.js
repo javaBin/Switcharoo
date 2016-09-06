@@ -1,12 +1,14 @@
 var Program = require('./program');
 var Twitter = require('./twitter');
 var Instagram = require('./instagram');
+var Votes = require('./votes');
 var _ = require('lodash');
 
 function get() {
 	var services = [
 		Program.status(),
 		Twitter.status(),
+    Votes.status()
 	];
 
 	var errors = _(services).any(function(service) { return service.statusCode !== 200; });

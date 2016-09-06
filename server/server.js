@@ -4,6 +4,7 @@ var Program = require('./services/program');
 var Slide = require('./models/slide');
 var Setting = require('./models/setting');
 var Status = require('./services/status');
+var Votes = require('./services/votes');
 var morgan = require('morgan');
 var multer = require('multer');
 var config = require('./config');
@@ -47,16 +48,21 @@ function configure(app, express, basePath) {
         Program.program(all, res);
     });
 
+    app.get('/votes', function(req, res) {
+        Votes.votes(res);
+    });
+
     app.get('/data', (req, res) => {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         Promise.all([
             Slide.find({visible: true}),
             Twitter.asJson(),
-            Program.asJson()
+            Program.asJson(),
+            Votes.asJson()
         ]).then((r) => {
             const program = r[0].sort((a, b) => parseInt(a.index) > parseInt(b.index));
-            res.json({slides: program.concat(r[1]).concat(r[2])});
+            res.json({slides: program.concat(r[1]).concat(r[2]).concat(r[3])});
         }).catch(() => {
             res.status(500).send();
         });

@@ -8,6 +8,7 @@ import Json.Decode exposing (Decoder, andThen, succeed, list, string, object1, f
 import Models.Info as Info
 import Models.Tweets as Tweets
 import Models.Program as Program
+import Models.Votes as Votes
 
 type alias Model =
     { slides : List SlideWrapper
@@ -20,6 +21,7 @@ type SlideWrapper
     = InfoWrapper Info.Model
     | TweetsWrapper Tweets.Model
     | ProgramWrapper Program.Model
+    | VotesWrapper Votes.Model
 
 type Msg
     = Update
@@ -43,6 +45,7 @@ slideWrapper t =
         "video" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
         "tweets" -> Tweets.tweets `andThen` (\s -> succeed <| TweetsWrapper s)
         "program" -> Program.decoder `andThen` (\s -> succeed <| ProgramWrapper s)
+        "votes" -> Votes.decoder `andThen` (\s -> succeed <| VotesWrapper s)
         t' -> fail <| "Unknown slideType " ++ t'
 
 view : Model -> Int -> Html Msg
@@ -60,6 +63,7 @@ viewSlide slide =
         InfoWrapper s -> App.map (\_ -> Update) (Info.view s)
         TweetsWrapper s -> App.map (\_ -> Update) (Tweets.view s)
         ProgramWrapper s -> App.map (\_ -> Update) (Program.view s)
+        VotesWrapper s -> App.map (\_ -> Update) (Votes.view s)
 
 getAt : Int -> List a -> Maybe a
 getAt idx = List.head << List.drop idx

@@ -10245,6 +10245,63 @@ var _user$project$Models_Program$view = function (model) {
 			]));
 };
 
+var _user$project$Models_Votes$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('slides__slide votes ')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('votes__header')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Remember to vote after talks! So far ')
+					])),
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('votes__vote')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(model.votes))
+					])),
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('votes__header')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('has been given')
+					]))
+			]));
+};
+var _user$project$Models_Votes$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		return model;
+	});
+var _user$project$Models_Votes$Model = function (a) {
+	return {votes: a};
+};
+var _user$project$Models_Votes$init = _user$project$Models_Votes$Model(0);
+var _user$project$Models_Votes$decoder = A2(
+	_elm_lang$core$Json_Decode$object1,
+	_user$project$Models_Votes$Model,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'votes', _elm_lang$core$Json_Decode$int));
+var _user$project$Models_Votes$Update = {ctor: 'Update'};
+
 var _user$project$Models_Slides$getNextIndex = F2(
 	function (idx, model) {
 		return _elm_lang$core$Native_Utils.eq(
@@ -10268,6 +10325,9 @@ var _user$project$Models_Slides$Model = function (a) {
 var _user$project$Models_Slides$init = _user$project$Models_Slides$Model(
 	_elm_lang$core$Native_List.fromArray(
 		[]));
+var _user$project$Models_Slides$VotesWrapper = function (a) {
+	return {ctor: 'VotesWrapper', _0: a};
+};
 var _user$project$Models_Slides$ProgramWrapper = function (a) {
 	return {ctor: 'ProgramWrapper', _0: a};
 };
@@ -10320,6 +10380,14 @@ var _user$project$Models_Slides$slideWrapper = function (t) {
 					return _elm_lang$core$Json_Decode$succeed(
 						_user$project$Models_Slides$ProgramWrapper(s));
 				});
+		case 'votes':
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				_user$project$Models_Votes$decoder,
+				function (s) {
+					return _elm_lang$core$Json_Decode$succeed(
+						_user$project$Models_Slides$VotesWrapper(s));
+				});
 		default:
 			return _elm_lang$core$Json_Decode$fail(
 				A2(_elm_lang$core$Basics_ops['++'], 'Unknown slideType ', _p2));
@@ -10352,21 +10420,28 @@ var _user$project$Models_Slides$viewSlide = function (slide) {
 					return _user$project$Models_Slides$Update;
 				},
 				_user$project$Models_Tweets$view(_p3._0));
-		default:
+		case 'ProgramWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
 				function (_p6) {
 					return _user$project$Models_Slides$Update;
 				},
 				_user$project$Models_Program$view(_p3._0));
+		default:
+			return A2(
+				_elm_lang$html$Html_App$map,
+				function (_p7) {
+					return _user$project$Models_Slides$Update;
+				},
+				_user$project$Models_Votes$view(_p3._0));
 	}
 };
 var _user$project$Models_Slides$view = F2(
 	function (model, idx) {
 		var slide = A2(_user$project$Models_Slides$getAt, idx, model.slides);
-		var _p7 = slide;
-		if (_p7.ctor === 'Just') {
-			return _user$project$Models_Slides$viewSlide(_p7._0);
+		var _p8 = slide;
+		if (_p8.ctor === 'Just') {
+			return _user$project$Models_Slides$viewSlide(_p8._0);
 		} else {
 			return A2(
 				_elm_lang$html$Html$div,

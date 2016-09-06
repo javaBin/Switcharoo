@@ -39,6 +39,7 @@ body {
     flex-direction: column;
     justify-content: center;
     height: 100%;
+    padding: 0 100px;
     position: relative;
     width: 100%;
 }
@@ -185,4 +186,28 @@ body {
 .tweet__at,
 .tweet__hash {
     color: #F25D5B;
+}
+
+.votes {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 100px;
+    position: relative;
+    width: 100%;
+}
+
+.votes__header {
+    font-size: 6rem;
+    text-align: center;
+    margin: 0;
+}
+
+.votes__vote {
+    color: #FCB018;
+    font-size: 6rem;
+    margin: 0;
+    text-transform: uppercase;
 }
