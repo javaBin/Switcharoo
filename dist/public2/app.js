@@ -9944,30 +9944,30 @@ var _user$project$Models_Tweet$tweetView = F2(
 					_elm_lang$html$Html$div,
 					_elm_lang$core$Native_List.fromArray(
 						[
-							_elm_lang$html$Html_Attributes$style(
-							_elm_lang$core$Native_List.fromArray(
-								[
-									{
-									ctor: '_Tuple2',
-									_0: 'backgroundImage',
-									_1: A2(
-										_elm_lang$core$Basics_ops['++'],
-										'url(\'',
-										A2(_elm_lang$core$Basics_ops['++'], model.image, '\')'))
-								}
-								])),
-							_elm_lang$html$Html_Attributes$class('tweet__img')
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[])),
-					A2(
-					_elm_lang$html$Html$div,
-					_elm_lang$core$Native_List.fromArray(
-						[
 							_elm_lang$html$Html_Attributes$class('tweet__info')
 						]),
 					_elm_lang$core$Native_List.fromArray(
 						[
+							A2(
+							_elm_lang$html$Html$div,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$html$Html_Attributes$style(
+									_elm_lang$core$Native_List.fromArray(
+										[
+											{
+											ctor: '_Tuple2',
+											_0: 'backgroundImage',
+											_1: A2(
+												_elm_lang$core$Basics_ops['++'],
+												'url(\'',
+												A2(_elm_lang$core$Basics_ops['++'], model.image, '\')'))
+										}
+										])),
+									_elm_lang$html$Html_Attributes$class('tweet__img')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[])),
 							A2(
 							_elm_lang$html$Html$div,
 							_elm_lang$core$Native_List.fromArray(
@@ -9997,15 +9997,15 @@ var _user$project$Models_Tweet$tweetView = F2(
 											_elm_lang$html$Html$text(
 											A2(_elm_lang$core$Basics_ops['++'], '@', model.handle))
 										]))
-								])),
-							A2(
-							_elm_lang$html$Html$div,
-							_elm_lang$core$Native_List.fromArray(
-								[
-									_elm_lang$html$Html_Attributes$class('tweet__body')
-								]),
-							body)
-						]))
+								]))
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('tweet__body')
+						]),
+					body)
 				]));
 	});
 var _user$project$Models_Tweet$update = F2(

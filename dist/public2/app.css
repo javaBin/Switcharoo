@@ -130,25 +130,24 @@ body {
 }
 
 .tweets {
-    align-items: center;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     list-style: none;
     height: 100%;
+    padding: 100px 50px 200px 50px;
     justify-content: center;
-    margin: 0 auto;
-    padding: 0;
-    width: 900px;
 }
 
 .tweet {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
+    justify-content: flex-start;
+    flex: 1 0 50%;
+    padding: 0 20px 90px 20px;
 }
 
-.tweet:not(:last-child) {
-    margin-bottom: 50px;
+.tweet__info {
+    display: flex;
+    flex-direction: horizontal;
 }
 
 .tweet__img {
@@ -162,25 +161,24 @@ body {
 }
 
 .tweet__user {
-    display: flex;
-    flex-direction: row;
     margin-bottom: 10px;
 }
 
 .tweet__name {
-    font-size: 1.9rem;
+    color: #FCB018;
+    font-size: 3.5rem;
     font-weight: 400;
-    margin-right: 20px;
+    margin-top: 10px;
 }
 
 .tweet__handle {
-    color: rgba(255, 255, 255, .5);
-    font-size: 1.9rem;
+    color: rgba(255, 255, 255, .7);
+    font-size: 2.7rem;
     font-weight: 100;
 }
 
 .tweet__body {
-    font-size: 1.8rem;
+    font-size: 3rem;
     font-weight: 100;
 }
 

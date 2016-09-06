@@ -60,17 +60,19 @@ tweetView model t =
         body = List.map toHtml t
     in
         li [ class "tweets__tweet tweet" ]
-            [ div [ style [("backgroundImage", "url('" ++ model.image ++ "')")], class "tweet__img" ] []
-            , div [ class "tweet__info" ]
-                  [ div [ class "tweet__user" ]
-                        [ div [ class "tweet__name" ]
-                              [ text model.user ]
-                        , div [ class "tweet__handle" ]
-                              [ text <| "@" ++ model.handle ]
-                        ]
-                  , div [ class "tweet__body" ] body
-                  ]
-            ]
+           [ div [ class "tweet__info" ]
+                 [ div [ style [("backgroundImage", "url('" ++ model.image ++ "')")], class "tweet__img"
+                       ]
+                       []
+                  , div [ class "tweet__user" ]
+                       [ div [ class "tweet__name" ]
+                             [ text model.user ]
+                       , div [ class "tweet__handle" ]
+                             [ text <| "@" ++ model.handle ]
+                       ]
+                 ]
+           , div [ class "tweet__body" ] body
+           ]
 
 toHtml : T -> Html Msg
 toHtml t =
