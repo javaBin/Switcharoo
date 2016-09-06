@@ -45,8 +45,8 @@ body {
 
 .slide__title {
     color: #FCB018;
-    font-size: 5rem;
-    margin: 0 0 40px 0;
+    font-size: 6rem;
+    margin: 0 0 10px 0;
     text-transform: uppercase;
 }
 
@@ -72,7 +72,8 @@ body {
 
 .program__header {
     color: #FCB018;
-    font-size: 5rem;
+    font-size: 6rem;
+    margin-bottom: 0;
     text-align: center;
     text-transform: uppercase;
 }
