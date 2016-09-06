@@ -14,7 +14,7 @@ var job = new cron(cronPattern, getTweets);
 function getTweets(complete) {
     Twitter.get('search/tweets', {
         q: 'javazone exclude:retweets',
-        count: 5,
+        count: 4,
         result_type: 'mixed'
     }, function(err, data, response) {
         if (err) {
@@ -35,7 +35,7 @@ function getTweets(complete) {
         });
 
         // Seems we sometimes get more than 5 tweets, so we limit it to 5 here
-        current_tweets = data.slice(0, 5);
+        current_tweets = data.slice(0, 4);
 
         if (complete)
             complete();
