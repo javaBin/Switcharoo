@@ -71,6 +71,7 @@ label model =
         "twitter-enabled" -> "Twitter"
         "instagram-enabled" -> "Instagram"
         "program-enabled" -> "Program"
+        "votes-enabled" -> "Votes"
         _ -> "Error"
 
 icon : String -> Html msg

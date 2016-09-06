@@ -10116,6 +10116,8 @@ var _user$project$Setting$label = function (model) {
 			return 'Instagram';
 		case 'program-enabled':
 			return 'Program';
+		case 'votes-enabled':
+			return 'Votes';
 		default:
 			return 'Error';
 	}
