@@ -128,7 +128,7 @@ function getSlotForTimestamp(time) {
 			: {"heading": "No presentations at the moment", "presentations": [], type: 'program'};
 	}
 
-	return {"heading": "What's happening right now?", "presentations": current_program[timestamp], type: 'program'};
+	return {"heading": "Happening now", "presentations": current_program[timestamp], type: 'program'};
 }
 
 function program(all, res) {
