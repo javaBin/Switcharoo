@@ -124,11 +124,11 @@ function getSlotForTimestamp(time) {
 	if (time > end) {
 		var index = timestamps.indexOf(timestamp);
 		return timestamps.length > index
-			? {"heading": "Next up", "presentations": current_program[timestamps[index + 1]], type: 'program'}
+			? {"heading": "Next", "presentations": current_program[timestamps[index + 1]], type: 'program'}
 			: {"heading": "No presentations at the moment", "presentations": [], type: 'program'};
 	}
 
-	return {"heading": "Happening now", "presentations": current_program[timestamp], type: 'program'};
+	return {"heading": "Now", "presentations": current_program[timestamp], type: 'program'};
 }
 
 function program(all, res) {
