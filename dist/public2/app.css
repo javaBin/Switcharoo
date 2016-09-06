@@ -135,7 +135,7 @@ body {
     flex-wrap: wrap;
     list-style: none;
     height: 100%;
-    padding: 100px 50px 200px 50px;
+    padding: 150px 50px 200px 50px;
     justify-content: center;
 }
 
@@ -184,5 +184,5 @@ body {
 
 .tweet__at,
 .tweet__hash {
-    color: #149089;
+    color: #F25D5B;
 }
