@@ -1,5 +1,5 @@
 html, body {
-    // cursor: none;
+    cursor: none;
     font-size: 16px;
     height: 100%;
     margin: 0;
@@ -44,13 +44,16 @@ body {
 }
 
 .slide__title {
-    font-size: 3rem;
+    color: #FCB018;
+    font-size: 5rem;
     margin: 0 0 40px 0;
+    text-transform: uppercase;
 }
 
 .slide__body {
-    font-size: 4em;
+    font-size: 4.5em;
     padding: 0 100px;
+    font-weight: 100;
     text-align: center;
 }
 
@@ -68,7 +71,8 @@ body {
 }
 
 .program__header {
-    font-size: 4rem;
+    color: #FCB018;
+    font-size: 5rem;
     text-align: center;
     text-transform: uppercase;
 }
@@ -99,6 +103,7 @@ body {
 }
 
 .entry__speakers {
+    color: rgba(255, 255, 255, .7);
     font-size: 1.5rem;
 }
 
