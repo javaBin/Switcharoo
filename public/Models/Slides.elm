@@ -1,4 +1,4 @@
-module Models.Slides exposing (Model, view, slides, init, getNextIndex)
+module Models.Slides exposing (..)
 
 import Html.App as App
 import List exposing (length)
@@ -25,11 +25,40 @@ type SlideWrapper
 
 type Msg
     = Update
+    | VotesMsg Votes.Msg
+    | ResetVotes
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Update -> model
+        Update ->
+            model
+
+        VotesMsg votesMsg ->
+            case getVotes model of
+                Just s ->
+                    let
+                        newVotes = Votes.update votesMsg s
+                    in
+                        {model | slides = List.map (\cur -> updateVotes cur newVotes) model.slides}
+                Nothing ->
+                    model
+
+        ResetVotes ->
+            case getVotes model of
+                Just s ->
+                    let
+                        newVotes = Votes.update Votes.Reset s
+                    in
+                        {model | slides = List.map(\cur -> updateVotes cur newVotes) model.slides}
+                Nothing ->
+                    model
+
+updateVotes : SlideWrapper -> Votes.Model -> SlideWrapper
+updateVotes cur new =
+    case cur of
+        VotesWrapper _ -> VotesWrapper new
+        _ -> cur
 
 slides : Decoder Model
 slides = object1 Model ("slides" := slideWrapperList)
@@ -64,6 +93,21 @@ viewSlide slide =
         TweetsWrapper s -> App.map (\_ -> Update) (Tweets.view s)
         ProgramWrapper s -> App.map (\_ -> Update) (Program.view s)
         VotesWrapper s -> App.map (\_ -> Update) (Votes.view s)
+
+isVotes : SlideWrapper -> Maybe Votes.Model -> Maybe Votes.Model
+isVotes s old =
+    case s of
+        VotesWrapper s2 -> Just s2
+        _ -> old
+
+getVotes : Model -> Maybe Votes.Model
+getVotes model = List.foldl isVotes Nothing model.slides
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case getVotes model of
+        Just s -> Sub.map VotesMsg <| Votes.subscriptions s
+        Nothing -> Sub.batch []
 
 getAt : Int -> List a -> Maybe a
 getAt idx = List.head << List.drop idx

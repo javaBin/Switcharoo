@@ -30,6 +30,7 @@ type Msg
     | NextSlide
     | HideSlide
     | ShowSlide
+    | SlidesMsg Slides.Msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -70,14 +71,21 @@ update msg model =
         NextSlide ->
             let
                 nextIndex = Slides.getNextIndex model.index model.slides
+                newVotes = Slides.update Slides.ResetVotes model.slides
             in
                 if nextIndex == 0 then
                     swapIfNewSlides model
                 else
-                    ({ model | index = nextIndex }, showSlide)
+                    ({ model | index = nextIndex, slides = newVotes }, showSlide)
 
         ShowSlide ->
             ({ model | switching = False }, Cmd.none)
+
+        SlidesMsg slidesMsg ->
+            let
+                newSlides = Slides.update slidesMsg model.slides
+            in
+                ({model | slides = newSlides}, Cmd.none)
 
 isJust : Maybe a -> Bool
 isJust m =
@@ -120,11 +128,12 @@ containerClass model =
     else
         "switcharoo"
 
-subscription : model -> Sub Msg
+subscription : Model -> Sub Msg
 subscription model =
     Sub.batch
         [ Time.every (10 * second) (\_ -> HideSlide)
         , Time.every (60 * second) (\_ -> Refetch)
+        , Sub.map SlidesMsg <| Slides.subscriptions model.slides
         ]
 
 main : Program Never

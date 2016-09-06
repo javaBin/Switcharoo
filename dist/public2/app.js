@@ -10290,17 +10290,38 @@ var _user$project$Models_Votes$view = function (model) {
 var _user$project$Models_Votes$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		return model;
+		if (_p0.ctor === 'Update') {
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{votes: _p0._0});
+		} else {
+			return _elm_lang$core$Native_Utils.update(
+				model,
+				{votes: model.realVotes});
+		}
 	});
-var _user$project$Models_Votes$Model = function (a) {
-	return {votes: a};
-};
-var _user$project$Models_Votes$init = _user$project$Models_Votes$Model(0);
-var _user$project$Models_Votes$decoder = A2(
-	_elm_lang$core$Json_Decode$object1,
+var _user$project$Models_Votes$Model = F2(
+	function (a, b) {
+		return {votes: a, realVotes: b};
+	});
+var _user$project$Models_Votes$init = A2(_user$project$Models_Votes$Model, 0, 0);
+var _user$project$Models_Votes$decoder = A3(
+	_elm_lang$core$Json_Decode$object2,
 	_user$project$Models_Votes$Model,
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'votes', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'votes', _elm_lang$core$Json_Decode$int));
-var _user$project$Models_Votes$Update = {ctor: 'Update'};
+var _user$project$Models_Votes$Reset = {ctor: 'Reset'};
+var _user$project$Models_Votes$Update = function (a) {
+	return {ctor: 'Update', _0: a};
+};
+var _user$project$Models_Votes$subscriptions = function (model) {
+	return A2(
+		_elm_lang$core$Time$every,
+		1 * _elm_lang$core$Time$second,
+		function (_p1) {
+			return _user$project$Models_Votes$Update(model.votes + 1);
+		});
+};
 
 var _user$project$Models_Slides$getNextIndex = F2(
 	function (idx, model) {
@@ -10314,11 +10335,18 @@ var _user$project$Models_Slides$getAt = function (idx) {
 			A2(_elm_lang$core$List$drop, idx, _p0));
 	};
 };
-var _user$project$Models_Slides$update = F2(
-	function (msg, model) {
-		var _p1 = msg;
-		return model;
+var _user$project$Models_Slides$isVotes = F2(
+	function (s, old) {
+		var _p1 = s;
+		if (_p1.ctor === 'VotesWrapper') {
+			return _elm_lang$core$Maybe$Just(_p1._0);
+		} else {
+			return old;
+		}
 	});
+var _user$project$Models_Slides$getVotes = function (model) {
+	return A3(_elm_lang$core$List$foldl, _user$project$Models_Slides$isVotes, _elm_lang$core$Maybe$Nothing, model.slides);
+};
 var _user$project$Models_Slides$Model = function (a) {
 	return {slides: a};
 };
@@ -10328,6 +10356,57 @@ var _user$project$Models_Slides$init = _user$project$Models_Slides$Model(
 var _user$project$Models_Slides$VotesWrapper = function (a) {
 	return {ctor: 'VotesWrapper', _0: a};
 };
+var _user$project$Models_Slides$updateVotes = F2(
+	function (cur, $new) {
+		var _p2 = cur;
+		if (_p2.ctor === 'VotesWrapper') {
+			return _user$project$Models_Slides$VotesWrapper($new);
+		} else {
+			return cur;
+		}
+	});
+var _user$project$Models_Slides$update = F2(
+	function (msg, model) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
+			case 'Update':
+				return model;
+			case 'VotesMsg':
+				var _p4 = _user$project$Models_Slides$getVotes(model);
+				if (_p4.ctor === 'Just') {
+					var newVotes = A2(_user$project$Models_Votes$update, _p3._0, _p4._0);
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							slides: A2(
+								_elm_lang$core$List$map,
+								function (cur) {
+									return A2(_user$project$Models_Slides$updateVotes, cur, newVotes);
+								},
+								model.slides)
+						});
+				} else {
+					return model;
+				}
+			default:
+				var _p5 = _user$project$Models_Slides$getVotes(model);
+				if (_p5.ctor === 'Just') {
+					var newVotes = A2(_user$project$Models_Votes$update, _user$project$Models_Votes$Reset, _p5._0);
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							slides: A2(
+								_elm_lang$core$List$map,
+								function (cur) {
+									return A2(_user$project$Models_Slides$updateVotes, cur, newVotes);
+								},
+								model.slides)
+						});
+				} else {
+					return model;
+				}
+		}
+	});
 var _user$project$Models_Slides$ProgramWrapper = function (a) {
 	return {ctor: 'ProgramWrapper', _0: a};
 };
@@ -10338,8 +10417,8 @@ var _user$project$Models_Slides$InfoWrapper = function (a) {
 	return {ctor: 'InfoWrapper', _0: a};
 };
 var _user$project$Models_Slides$slideWrapper = function (t) {
-	var _p2 = t;
-	switch (_p2) {
+	var _p6 = t;
+	switch (_p6) {
 		case 'text':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
@@ -10390,7 +10469,7 @@ var _user$project$Models_Slides$slideWrapper = function (t) {
 				});
 		default:
 			return _elm_lang$core$Json_Decode$fail(
-				A2(_elm_lang$core$Basics_ops['++'], 'Unknown slideType ', _p2));
+				A2(_elm_lang$core$Basics_ops['++'], 'Unknown slideType ', _p6));
 	}
 };
 var _user$project$Models_Slides$slideWrapperList = _elm_lang$core$Json_Decode$list(
@@ -10402,46 +10481,63 @@ var _user$project$Models_Slides$slides = A2(
 	_elm_lang$core$Json_Decode$object1,
 	_user$project$Models_Slides$Model,
 	A2(_elm_lang$core$Json_Decode_ops[':='], 'slides', _user$project$Models_Slides$slideWrapperList));
+var _user$project$Models_Slides$ResetVotes = {ctor: 'ResetVotes'};
+var _user$project$Models_Slides$VotesMsg = function (a) {
+	return {ctor: 'VotesMsg', _0: a};
+};
+var _user$project$Models_Slides$subscriptions = function (model) {
+	var _p7 = _user$project$Models_Slides$getVotes(model);
+	if (_p7.ctor === 'Just') {
+		return A2(
+			_elm_lang$core$Platform_Sub$map,
+			_user$project$Models_Slides$VotesMsg,
+			_user$project$Models_Votes$subscriptions(_p7._0));
+	} else {
+		return _elm_lang$core$Platform_Sub$batch(
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	}
+};
 var _user$project$Models_Slides$Update = {ctor: 'Update'};
 var _user$project$Models_Slides$viewSlide = function (slide) {
-	var _p3 = slide;
-	switch (_p3.ctor) {
+	var _p8 = slide;
+	switch (_p8.ctor) {
 		case 'InfoWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p4) {
+				function (_p9) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Info$view(_p3._0));
+				_user$project$Models_Info$view(_p8._0));
 		case 'TweetsWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p5) {
+				function (_p10) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Tweets$view(_p3._0));
+				_user$project$Models_Tweets$view(_p8._0));
 		case 'ProgramWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p6) {
+				function (_p11) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Program$view(_p3._0));
+				_user$project$Models_Program$view(_p8._0));
 		default:
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p7) {
+				function (_p12) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Votes$view(_p3._0));
+				_user$project$Models_Votes$view(_p8._0));
 	}
 };
 var _user$project$Models_Slides$view = F2(
 	function (model, idx) {
 		var slide = A2(_user$project$Models_Slides$getAt, idx, model.slides);
-		var _p8 = slide;
-		if (_p8.ctor === 'Just') {
-			return _user$project$Models_Slides$viewSlide(_p8._0);
+		var _p13 = slide;
+		if (_p13.ctor === 'Just') {
+			return _user$project$Models_Slides$viewSlide(_p13._0);
 		} else {
 			return A2(
 				_elm_lang$html$Html$div,
@@ -10472,6 +10568,9 @@ var _user$project$Main$Model = F4(
 		return {slides: a, nextSlides: b, index: c, switching: d};
 	});
 var _user$project$Main$initModel = A4(_user$project$Main$Model, _user$project$Models_Slides$init, _elm_lang$core$Maybe$Nothing, 0, false);
+var _user$project$Main$SlidesMsg = function (a) {
+	return {ctor: 'SlidesMsg', _0: a};
+};
 var _user$project$Main$ShowSlide = {ctor: 'ShowSlide'};
 var _user$project$Main$showSlide = A3(
 	_elm_lang$core$Task$perform,
@@ -10540,7 +10639,11 @@ var _user$project$Main$subscription = function (model) {
 				60 * _elm_lang$core$Time$second,
 				function (_p7) {
 					return _user$project$Main$Refetch;
-				})
+				}),
+				A2(
+				_elm_lang$core$Platform_Sub$map,
+				_user$project$Main$SlidesMsg,
+				_user$project$Models_Slides$subscriptions(model.slides))
 			]));
 };
 var _user$project$Main$GetFailed = function (a) {
@@ -10601,20 +10704,30 @@ var _user$project$Main$update = F2(
 					_1: _user$project$Main$hideSlide
 				});
 			case 'NextSlide':
+				var newVotes = A2(_user$project$Models_Slides$update, _user$project$Models_Slides$ResetVotes, model.slides);
 				var nextIndex = A2(_user$project$Models_Slides$getNextIndex, model.index, model.slides);
 				return _elm_lang$core$Native_Utils.eq(nextIndex, 0) ? _user$project$Main$swapIfNewSlides(model) : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{index: nextIndex}),
+						{index: nextIndex, slides: newVotes}),
 					_1: _user$project$Main$showSlide
 				};
-			default:
+			case 'ShowSlide':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{switching: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var newSlides = A2(_user$project$Models_Slides$update, _p8._0, model.slides);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{slides: newSlides}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
