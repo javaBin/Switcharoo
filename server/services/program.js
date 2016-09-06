@@ -114,7 +114,7 @@ function getSlotForTimestamp(time) {
 	console.log('Returning program for: ' + time);
 	var timestamps = Object.keys(current_program).sort();
 	if (time < timestamps[0])
-		return {"heading": "Next up", "presentations": current_program[timestamps[0]], type: 'program'};
+		return {"heading": "Next", "presentations": current_program[timestamps[0]], type: 'program'};
 
 	var timestamp = _.chain(timestamps)
 		.filter(function(slot) {
