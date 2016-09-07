@@ -143,7 +143,7 @@ body {
 .tweet {
     justify-content: flex-start;
     flex: 1 0 50%;
-    padding: 0 20px 90px 20px;
+    padding: 0 20px 70px 20px;
 }
 
 .tweet__info {
@@ -156,9 +156,9 @@ body {
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
-    height: 140px;
+    height: 120px;
     margin: 10px 40px 0 0;
-    width: 140px;
+    width: 120px;
 }
 
 .tweet__user {
@@ -167,7 +167,7 @@ body {
 
 .tweet__name {
     color: #FCB018;
-    font-size: 3.5rem;
+    font-size: 3rem;
     font-weight: 400;
     margin-top: 10px;
 }
@@ -179,7 +179,7 @@ body {
 }
 
 .tweet__body {
-    font-size: 3rem;
+    font-size: 2.75rem;
     font-weight: 100;
 }
 
