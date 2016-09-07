@@ -105,8 +105,6 @@ function get() {
 
 function now() {
 	var now = new moment();
-	now.add('days', 2);
-  now.subtract('hours', 5);
 	console.log('Now: ' + now);
 	return now;
 }
