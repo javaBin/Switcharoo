@@ -71,6 +71,10 @@ body {
     width: 100%;
 }
 
+.slide--video {
+    padding: 0;
+}
+
 .program__header {
     color: #FCB018;
     font-size: 6rem;
