@@ -15,7 +15,7 @@ function getTweets(complete) {
     Twitter.get('search/tweets', {
         q: 'javazone exclude:retweets',
         count: 4,
-        result_type: 'mixed'
+        result_type: 'recent'
     }, function(err, data, response) {
         if (err) {
             console.error('Error fetching tweets:');
