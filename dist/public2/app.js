@@ -10323,12 +10323,11 @@ var _user$project$Models_Votes$subscriptions = function (model) {
 		});
 };
 
-var _user$project$Models_Slides$getNextIndex = F2(
-	function (idx, model) {
-		return _elm_lang$core$Native_Utils.eq(
-			idx + 1,
-			_elm_lang$core$List$length(model.slides)) ? 0 : (idx + 1);
-	});
+var _user$project$Models_Slides$getNextIndex = function (model) {
+	return _elm_lang$core$Native_Utils.eq(
+		model.index + 1,
+		_elm_lang$core$List$length(model.slides)) ? 0 : (model.index + 1);
+};
 var _user$project$Models_Slides$getAt = function (idx) {
 	return function (_p0) {
 		return _elm_lang$core$List$head(
@@ -10344,15 +10343,16 @@ var _user$project$Models_Slides$isVotes = F2(
 			return old;
 		}
 	});
-var _user$project$Models_Slides$getVotes = function (model) {
-	return A3(_elm_lang$core$List$foldl, _user$project$Models_Slides$isVotes, _elm_lang$core$Maybe$Nothing, model.slides);
-};
-var _user$project$Models_Slides$Model = function (a) {
-	return {slides: a};
-};
-var _user$project$Models_Slides$init = _user$project$Models_Slides$Model(
+var _user$project$Models_Slides$Model = F3(
+	function (a, b, c) {
+		return {slides: a, index: b, switching: c};
+	});
+var _user$project$Models_Slides$init = A3(
+	_user$project$Models_Slides$Model,
 	_elm_lang$core$Native_List.fromArray(
-		[]));
+		[]),
+	0,
+	false);
 var _user$project$Models_Slides$VotesWrapper = function (a) {
 	return {ctor: 'VotesWrapper', _0: a};
 };
@@ -10365,48 +10365,6 @@ var _user$project$Models_Slides$updateVotes = F2(
 			return cur;
 		}
 	});
-var _user$project$Models_Slides$update = F2(
-	function (msg, model) {
-		var _p3 = msg;
-		switch (_p3.ctor) {
-			case 'Update':
-				return model;
-			case 'VotesMsg':
-				var _p4 = _user$project$Models_Slides$getVotes(model);
-				if (_p4.ctor === 'Just') {
-					var newVotes = A2(_user$project$Models_Votes$update, _p3._0, _p4._0);
-					return _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							slides: A2(
-								_elm_lang$core$List$map,
-								function (cur) {
-									return A2(_user$project$Models_Slides$updateVotes, cur, newVotes);
-								},
-								model.slides)
-						});
-				} else {
-					return model;
-				}
-			default:
-				var _p5 = _user$project$Models_Slides$getVotes(model);
-				if (_p5.ctor === 'Just') {
-					var newVotes = A2(_user$project$Models_Votes$update, _user$project$Models_Votes$Reset, _p5._0);
-					return _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							slides: A2(
-								_elm_lang$core$List$map,
-								function (cur) {
-									return A2(_user$project$Models_Slides$updateVotes, cur, newVotes);
-								},
-								model.slides)
-						});
-				} else {
-					return model;
-				}
-		}
-	});
 var _user$project$Models_Slides$ProgramWrapper = function (a) {
 	return {ctor: 'ProgramWrapper', _0: a};
 };
@@ -10417,8 +10375,8 @@ var _user$project$Models_Slides$InfoWrapper = function (a) {
 	return {ctor: 'InfoWrapper', _0: a};
 };
 var _user$project$Models_Slides$slideWrapper = function (t) {
-	var _p6 = t;
-	switch (_p6) {
+	var _p3 = t;
+	switch (_p3) {
 		case 'text':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
@@ -10469,7 +10427,7 @@ var _user$project$Models_Slides$slideWrapper = function (t) {
 				});
 		default:
 			return _elm_lang$core$Json_Decode$fail(
-				A2(_elm_lang$core$Basics_ops['++'], 'Unknown slideType ', _p6));
+				A2(_elm_lang$core$Basics_ops['++'], 'Unknown slideType ', _p3));
 	}
 };
 var _user$project$Models_Slides$slideWrapperList = _elm_lang$core$Json_Decode$list(
@@ -10477,141 +10435,170 @@ var _user$project$Models_Slides$slideWrapperList = _elm_lang$core$Json_Decode$li
 		_elm_lang$core$Json_Decode$andThen,
 		A2(_elm_lang$core$Json_Decode_ops[':='], 'type', _elm_lang$core$Json_Decode$string),
 		_user$project$Models_Slides$slideWrapper));
-var _user$project$Models_Slides$slides = A2(
-	_elm_lang$core$Json_Decode$object1,
-	_user$project$Models_Slides$Model,
-	A2(_elm_lang$core$Json_Decode_ops[':='], 'slides', _user$project$Models_Slides$slideWrapperList));
-var _user$project$Models_Slides$ResetVotes = {ctor: 'ResetVotes'};
-var _user$project$Models_Slides$VotesMsg = function (a) {
-	return {ctor: 'VotesMsg', _0: a};
-};
+var _user$project$Models_Slides$slides = A2(_elm_lang$core$Json_Decode_ops[':='], 'slides', _user$project$Models_Slides$slideWrapperList);
+var _user$project$Models_Slides$ShowSlide = {ctor: 'ShowSlide'};
+var _user$project$Models_Slides$showSlide = A3(
+	_elm_lang$core$Task$perform,
+	function (_p4) {
+		return _user$project$Models_Slides$ShowSlide;
+	},
+	function (_p5) {
+		return _user$project$Models_Slides$ShowSlide;
+	},
+	_elm_lang$core$Process$sleep(500 * _elm_lang$core$Time$millisecond));
+var _user$project$Models_Slides$HideSlide = {ctor: 'HideSlide'};
 var _user$project$Models_Slides$subscriptions = function (model) {
-	var _p7 = _user$project$Models_Slides$getVotes(model);
-	if (_p7.ctor === 'Just') {
-		return A2(
-			_elm_lang$core$Platform_Sub$map,
-			_user$project$Models_Slides$VotesMsg,
-			_user$project$Models_Votes$subscriptions(_p7._0));
-	} else {
-		return _elm_lang$core$Platform_Sub$batch(
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-	}
+	return A2(
+		_elm_lang$core$Time$every,
+		10 * _elm_lang$core$Time$second,
+		function (_p6) {
+			return _user$project$Models_Slides$HideSlide;
+		});
 };
+var _user$project$Models_Slides$NextSlide = {ctor: 'NextSlide'};
+var _user$project$Models_Slides$hideSlide = A3(
+	_elm_lang$core$Task$perform,
+	function (_p7) {
+		return _user$project$Models_Slides$NextSlide;
+	},
+	function (_p8) {
+		return _user$project$Models_Slides$NextSlide;
+	},
+	_elm_lang$core$Process$sleep(500 * _elm_lang$core$Time$millisecond));
+var _user$project$Models_Slides$update = F2(
+	function (msg, model) {
+		var _p9 = msg;
+		switch (_p9.ctor) {
+			case 'Update':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'HideSlide':
+				var shouldChange = _elm_lang$core$Native_Utils.cmp(
+					_elm_lang$core$List$length(model.slides),
+					1) > 0;
+				var nextIndex = _user$project$Models_Slides$getNextIndex(model);
+				return shouldChange ? {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{switching: true}),
+					_1: _user$project$Models_Slides$hideSlide
+				} : {ctor: '_Tuple2', _0: model, _1: _user$project$Models_Slides$hideSlide};
+			case 'NextSlide':
+				var nextIndex = _user$project$Models_Slides$getNextIndex(model);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{index: nextIndex}),
+					_1: _user$project$Models_Slides$showSlide
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{switching: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
 var _user$project$Models_Slides$Update = {ctor: 'Update'};
 var _user$project$Models_Slides$viewSlide = function (slide) {
-	var _p8 = slide;
-	switch (_p8.ctor) {
+	var _p10 = slide;
+	switch (_p10.ctor) {
 		case 'InfoWrapper':
-			return A2(
-				_elm_lang$html$Html_App$map,
-				function (_p9) {
-					return _user$project$Models_Slides$Update;
-				},
-				_user$project$Models_Info$view(_p8._0));
-		case 'TweetsWrapper':
-			return A2(
-				_elm_lang$html$Html_App$map,
-				function (_p10) {
-					return _user$project$Models_Slides$Update;
-				},
-				_user$project$Models_Tweets$view(_p8._0));
-		case 'ProgramWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
 				function (_p11) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Program$view(_p8._0));
-		default:
+				_user$project$Models_Info$view(_p10._0));
+		case 'TweetsWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
 				function (_p12) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Votes$view(_p8._0));
+				_user$project$Models_Tweets$view(_p10._0));
+		case 'ProgramWrapper':
+			return A2(
+				_elm_lang$html$Html_App$map,
+				function (_p13) {
+					return _user$project$Models_Slides$Update;
+				},
+				_user$project$Models_Program$view(_p10._0));
+		default:
+			return A2(
+				_elm_lang$html$Html_App$map,
+				function (_p14) {
+					return _user$project$Models_Slides$Update;
+				},
+				_user$project$Models_Votes$view(_p10._0));
 	}
 };
-var _user$project$Models_Slides$view = F2(
-	function (model, idx) {
-		var slide = A2(_user$project$Models_Slides$getAt, idx, model.slides);
-		var _p13 = slide;
-		if (_p13.ctor === 'Just') {
-			return _user$project$Models_Slides$viewSlide(_p13._0);
+var _user$project$Models_Slides$view = function (model) {
+	var slide = A2(_user$project$Models_Slides$getAt, model.index, model.slides);
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$classList(
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple2', _0: 'switcharoo', _1: true},
+						{ctor: '_Tuple2', _0: 'switcharoo--hidden', _1: model.switching}
+					]))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				function () {
+				var _p15 = slide;
+				if (_p15.ctor === 'Just') {
+					return _user$project$Models_Slides$viewSlide(_p15._0);
+				} else {
+					return _elm_lang$html$Html$text('');
+				}
+			}()
+			]));
+};
+
+var _user$project$Main$swapIfNewSlides = F3(
+	function (model, newSlides, slidesCmd) {
+		var _p0 = model.nextSlides;
+		if (_p0.ctor === 'Just') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{slides: _p0._0, nextSlides: _elm_lang$core$Maybe$Nothing}),
+				_1: slidesCmd
+			};
 		} else {
-			return A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('slides')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('')
-					]));
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{slides: newSlides}),
+				_1: slidesCmd
+			};
 		}
 	});
-
-var _user$project$Main$containerClass = function (model) {
-	return model.switching ? 'switcharoo switcharoo--hidden' : 'switcharoo';
-};
 var _user$project$Main$isJust = function (m) {
-	var _p0 = m;
-	if (_p0.ctor === 'Just') {
+	var _p1 = m;
+	if (_p1.ctor === 'Just') {
 		return true;
 	} else {
 		return false;
 	}
 };
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {slides: a, nextSlides: b, index: c, switching: d};
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {slides: a, nextSlides: b};
 	});
-var _user$project$Main$initModel = A4(_user$project$Main$Model, _user$project$Models_Slides$init, _elm_lang$core$Maybe$Nothing, 0, false);
+var _user$project$Main$initModel = A2(_user$project$Main$Model, _user$project$Models_Slides$init, _elm_lang$core$Maybe$Nothing);
 var _user$project$Main$SlidesMsg = function (a) {
 	return {ctor: 'SlidesMsg', _0: a};
 };
-var _user$project$Main$ShowSlide = {ctor: 'ShowSlide'};
-var _user$project$Main$showSlide = A3(
-	_elm_lang$core$Task$perform,
-	function (_p1) {
-		return _user$project$Main$ShowSlide;
-	},
-	function (_p2) {
-		return _user$project$Main$ShowSlide;
-	},
-	_elm_lang$core$Process$sleep(500 * _elm_lang$core$Time$millisecond));
-var _user$project$Main$swapIfNewSlides = function (model) {
-	var _p3 = model.nextSlides;
-	if (_p3.ctor === 'Just') {
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				model,
-				{index: 0, slides: _p3._0, nextSlides: _elm_lang$core$Maybe$Nothing}),
-			_1: _user$project$Main$showSlide
-		};
-	} else {
-		return {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.update(
-				model,
-				{index: 0}),
-			_1: _user$project$Main$showSlide
-		};
-	}
-};
-var _user$project$Main$HideSlide = {ctor: 'HideSlide'};
-var _user$project$Main$NextSlide = {ctor: 'NextSlide'};
-var _user$project$Main$hideSlide = A3(
-	_elm_lang$core$Task$perform,
-	function (_p4) {
-		return _user$project$Main$NextSlide;
-	},
-	function (_p5) {
-		return _user$project$Main$NextSlide;
-	},
-	_elm_lang$core$Process$sleep(500 * _elm_lang$core$Time$millisecond));
 var _user$project$Main$RefetchFailed = function (a) {
 	return {ctor: 'RefetchFailed', _0: a};
 };
@@ -10630,14 +10617,8 @@ var _user$project$Main$subscription = function (model) {
 			[
 				A2(
 				_elm_lang$core$Time$every,
-				10 * _elm_lang$core$Time$second,
-				function (_p6) {
-					return _user$project$Main$HideSlide;
-				}),
-				A2(
-				_elm_lang$core$Time$every,
 				60 * _elm_lang$core$Time$second,
-				function (_p7) {
+				function (_p2) {
 					return _user$project$Main$Refetch;
 				}),
 				A2(
@@ -10660,14 +10641,17 @@ var _user$project$Main$getSlides = A3(
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _user$project$Main$getSlides};
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p8 = msg;
-		switch (_p8.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'GetSlides':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getSlides};
 			case 'GetSucceeded':
 				return {
 					ctor: '_Tuple2',
-					_0: A4(_user$project$Main$Model, _p8._0, _elm_lang$core$Maybe$Nothing, 0, false),
+					_0: A2(
+						_user$project$Main$Model,
+						A3(_user$project$Models_Slides$Model, _p3._0, 0, false),
+						_elm_lang$core$Maybe$Nothing),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'GetFailed':
@@ -10675,80 +10659,50 @@ var _user$project$Main$update = F2(
 			case 'Refetch':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$refetchSlides};
 			case 'RefetchSucceeded':
-				var _p9 = _p8._0;
-				return _elm_lang$core$Native_Utils.eq(_p9, model.slides) ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
+				var _p4 = _p3._0;
+				return _elm_lang$core$Native_Utils.eq(_p4, model.slides.slides) ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							nextSlides: _elm_lang$core$Maybe$Just(_p9)
+							nextSlides: _elm_lang$core$Maybe$Just(
+								A3(_user$project$Models_Slides$Model, _p4, 0, false))
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'RefetchFailed':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'HideSlide':
-				var hasNext = _user$project$Main$isJust(model.nextSlides);
-				var nextIndex = A2(_user$project$Models_Slides$getNextIndex, model.index, model.slides);
-				return hasNext ? {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{switching: true}),
-					_1: _user$project$Main$hideSlide
-				} : (_elm_lang$core$Native_Utils.eq(nextIndex, model.index) ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{switching: true}),
-					_1: _user$project$Main$hideSlide
-				});
-			case 'NextSlide':
-				var newVotes = A2(_user$project$Models_Slides$update, _user$project$Models_Slides$ResetVotes, model.slides);
-				var nextIndex = A2(_user$project$Models_Slides$getNextIndex, model.index, model.slides);
-				return _elm_lang$core$Native_Utils.eq(nextIndex, 0) ? _user$project$Main$swapIfNewSlides(model) : {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{index: nextIndex, slides: newVotes}),
-					_1: _user$project$Main$showSlide
-				};
-			case 'ShowSlide':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{switching: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
 			default:
-				var newSlides = A2(_user$project$Models_Slides$update, _p8._0, model.slides);
-				return {
+				var _p5 = A2(_user$project$Models_Slides$update, _p3._0, model.slides);
+				var newSlides = _p5._0;
+				var slidesCmd = _p5._1;
+				var mappedCmd = A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlidesMsg, slidesCmd);
+				return _elm_lang$core$Native_Utils.eq(newSlides.index, 0) ? A3(_user$project$Main$swapIfNewSlides, model, newSlides, mappedCmd) : {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{slides: newSlides}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_1: mappedCmd
 				};
 		}
 	});
 var _user$project$Main$GetSlides = {ctor: 'GetSlides'};
 var _user$project$Main$view = function (model) {
-	var class$ = _user$project$Main$containerClass(model);
-	var slides = A2(
-		_elm_lang$html$Html_App$map,
-		function (_p10) {
-			return _user$project$Main$GetSlides;
-		},
-		A2(_user$project$Models_Slides$view, model.slides, model.index));
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class(class$)
+				_elm_lang$html$Html_Attributes$class('switcharoo')
 			]),
 		_elm_lang$core$Native_List.fromArray(
-			[slides]));
+			[
+				A2(
+				_elm_lang$html$Html_App$map,
+				function (_p6) {
+					return _user$project$Main$GetSlides;
+				},
+				_user$project$Models_Slides$view(model.slides))
+			]));
 };
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(

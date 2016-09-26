@@ -3,19 +3,24 @@ module Models.Slides exposing (..)
 import Html.App as App
 import List exposing (length)
 import Html exposing (..)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, classList)
 import Json.Decode exposing (Decoder, andThen, succeed, list, string, object1, fail, (:=))
 import Models.Info as Info
 import Models.Tweets as Tweets
 import Models.Program as Program
 import Models.Votes as Votes
+import Time exposing (Time, second, millisecond)
+import Task
+import Process exposing (sleep)
 
 type alias Model =
     { slides : List SlideWrapper
+    , index : Int
+    , switching : Bool
     }
 
 init : Model
-init = Model []
+init = Model [] 0 False
 
 type SlideWrapper
     = InfoWrapper Info.Model
@@ -25,34 +30,62 @@ type SlideWrapper
 
 type Msg
     = Update
-    | VotesMsg Votes.Msg
-    | ResetVotes
+    -- | VotesMsg Votes.Msg
+    -- | ResetVotes
+    | NextSlide
+    | HideSlide
+    | ShowSlide
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         Update ->
-            model
+            (model, Cmd.none)
 
-        VotesMsg votesMsg ->
-            case getVotes model of
-                Just s ->
-                    let
-                        newVotes = Votes.update votesMsg s
-                    in
-                        {model | slides = List.map (\cur -> updateVotes cur newVotes) model.slides}
-                Nothing ->
-                    model
+        -- VotesMsg votesMsg ->
+        --     case getVotes model of
+        --         Just s ->
+        --             let
+        --                 newVotes = Votes.update votesMsg s
+        --             in
+        --                 {model | slides = List.map (\cur -> updateVotes cur newVotes) model.slides}
+        --         Nothing ->
+        --             (model, Cmd.none)
 
-        ResetVotes ->
-            case getVotes model of
-                Just s ->
-                    let
-                        newVotes = Votes.update Votes.Reset s
-                    in
-                        {model | slides = List.map(\cur -> updateVotes cur newVotes) model.slides}
-                Nothing ->
-                    model
+        -- ResetVotes ->
+        --     case getVotes model of
+        --         Just s ->
+        --             let
+        --                 newVotes = Votes.update Votes.Reset s
+        --             in
+        --                 {model | slides = List.map(\cur -> updateVotes cur newVotes) model.slides}
+        --         Nothing ->
+        --             (model, Cmd.none)
+
+        HideSlide ->
+            let
+                nextIndex = getNextIndex model
+                shouldChange = length model.slides > 1
+            in
+                if shouldChange then
+                    ({model | switching = True}, hideSlide)
+                else
+                    (model, hideSlide)
+
+        NextSlide ->
+            let
+                nextIndex = getNextIndex model
+            in
+                ({model | index = nextIndex}, showSlide)
+
+        ShowSlide ->
+            ({model | switching = False}, Cmd.none)
+
+hideSlide : Cmd Msg
+hideSlide = Task.perform (\_ -> NextSlide) (\_ -> NextSlide) <| sleep (500 * millisecond)
+
+showSlide : Cmd Msg
+showSlide = Task.perform (\_ -> ShowSlide) (\_ -> ShowSlide) <| sleep (500 * millisecond)
 
 updateVotes : SlideWrapper -> Votes.Model -> SlideWrapper
 updateVotes cur new =
@@ -60,8 +93,8 @@ updateVotes cur new =
         VotesWrapper _ -> VotesWrapper new
         _ -> cur
 
-slides : Decoder Model
-slides = object1 Model ("slides" := slideWrapperList)
+slides : Decoder (List SlideWrapper)
+slides = ("slides" := slideWrapperList)
 
 slideWrapperList : Decoder (List SlideWrapper)
 slideWrapperList = list (("type" := string) `andThen` slideWrapper)
@@ -77,14 +110,17 @@ slideWrapper t =
         "votes" -> Votes.decoder `andThen` (\s -> succeed <| VotesWrapper s)
         t' -> fail <| "Unknown slideType " ++ t'
 
-view : Model -> Int -> Html Msg
-view model idx =
+view : Model -> Html Msg
+view model =
     let
-        slide = getAt idx model.slides
+        slide = getAt model.index model.slides
     in
-        case slide of
-            Just s -> viewSlide s
-            Nothing -> div [ class "slides" ] [ text "" ]
+        div [ classList [("switcharoo", True), ("switcharoo--hidden", model.switching)] ]
+            [
+              case slide of
+                  Just s -> viewSlide s
+                  Nothing -> text ""
+            ]
 
 viewSlide : SlideWrapper -> Html Msg
 viewSlide slide =
@@ -100,21 +136,15 @@ isVotes s old =
         VotesWrapper s2 -> Just s2
         _ -> old
 
-getVotes : Model -> Maybe Votes.Model
-getVotes model = List.foldl isVotes Nothing model.slides
-
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    case getVotes model of
-        Just s -> Sub.map VotesMsg <| Votes.subscriptions s
-        Nothing -> Sub.batch []
+subscriptions model = Time.every (10 * second) (\_ -> HideSlide)
 
 getAt : Int -> List a -> Maybe a
 getAt idx = List.head << List.drop idx
 
-getNextIndex : Int -> Model -> Int
-getNextIndex idx model =
-    if idx + 1 == length model.slides then
+getNextIndex : Model -> Int
+getNextIndex model =
+    if model.index + 1 == length model.slides then
         0
     else
-        idx + 1
+        model.index + 1
