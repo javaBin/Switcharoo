@@ -10348,7 +10348,7 @@ var _wernerdegroot$listzipper$List_Zipper$after = function (_p0) {
 	var _p1 = _p0;
 	return _p1._2;
 };
-var _wernerdegroot$listzipper$List_Zipper$get = function (_p2) {
+var _wernerdegroot$listzipper$List_Zipper$current = function (_p2) {
 	var _p3 = _p2;
 	return _p3._1;
 };
@@ -10364,7 +10364,7 @@ var _wernerdegroot$listzipper$List_Zipper$toList = function (z) {
 			_elm_lang$core$Basics_ops['++'],
 			_elm_lang$core$Native_List.fromArray(
 				[
-					_wernerdegroot$listzipper$List_Zipper$get(z)
+					_wernerdegroot$listzipper$List_Zipper$current(z)
 				]),
 			_wernerdegroot$listzipper$List_Zipper$after(z)));
 };
@@ -10372,6 +10372,19 @@ var _wernerdegroot$listzipper$List_Zipper$Zipper = F3(
 	function (a, b, c) {
 		return {ctor: 'Zipper', _0: a, _1: b, _2: c};
 	});
+var _wernerdegroot$listzipper$List_Zipper$singleton = function (x) {
+	return A3(
+		_wernerdegroot$listzipper$List_Zipper$Zipper,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		x,
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+};
+var _wernerdegroot$listzipper$List_Zipper$withDefault = function (x) {
+	return _elm_lang$core$Maybe$withDefault(
+		_wernerdegroot$listzipper$List_Zipper$singleton(x));
+};
 var _wernerdegroot$listzipper$List_Zipper$fromList = function (xs) {
 	var _p6 = xs;
 	if (_p6.ctor === '[]') {
@@ -10543,7 +10556,7 @@ var _user$project$Models_Slides$isVotes = F2(
 	});
 var _user$project$Models_Slides$Model = F2(
 	function (a, b) {
-		return {slides: a, switching: b};
+		return {switching: a, slides: b};
 	});
 var _user$project$Models_Slides$VotesWrapper = function (a) {
 	return {ctor: 'VotesWrapper', _0: a};
@@ -10566,22 +10579,14 @@ var _user$project$Models_Slides$TweetsWrapper = function (a) {
 var _user$project$Models_Slides$InfoWrapper = function (a) {
 	return {ctor: 'InfoWrapper', _0: a};
 };
-var _user$project$Models_Slides$fromList = function (l) {
-	var _p6 = _wernerdegroot$listzipper$List_Zipper$fromList(l);
-	if (_p6.ctor === 'Just') {
-		return A2(_user$project$Models_Slides$Model, _p6._0, false);
-	} else {
-		return A2(
-			_user$project$Models_Slides$Model,
-			A3(
-				_wernerdegroot$listzipper$List_Zipper$Zipper,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_user$project$Models_Slides$InfoWrapper(_user$project$Models_Info$empty),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-			false);
-	}
+var _user$project$Models_Slides$fromList = function (_p6) {
+	return A2(
+		_user$project$Models_Slides$Model,
+		false,
+		A2(
+			_wernerdegroot$listzipper$List_Zipper$withDefault,
+			_user$project$Models_Slides$InfoWrapper(_user$project$Models_Info$empty),
+			_wernerdegroot$listzipper$List_Zipper$fromList(_p6)));
 };
 var _user$project$Models_Slides$init = _user$project$Models_Slides$fromList(
 	_elm_lang$core$Native_List.fromArray(
@@ -10760,7 +10765,7 @@ var _user$project$Models_Slides$viewSlide = function (slide) {
 	}
 };
 var _user$project$Models_Slides$view = function (model) {
-	var slide = _wernerdegroot$listzipper$List_Zipper$get(model.slides);
+	var slide = _wernerdegroot$listzipper$List_Zipper$current(model.slides);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(

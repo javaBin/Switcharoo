@@ -15,18 +15,16 @@ import Process exposing (sleep)
 import List.Zipper as Z
 
 type alias Model =
-    { slides : Z.Zipper SlideWrapper
-    , switching : Bool
+    { switching : Bool
+    , slides : Z.Zipper SlideWrapper
     }
 
 init : Model
 init = fromList []
 
+
 fromList : List SlideWrapper -> Model
-fromList l =
-    case Z.fromList l of
-        Just zipper -> Model zipper False
-        Nothing     -> Model (Z.Zipper [] (InfoWrapper Info.empty) []) False
+fromList = Model False << Z.withDefault (InfoWrapper Info.empty) << Z.fromList
 
 type SlideWrapper
     = InfoWrapper Info.Model
@@ -117,7 +115,7 @@ slideWrapper t =
 view : Model -> Html Msg
 view model =
     let
-        slide = Z.get model.slides
+        slide = Z.current model.slides
     in
         div [ classList [("switcharoo", True), ("switcharoo--hidden", model.switching)] ]
             [ viewSlide slide ]
