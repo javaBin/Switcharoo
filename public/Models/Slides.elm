@@ -106,13 +106,13 @@ slideWrapperList = list (("type" := string) `andThen` slideWrapper)
 slideWrapper : String -> Decoder SlideWrapper
 slideWrapper t =
     case t of
-        "text" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
-        "image" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
-        "video" -> Info.info `andThen` (\s -> succeed <| InfoWrapper s)
-        "tweets" -> Tweets.tweets `andThen` (\s -> succeed <| TweetsWrapper s)
-        "program" -> Program.decoder `andThen` (\s -> succeed <| ProgramWrapper s)
-        "votes" -> Votes.decoder `andThen` (\s -> succeed <| VotesWrapper s)
-        t' -> fail <| "Unknown slideType " ++ t'
+        "text" -> Info.info `andThen` (succeed << InfoWrapper)
+        "image" -> Info.info `andThen` (succeed << InfoWrapper)
+        "video" -> Info.info `andThen` (succeed << InfoWrapper)
+        "tweets" -> Tweets.tweets `andThen` (succeed << TweetsWrapper)
+        "program" -> Program.decoder `andThen` (succeed << ProgramWrapper)
+        "votes" -> Votes.decoder `andThen` (succeed << VotesWrapper)
+        unknown -> fail <| "Unknown slideType " ++ unknown
 
 view : Model -> Html Msg
 view model =

@@ -10593,49 +10593,49 @@ var _user$project$Models_Slides$slideWrapper = function (t) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				_user$project$Models_Info$info,
-				function (s) {
+				function (_p8) {
 					return _elm_lang$core$Json_Decode$succeed(
-						_user$project$Models_Slides$InfoWrapper(s));
+						_user$project$Models_Slides$InfoWrapper(_p8));
 				});
 		case 'image':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				_user$project$Models_Info$info,
-				function (s) {
+				function (_p9) {
 					return _elm_lang$core$Json_Decode$succeed(
-						_user$project$Models_Slides$InfoWrapper(s));
+						_user$project$Models_Slides$InfoWrapper(_p9));
 				});
 		case 'video':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				_user$project$Models_Info$info,
-				function (s) {
+				function (_p10) {
 					return _elm_lang$core$Json_Decode$succeed(
-						_user$project$Models_Slides$InfoWrapper(s));
+						_user$project$Models_Slides$InfoWrapper(_p10));
 				});
 		case 'tweets':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				_user$project$Models_Tweets$tweets,
-				function (s) {
+				function (_p11) {
 					return _elm_lang$core$Json_Decode$succeed(
-						_user$project$Models_Slides$TweetsWrapper(s));
+						_user$project$Models_Slides$TweetsWrapper(_p11));
 				});
 		case 'program':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				_user$project$Models_Program$decoder,
-				function (s) {
+				function (_p12) {
 					return _elm_lang$core$Json_Decode$succeed(
-						_user$project$Models_Slides$ProgramWrapper(s));
+						_user$project$Models_Slides$ProgramWrapper(_p12));
 				});
 		case 'votes':
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
 				_user$project$Models_Votes$decoder,
-				function (s) {
+				function (_p13) {
 					return _elm_lang$core$Json_Decode$succeed(
-						_user$project$Models_Slides$VotesWrapper(s));
+						_user$project$Models_Slides$VotesWrapper(_p13));
 				});
 		default:
 			return _elm_lang$core$Json_Decode$fail(
@@ -10651,10 +10651,10 @@ var _user$project$Models_Slides$slides = A2(_elm_lang$core$Json_Decode_ops[':=']
 var _user$project$Models_Slides$ShowSlide = {ctor: 'ShowSlide'};
 var _user$project$Models_Slides$showSlide = A3(
 	_elm_lang$core$Task$perform,
-	function (_p8) {
+	function (_p14) {
 		return _user$project$Models_Slides$ShowSlide;
 	},
-	function (_p9) {
+	function (_p15) {
 		return _user$project$Models_Slides$ShowSlide;
 	},
 	_elm_lang$core$Process$sleep(500 * _elm_lang$core$Time$millisecond));
@@ -10663,24 +10663,24 @@ var _user$project$Models_Slides$subscriptions = function (model) {
 	return A2(
 		_elm_lang$core$Time$every,
 		10 * _elm_lang$core$Time$second,
-		function (_p10) {
+		function (_p16) {
 			return _user$project$Models_Slides$HideSlide;
 		});
 };
 var _user$project$Models_Slides$NextSlide = {ctor: 'NextSlide'};
 var _user$project$Models_Slides$hideSlide = A3(
 	_elm_lang$core$Task$perform,
-	function (_p11) {
+	function (_p17) {
 		return _user$project$Models_Slides$NextSlide;
 	},
-	function (_p12) {
+	function (_p18) {
 		return _user$project$Models_Slides$NextSlide;
 	},
 	_elm_lang$core$Process$sleep(500 * _elm_lang$core$Time$millisecond));
 var _user$project$Models_Slides$update = F2(
 	function (msg, model) {
-		var _p13 = msg;
-		switch (_p13.ctor) {
+		var _p19 = msg;
+		switch (_p19.ctor) {
 			case 'Update':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'HideSlide':
@@ -10695,13 +10695,13 @@ var _user$project$Models_Slides$update = F2(
 					_1: _user$project$Models_Slides$hideSlide
 				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'NextSlide':
-				var _p14 = _wernerdegroot$listzipper$List_Zipper$next(model.slides);
-				if (_p14.ctor === 'Just') {
+				var _p20 = _wernerdegroot$listzipper$List_Zipper$next(model.slides);
+				if (_p20.ctor === 'Just') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{slides: _p14._0}),
+							{slides: _p20._0}),
 						_1: _user$project$Models_Slides$showSlide
 					};
 				} else {
@@ -10727,36 +10727,36 @@ var _user$project$Models_Slides$update = F2(
 	});
 var _user$project$Models_Slides$Update = {ctor: 'Update'};
 var _user$project$Models_Slides$viewSlide = function (slide) {
-	var _p15 = slide;
-	switch (_p15.ctor) {
+	var _p21 = slide;
+	switch (_p21.ctor) {
 		case 'InfoWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p16) {
+				function (_p22) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Info$view(_p15._0));
+				_user$project$Models_Info$view(_p21._0));
 		case 'TweetsWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p17) {
+				function (_p23) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Tweets$view(_p15._0));
+				_user$project$Models_Tweets$view(_p21._0));
 		case 'ProgramWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p18) {
+				function (_p24) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Program$view(_p15._0));
+				_user$project$Models_Program$view(_p21._0));
 		default:
 			return A2(
 				_elm_lang$html$Html_App$map,
-				function (_p19) {
+				function (_p25) {
 					return _user$project$Models_Slides$Update;
 				},
-				_user$project$Models_Votes$view(_p15._0));
+				_user$project$Models_Votes$view(_p21._0));
 	}
 };
 var _user$project$Models_Slides$view = function (model) {
