@@ -12,15 +12,21 @@ import Models.Votes as Votes
 import Time exposing (Time, second, millisecond)
 import Task
 import Process exposing (sleep)
+import List.Zipper as Z
 
 type alias Model =
-    { slides : List SlideWrapper
-    , index : Int
+    { slides : Z.Zipper SlideWrapper
     , switching : Bool
     }
 
 init : Model
-init = Model [] 0 False
+init = fromList []
+
+fromList : List SlideWrapper -> Model
+fromList l =
+    case Z.fromList l of
+        Just zipper -> Model zipper False
+        Nothing     -> Model (Z.Zipper [] (InfoWrapper Info.empty) []) False
 
 type SlideWrapper
     = InfoWrapper Info.Model
@@ -64,19 +70,17 @@ update msg model =
 
         HideSlide ->
             let
-                nextIndex = getNextIndex model
-                shouldChange = length model.slides > 1
+                shouldChange = zipperLength model.slides > 1
             in
                 if shouldChange then
-                    ({model | switching = True}, hideSlide)
+                    ({ model | switching = True }, hideSlide)
                 else
-                    (model, hideSlide)
+                    (model, Cmd.none)
 
         NextSlide ->
-            let
-                nextIndex = getNextIndex model
-            in
-                ({model | index = nextIndex}, showSlide)
+            case Z.next model.slides of
+                Just z  -> ({ model | slides = z }, showSlide)
+                Nothing -> ({ model | slides = Z.first model.slides }, showSlide)
 
         ShowSlide ->
             ({model | switching = False}, Cmd.none)
@@ -113,14 +117,10 @@ slideWrapper t =
 view : Model -> Html Msg
 view model =
     let
-        slide = getAt model.index model.slides
+        slide = Z.get model.slides
     in
         div [ classList [("switcharoo", True), ("switcharoo--hidden", model.switching)] ]
-            [
-              case slide of
-                  Just s -> viewSlide s
-                  Nothing -> text ""
-            ]
+            [ viewSlide slide ]
 
 viewSlide : SlideWrapper -> Html Msg
 viewSlide slide =
@@ -142,9 +142,13 @@ subscriptions model = Time.every (10 * second) (\_ -> HideSlide)
 getAt : Int -> List a -> Maybe a
 getAt idx = List.head << List.drop idx
 
-getNextIndex : Model -> Int
-getNextIndex model =
-    if model.index + 1 == length model.slides then
-        0
-    else
-        model.index + 1
+updateIfPossible : Model -> Maybe Model -> Model
+updateIfPossible current new =
+    case Z.next current.slides of
+        Just _  -> current
+        Nothing -> case new of
+                       Just n  -> n
+                       Nothing -> current
+
+zipperLength : Z.Zipper a -> Int
+zipperLength = length << Z.toList

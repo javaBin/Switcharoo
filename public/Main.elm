@@ -33,7 +33,7 @@ update msg model =
             (model, getSlides)
 
         GetSucceeded slideList ->
-            (Model (Slides.Model slideList 0 False) Nothing, Cmd.none)
+            (Model (Slides.fromList slideList) Nothing, Cmd.none)
 
         GetFailed error ->
             (model, Cmd.none)
@@ -42,10 +42,10 @@ update msg model =
             (model, refetchSlides)
 
         RefetchSucceeded slideList ->
-            if slideList == model.slides.slides then
+            if (Slides.fromList slideList).slides == model.slides.slides then
                 (model, Cmd.none)
             else
-                ({ model | nextSlides = Just (Slides.Model slideList 0 False) }, Cmd.none)
+                ({ model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none)
 
         RefetchFailed _ ->
             (model, Cmd.none)
@@ -54,23 +54,15 @@ update msg model =
             let
                 (newSlides, slidesCmd) = Slides.update slidesMsg model.slides
                 mappedCmd = Cmd.map SlidesMsg slidesCmd
+                slides = Slides.updateIfPossible newSlides model.nextSlides
             in
-                if newSlides.index == 0 then
-                    swapIfNewSlides model newSlides mappedCmd
-                else
-                    ({model | slides = newSlides}, mappedCmd)
+                ({ model | slides = slides }, mappedCmd)
 
 isJust : Maybe a -> Bool
 isJust m =
     case m of
         Just _ -> True
         Nothing -> False
-
-swapIfNewSlides : Model -> Slides.Model -> Cmd Msg -> (Model, Cmd Msg)
-swapIfNewSlides model newSlides slidesCmd =
-    case model.nextSlides of
-        Just s -> ({ model | slides = s, nextSlides = Nothing }, slidesCmd)
-        Nothing -> ({ model | slides = newSlides }, slidesCmd)
 
 getSlides : Cmd Msg
 getSlides = Task.perform GetFailed GetSucceeded <| Http.get Slides.slides "/data"
