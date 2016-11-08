@@ -8,7 +8,7 @@ html, body {
 }
 
 body {
-    background: #2E3231;
+    background: #222152;
     color: white;
     font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, 'sans serif';
     overflow: hidden;
@@ -45,7 +45,7 @@ body {
 }
 
 .slide__title {
-    color: #FCB018;
+    color: white;
     font-size: 6rem;
     margin: 0 0 10px 0;
     text-transform: uppercase;
@@ -170,7 +170,7 @@ body {
 }
 
 .tweet__name {
-    color: #FCB018;
+    color: white;
     font-size: 3rem;
     font-weight: 400;
     margin-top: 10px;

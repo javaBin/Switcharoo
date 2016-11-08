@@ -13,7 +13,7 @@ var job = new cron(cronPattern, getTweets);
 
 function getTweets(complete) {
     Twitter.get('search/tweets', {
-        q: 'javazone exclude:retweets',
+        q: 'ehinetc16 exclude:retweets',
         count: 4,
         result_type: 'recent'
     }, function(err, data, response) {
