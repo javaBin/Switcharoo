@@ -7,8 +7,7 @@ var _ = require('lodash');
 function get() {
 	var services = [
 		Program.status(),
-		Twitter.status(),
-    Votes.status()
+		Twitter.status()
 	];
 
 	var errors = _(services).any(function(service) { return service.statusCode !== 200; });
