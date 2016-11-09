@@ -8,7 +8,6 @@ import Json.Decode exposing (Decoder, andThen, succeed, list, string, object1, f
 import Models.Info as Info
 import Models.Tweets as Tweets
 import Models.Program as Program
-import Models.Votes as Votes
 import Time exposing (Time, second, millisecond)
 import Task
 import Process exposing (sleep)
@@ -35,13 +34,10 @@ type SlideWrapper
     = InfoWrapper Info.Model
     | TweetsWrapper Tweets.Model
     | ProgramWrapper Program.Model
-    | VotesWrapper Votes.Model
 
 
 type Msg
     = Update
-      -- | VotesMsg Votes.Msg
-      -- | ResetVotes
     | NextSlide
     | HideSlide
     | ShowSlide
@@ -53,24 +49,6 @@ update msg model =
         Update ->
             ( model, Cmd.none )
 
-        -- VotesMsg votesMsg ->
-        --     case getVotes model of
-        --         Just s ->
-        --             let
-        --                 newVotes = Votes.update votesMsg s
-        --             in
-        --                 {model | slides = List.map (\cur -> updateVotes cur newVotes) model.slides}
-        --         Nothing ->
-        --             (model, Cmd.none)
-        -- ResetVotes ->
-        --     case getVotes model of
-        --         Just s ->
-        --             let
-        --                 newVotes = Votes.update Votes.Reset s
-        --             in
-        --                 {model | slides = List.map(\cur -> updateVotes cur newVotes) model.slides}
-        --         Nothing ->
-        --             (model, Cmd.none)
         HideSlide ->
             let
                 shouldChange =
@@ -131,9 +109,6 @@ slideWrapper t =
         "program" ->
             Program.decoder `andThen` (succeed << ProgramWrapper)
 
-        "votes" ->
-            Votes.decoder `andThen` (succeed << VotesWrapper)
-
         unknown ->
             fail <| "Unknown slideType " ++ unknown
 
@@ -159,19 +134,6 @@ viewSlide slide =
 
         ProgramWrapper s ->
             App.map (\_ -> Update) (Program.view s)
-
-        VotesWrapper s ->
-            App.map (\_ -> Update) (Votes.view s)
-
-
-isVotes : SlideWrapper -> Maybe Votes.Model -> Maybe Votes.Model
-isVotes s old =
-    case s of
-        VotesWrapper s2 ->
-            Just s2
-
-        _ ->
-            old
 
 
 subscriptions : Model -> Sub Msg
