@@ -1,3 +1,5 @@
+module Main exposing (..)
+
 import Html exposing (..)
 import Html.App exposing (program, map)
 import Html.Attributes exposing (class)
@@ -5,17 +7,24 @@ import Http
 import Task
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
+import Debug
+
 
 type alias Model =
     { slides : Slides.Model
-    , nextSlides: Maybe Slides.Model
+    , nextSlides : Maybe Slides.Model
     }
 
-initModel : Model
-initModel = Model (Slides.init) Nothing
 
-init : (Model, Cmd Msg)
-init = (initModel, getSlides)
+initModel : Model
+initModel =
+    Model (Slides.init) Nothing
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( initModel, getSlides )
+
 
 type Msg
     = GetSlides
@@ -26,61 +35,69 @@ type Msg
     | RefetchFailed Http.Error
     | SlidesMsg Slides.Msg
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GetSlides ->
-            (model, getSlides)
+            ( model, getSlides )
 
         GetSucceeded slideList ->
-            (Model (Slides.fromList slideList) Nothing, Cmd.none)
+            ( Model (Slides.fromList slideList) Nothing, Cmd.none )
 
         GetFailed error ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         Refetch ->
-            (model, refetchSlides)
+            ( model, refetchSlides )
 
         RefetchSucceeded slideList ->
             if (Slides.fromList slideList).slides == model.slides.slides then
-                (model, Cmd.none)
+                Debug.log "content is equal" ( model, Cmd.none )
             else
-                ({ model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none)
+                Debug.log "content is different" ( { model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none )
 
         RefetchFailed _ ->
-            (model, Cmd.none)
+            ( model, Cmd.none )
 
         SlidesMsg slidesMsg ->
             let
-                (newSlides, slidesCmd) = Slides.update slidesMsg model.slides
-                mappedCmd = Cmd.map SlidesMsg slidesCmd
-                slides = Slides.updateIfPossible newSlides model.nextSlides
-            in
-                ({ model | slides = slides }, mappedCmd)
+                ( newSlides, slidesCmd ) =
+                    Slides.update slidesMsg model.slides
 
-isJust : Maybe a -> Bool
-isJust m =
-    case m of
-        Just _ -> True
-        Nothing -> False
+                mappedCmd =
+                    Cmd.map SlidesMsg slidesCmd
+
+                slides =
+                    Slides.updateIfPossible newSlides model.nextSlides
+            in
+                ( { model | slides = slides }, mappedCmd )
+
 
 getSlides : Cmd Msg
-getSlides = Task.perform GetFailed GetSucceeded <| Http.get Slides.slides "/data"
+getSlides =
+    Task.perform GetFailed GetSucceeded <| Http.get Slides.slides "/data"
+
 
 refetchSlides : Cmd Msg
-refetchSlides = Task.perform RefetchFailed RefetchSucceeded <| Http.get Slides.slides "/data"
+refetchSlides =
+    Task.perform RefetchFailed RefetchSucceeded <| Http.get Slides.slides "/data"
+
 
 view : Model -> Html Msg
 view model =
     div [ class "switcharoo" ]
         [ map (\_ -> GetSlides) (Slides.view model.slides) ]
 
+
 subscription : Model -> Sub Msg
 subscription model =
     Sub.batch
-        [ Time.every (60 * second) (\_ -> Refetch)
+        [ Time.every (10 * second) (\_ -> Refetch)
         , Sub.map SlidesMsg <| Slides.subscriptions model.slides
         ]
 
+
 main : Program Never
-main = program { init = init, update = update, view = view, subscriptions = subscription}
+main =
+    program { init = init, update = update, view = view, subscriptions = subscription }
