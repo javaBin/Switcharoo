@@ -15,12 +15,6 @@
 		"access_token_secret": ""
 	},
 
-	"instagram": {
-		"cronPattern": "0 */10 * * * *",
-		"client_id": "",
-		"client_secret": ""
-	},
-
 	"mongodb": {
 		"connection_string": "mongodb://localhost:27017/my_db"
 	},

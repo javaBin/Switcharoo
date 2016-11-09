@@ -1,6 +1,5 @@
 var Program = require('./program');
 var Twitter = require('./twitter');
-var Instagram = require('./instagram');
 var Votes = require('./votes');
 var _ = require('lodash');
 
