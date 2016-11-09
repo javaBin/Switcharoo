@@ -7,7 +7,6 @@ import Http
 import Task
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
-import Debug
 
 
 type alias Model =

@@ -12,7 +12,6 @@ import Time exposing (Time, second, millisecond)
 import Task
 import Process exposing (sleep)
 import List.Zipper as Z
-import Debug
 
 
 type alias Model =
@@ -57,7 +56,7 @@ update msg model =
                     ( model, Cmd.none )
 
         NextSlide ->
-            case Debug.log "next" (Z.next model.slides) of
+            case (Z.next model.slides) of
                 Just z ->
                     ( { model | slides = z }, showSlide )
 

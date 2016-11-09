@@ -10591,10 +10591,7 @@ var _user$project$Models_Slides$update = F2(
 					_1: _user$project$Models_Slides$hideSlide
 				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'NextSlide':
-				var _p16 = A2(
-					_elm_lang$core$Debug$log,
-					'next',
-					_wernerdegroot$listzipper$List_Zipper$next(model.slides));
+				var _p16 = _wernerdegroot$listzipper$List_Zipper$next(model.slides);
 				if (_p16.ctor === 'Just') {
 					return {
 						ctor: '_Tuple2',
