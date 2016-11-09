@@ -52,10 +52,10 @@ update msg model =
             ( model, refetchSlides )
 
         RefetchSucceeded slideList ->
-            if (Slides.fromList slideList).slides == model.slides.slides then
-                Debug.log "content is equal" ( model, Cmd.none )
+            if Slides.zipperEquals (Slides.fromList slideList).slides model.slides.slides then
+                ( model, Cmd.none )
             else
-                Debug.log "content is different" ( { model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none )
+                ( { model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none )
 
         RefetchFailed _ ->
             ( model, Cmd.none )
@@ -68,10 +68,10 @@ update msg model =
                 mappedCmd =
                     Cmd.map SlidesMsg slidesCmd
 
-                slides =
+                ( slides, nextSlides ) =
                     Slides.updateIfPossible newSlides model.nextSlides
             in
-                ( { model | slides = slides }, mappedCmd )
+                ( { model | slides = slides, nextSlides = nextSlides }, mappedCmd )
 
 
 getSlides : Cmd Msg

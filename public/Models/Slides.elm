@@ -12,6 +12,7 @@ import Time exposing (Time, second, millisecond)
 import Task
 import Process exposing (sleep)
 import List.Zipper as Z
+import Debug
 
 
 type alias Model =
@@ -37,8 +38,7 @@ type SlideWrapper
 
 
 type Msg
-    = Update
-    | NextSlide
+    = NextSlide
     | HideSlide
     | ShowSlide
 
@@ -46,9 +46,6 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Update ->
-            ( model, Cmd.none )
-
         HideSlide ->
             let
                 shouldChange =
@@ -60,7 +57,7 @@ update msg model =
                     ( model, Cmd.none )
 
         NextSlide ->
-            case Z.next model.slides of
+            case Debug.log "next" (Z.next model.slides) of
                 Just z ->
                     ( { model | slides = z }, showSlide )
 
@@ -127,13 +124,13 @@ viewSlide : SlideWrapper -> Html Msg
 viewSlide slide =
     case slide of
         InfoWrapper s ->
-            App.map (\_ -> Update) (Info.view s)
+            App.map (\_ -> NextSlide) (Info.view s)
 
         TweetsWrapper s ->
-            App.map (\_ -> Update) (Tweets.view s)
+            App.map (\_ -> NextSlide) (Tweets.view s)
 
         ProgramWrapper s ->
-            App.map (\_ -> Update) (Program.view s)
+            App.map (\_ -> NextSlide) (Program.view s)
 
 
 subscriptions : Model -> Sub Msg
@@ -141,21 +138,26 @@ subscriptions model =
     Time.every (10 * second) (\_ -> HideSlide)
 
 
-updateIfPossible : Model -> Maybe Model -> Model
+updateIfPossible : Model -> Maybe Model -> ( Model, Maybe Model )
 updateIfPossible current new =
     case Z.next current.slides of
         Just _ ->
-            current
+            ( current, new )
 
         Nothing ->
             case new of
                 Just n ->
-                    n
+                    ( n, Nothing )
 
                 Nothing ->
-                    current
+                    ( current, Nothing )
 
 
 zipperLength : Z.Zipper a -> Int
 zipperLength =
     length << Z.toList
+
+
+zipperEquals : Z.Zipper a -> Z.Zipper a -> Bool
+zipperEquals a b =
+    Z.toList a == Z.toList b

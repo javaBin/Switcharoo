@@ -10443,6 +10443,12 @@ var _wernerdegroot$listzipper$List_Zipper$last = function (_p26) {
 	}
 };
 
+var _user$project$Models_Slides$zipperEquals = F2(
+	function (a, b) {
+		return _elm_lang$core$Native_Utils.eq(
+			_wernerdegroot$listzipper$List_Zipper$toList(a),
+			_wernerdegroot$listzipper$List_Zipper$toList(b));
+	});
 var _user$project$Models_Slides$zipperLength = function (_p0) {
 	return _elm_lang$core$List$length(
 		_wernerdegroot$listzipper$List_Zipper$toList(_p0));
@@ -10451,13 +10457,13 @@ var _user$project$Models_Slides$updateIfPossible = F2(
 	function (current, $new) {
 		var _p1 = _wernerdegroot$listzipper$List_Zipper$next(current.slides);
 		if (_p1.ctor === 'Just') {
-			return current;
+			return {ctor: '_Tuple2', _0: current, _1: $new};
 		} else {
 			var _p2 = $new;
 			if (_p2.ctor === 'Just') {
-				return _p2._0;
+				return {ctor: '_Tuple2', _0: _p2._0, _1: _elm_lang$core$Maybe$Nothing};
 			} else {
-				return current;
+				return {ctor: '_Tuple2', _0: current, _1: _elm_lang$core$Maybe$Nothing};
 			}
 		}
 	});
@@ -10573,8 +10579,6 @@ var _user$project$Models_Slides$update = F2(
 	function (msg, model) {
 		var _p15 = msg;
 		switch (_p15.ctor) {
-			case 'Update':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'HideSlide':
 				var shouldChange = _elm_lang$core$Native_Utils.cmp(
 					_user$project$Models_Slides$zipperLength(model.slides),
@@ -10587,7 +10591,10 @@ var _user$project$Models_Slides$update = F2(
 					_1: _user$project$Models_Slides$hideSlide
 				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'NextSlide':
-				var _p16 = _wernerdegroot$listzipper$List_Zipper$next(model.slides);
+				var _p16 = A2(
+					_elm_lang$core$Debug$log,
+					'next',
+					_wernerdegroot$listzipper$List_Zipper$next(model.slides));
 				if (_p16.ctor === 'Just') {
 					return {
 						ctor: '_Tuple2',
@@ -10617,7 +10624,6 @@ var _user$project$Models_Slides$update = F2(
 				};
 		}
 	});
-var _user$project$Models_Slides$Update = {ctor: 'Update'};
 var _user$project$Models_Slides$viewSlide = function (slide) {
 	var _p17 = slide;
 	switch (_p17.ctor) {
@@ -10625,21 +10631,21 @@ var _user$project$Models_Slides$viewSlide = function (slide) {
 			return A2(
 				_elm_lang$html$Html_App$map,
 				function (_p18) {
-					return _user$project$Models_Slides$Update;
+					return _user$project$Models_Slides$NextSlide;
 				},
 				_user$project$Models_Info$view(_p17._0));
 		case 'TweetsWrapper':
 			return A2(
 				_elm_lang$html$Html_App$map,
 				function (_p19) {
-					return _user$project$Models_Slides$Update;
+					return _user$project$Models_Slides$NextSlide;
 				},
 				_user$project$Models_Tweets$view(_p17._0));
 		default:
 			return A2(
 				_elm_lang$html$Html_App$map,
 				function (_p20) {
-					return _user$project$Models_Slides$Update;
+					return _user$project$Models_Slides$NextSlide;
 				},
 				_user$project$Models_Program$view(_p17._0));
 	}
@@ -10732,24 +10738,19 @@ var _user$project$Main$update = F2(
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$refetchSlides};
 			case 'RefetchSucceeded':
 				var _p2 = _p1._0;
-				return _elm_lang$core$Native_Utils.eq(
+				return A2(
+					_user$project$Models_Slides$zipperEquals,
 					_user$project$Models_Slides$fromList(_p2).slides,
-					model.slides.slides) ? A2(
-					_elm_lang$core$Debug$log,
-					'content is equal',
-					{ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none}) : A2(
-					_elm_lang$core$Debug$log,
-					'content is different',
-					{
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								nextSlides: _elm_lang$core$Maybe$Just(
-									_user$project$Models_Slides$fromList(_p2))
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					});
+					model.slides.slides) ? {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none} : {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							nextSlides: _elm_lang$core$Maybe$Just(
+								_user$project$Models_Slides$fromList(_p2))
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'RefetchFailed':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			default:
@@ -10757,12 +10758,14 @@ var _user$project$Main$update = F2(
 				var newSlides = _p3._0;
 				var slidesCmd = _p3._1;
 				var mappedCmd = A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SlidesMsg, slidesCmd);
-				var slides = A2(_user$project$Models_Slides$updateIfPossible, newSlides, model.nextSlides);
+				var _p4 = A2(_user$project$Models_Slides$updateIfPossible, newSlides, model.nextSlides);
+				var slides = _p4._0;
+				var nextSlides = _p4._1;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{slides: slides}),
+						{slides: slides, nextSlides: nextSlides}),
 					_1: mappedCmd
 				};
 		}
@@ -10779,7 +10782,7 @@ var _user$project$Main$view = function (model) {
 			[
 				A2(
 				_elm_lang$html$Html_App$map,
-				function (_p4) {
+				function (_p5) {
 					return _user$project$Main$GetSlides;
 				},
 				_user$project$Models_Slides$view(model.slides))
