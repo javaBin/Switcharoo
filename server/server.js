@@ -1,5 +1,4 @@
 var Twitter = require('./services/twitter');
-var Instagram = require('./services/instagram');
 var Program = require('./services/program');
 var Slide = require('./models/slide');
 var Setting = require('./models/setting');
@@ -11,6 +10,7 @@ var config = require('./config');
 var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
 var bodyParser = require('body-parser');
 var path = require('path');
+var ffmpeg = require('fluent-ffmpeg');
 
 function configure(app, express, basePath) {
     app.set('port', config.app.port);
@@ -84,7 +84,19 @@ function configure(app, express, basePath) {
         console.log(req.file);
         var filename = req.file.filename;
         var type = getType(req.file.mimetype);
-        res.json({location: '/uploads/' + filename, filetype: type});
+        if (type === 'image') {
+            res.json({location: '/uploads/' + filename, filetype: type});
+        } else {
+            ffmpeg(path.resolve(basePath, 'dist', 'public2', 'uploads', filename))
+                .on('end', function() {
+                    res.json({location: '/uploads/' + filename, filetype: type, thumbnail: '/uploads/' + filename + '.png'});
+                }).screenshots({
+                    timestamps: ['50%'],
+                    filename: '%f.png',
+                    folder: path.resolve(basePath, 'dist', 'public2', 'uploads'),
+                    size: '368x230'
+                });
+        }
     });
 
     Slide.register(app, '/slides');

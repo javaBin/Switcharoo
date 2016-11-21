@@ -1,4 +1,4 @@
-module Models.Info exposing (Model, view, info)
+module Models.Info exposing (Model, view, info, empty)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, style, attribute, src)
@@ -16,6 +16,9 @@ type alias Model =
 type Msg = Update
 
 type InfoType = TextInfo | ImageInfo | VideoInfo
+
+empty : Model
+empty = Model "" "" 0 TextInfo
 
 update : Msg -> Model -> Model
 update msg model =
