@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "../node_modules/.bin/elm-live Main.elm --output=../dist/admin2/app.js",
+    "watch": "../node_modules/.bin/elm-live Main.elm --output=../dist/admin2/app.js -- --debug",
     "build": "elm make Main.elm --output=../dist/admin2/app.js"
   },
   "keywords": [],

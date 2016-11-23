@@ -1,10 +1,9 @@
 module Main exposing (..)
 
 import Html exposing (..)
-import Html.App exposing (program, map)
+import Html exposing (program, map)
 import Html.Attributes exposing (class)
 import Http
-import Task
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
 
@@ -27,11 +26,9 @@ init =
 
 type Msg
     = GetSlides
-    | GetSucceeded (List Slides.SlideWrapper)
-    | GetFailed Http.Error
+    | Slides (Result Http.Error (List Slides.SlideWrapper))
     | Refetch
-    | RefetchSucceeded (List Slides.SlideWrapper)
-    | RefetchFailed Http.Error
+    | RefetchSlides (Result Http.Error (List Slides.SlideWrapper))
     | SlidesMsg Slides.Msg
 
 
@@ -41,22 +38,22 @@ update msg model =
         GetSlides ->
             ( model, getSlides )
 
-        GetSucceeded slideList ->
+        Slides (Ok slideList) ->
             ( Model (Slides.fromList slideList) Nothing, Cmd.none )
 
-        GetFailed error ->
+        Slides (Err _) ->
             ( model, Cmd.none )
 
         Refetch ->
             ( model, refetchSlides )
 
-        RefetchSucceeded slideList ->
+        RefetchSlides (Ok slideList) ->
             if Slides.zipperEquals (Slides.fromList slideList).slides model.slides.slides then
                 ( model, Cmd.none )
             else
                 ( { model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none )
 
-        RefetchFailed _ ->
+        RefetchSlides (Err _) ->
             ( model, Cmd.none )
 
         SlidesMsg slidesMsg ->
@@ -75,12 +72,12 @@ update msg model =
 
 getSlides : Cmd Msg
 getSlides =
-    Task.perform GetFailed GetSucceeded <| Http.get Slides.slides "/data"
+    Http.send Slides <| Http.get "/data" Slides.slides
 
 
 refetchSlides : Cmd Msg
 refetchSlides =
-    Task.perform RefetchFailed RefetchSucceeded <| Http.get Slides.slides "/data"
+    Http.send RefetchSlides <| Http.get "/data" Slides.slides
 
 
 view : Model -> Html Msg
@@ -97,6 +94,6 @@ subscription model =
         ]
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
     program { init = init, update = update, view = view, subscriptions = subscription }

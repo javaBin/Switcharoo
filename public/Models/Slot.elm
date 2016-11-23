@@ -2,7 +2,8 @@ module Models.Slot exposing (Model, view, decoder)
 
 import Html exposing (..)
 import Html.Attributes exposing (class)
-import Json.Decode exposing (Decoder, object3, string, (:=), maybe)
+import Json.Decode exposing (Decoder, map3, string, field, maybe)
+
 
 type alias Model =
     { room : String
@@ -10,31 +11,42 @@ type alias Model =
     , speakers : Maybe String
     }
 
-type Msg = Update
+
+type Msg
+    = Update
+
 
 decoder : Decoder Model
-decoder = object3 Model ("room" := string) ("title" := string) (maybe ("speakers" := string))
+decoder =
+    map3 Model (field "room" string) (field "title" string) (maybe (field "speakers" string))
+
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Update -> model
+        Update ->
+            model
+
 
 unwrapMaybe : Maybe String -> String
 unwrapMaybe m =
     case m of
-        Just s  -> s
-        Nothing -> ""
+        Just s ->
+            s
+
+        Nothing ->
+            ""
+
 
 view : Model -> Html Msg
 view model =
-    li [ class "program__entry entry"]
-       [ div [ class "entry__room" ]
-             [ text model.room ]
-       , div [ class "entry__info" ]
-             [ div [ class "entry__title" ]
-                   [ text model.title]
-             , div [ class "entry__speakers" ]
-                   [ text <| unwrapMaybe model.speakers ]
-             ]
-       ]
+    li [ class "program__entry entry" ]
+        [ div [ class "entry__room" ]
+            [ text model.room ]
+        , div [ class "entry__info" ]
+            [ div [ class "entry__title" ]
+                [ text model.title ]
+            , div [ class "entry__speakers" ]
+                [ text <| unwrapMaybe model.speakers ]
+            ]
+        ]

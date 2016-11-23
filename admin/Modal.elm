@@ -1,14 +1,12 @@
--- module Modal exposing (Model, Msg, init, update, subscriptions, view)
 module Modal exposing (..)
 
-import Html exposing (Html, div, button, text, i, input)
-import Html.App as App
-import Html.Attributes exposing (class, classList, attribute, type', id, disabled)
+import Html exposing (Html, div, button, text, i, input, map)
+import Html.Attributes exposing (class, classList, attribute, type_, id, disabled)
 import Html.Events exposing (onClick, on, onInput)
 import Events exposing (onClickStopPropagation)
 import Slide
-import Task
 import Http exposing (Response)
+
 
 type alias Model =
     { show : Bool
@@ -16,57 +14,68 @@ type alias Model =
     , slide : Slide.Model
     }
 
-init : (Model, Cmd Msg)
-init = (Model False "MediaInputId" Slide.initModel, Cmd.none)
+
+init : ( Model, Cmd Msg )
+init =
+    ( Model False "MediaInputId" Slide.initModel, Cmd.none )
+
 
 type Msg
     = Show
     | Hide
     | Edit Slide.Model
     | CreateSlide
-    | CreateFailed Http.RawError
-    | CreateSucceeded Response
+    | CreateResponse (Result Http.Error String)
     | CurrentSlide Slide.Msg
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Show ->
-            ({model | show = True}, Cmd.none)
+            ( { model | show = True }, Cmd.none )
 
         Hide ->
             init
 
         Edit editSlide ->
             let
-                newModel = {model | slide = editSlide}
+                newModel =
+                    { model | slide = editSlide }
             in
                 update Show newModel
 
         CreateSlide ->
-            (model, createSlide model.slide)
+            ( model, createSlide model.slide )
 
-        CreateFailed _ ->
-            (model, Cmd.none)
+        CreateResponse (Err _) ->
+            ( model, Cmd.none )
 
-        CreateSucceeded _ ->
+        CreateResponse (Ok _) ->
             update Hide model
 
         CurrentSlide msg ->
             let
-                (newSlide, newCmd) = Slide.update msg model.slide
+                ( newSlide, newCmd ) =
+                    Slide.update msg model.slide
             in
-                ({model | slide = newSlide}, Cmd.map CurrentSlide newCmd)
+                ( { model | slide = newSlide }, Cmd.map CurrentSlide newCmd )
+
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Sub.map CurrentSlide <| Slide.subscriptions model.slide
+subscriptions model =
+    Sub.map CurrentSlide <| Slide.subscriptions model.slide
+
 
 createSlide : Slide.Model -> Cmd Msg
-createSlide model = Task.perform CreateFailed CreateSucceeded <| Slide.createOrEditSlide model
+createSlide model =
+    Slide.createOrEditSlide model CreateResponse
+
 
 icon : String -> Html msg
 icon c =
     i [ class <| "icon-" ++ c ] []
+
 
 isEmpty : Slide.Model -> Bool
 isEmpty m =
@@ -75,43 +84,50 @@ isEmpty m =
     else
         False
 
+
 view : Model -> Html Msg
 view model =
     div [ class "slide slide--new-slide", onClick Show ]
         [ div [ class "slide__content slide__content--new-slide" ] []
-        , div [ classList [ ("modal", True), ("modal--visible", model.show) ] ]
-              [ showModalBackdrop model ]
+        , div [ classList [ ( "modal", True ), ( "modal--visible", model.show ) ] ]
+            [ showModalBackdrop model ]
         ]
+
 
 showModalBackdrop : Model -> Html Msg
 showModalBackdrop model =
-    div [ classList [ ("modal", True), ("modal--visible", model.show) ] ]
+    div [ classList [ ( "modal", True ), ( "modal--visible", model.show ) ] ]
         [ div [ class "modal__backdrop", onClickStopPropagation Hide ]
-              [ showModal model ]
+            [ showModal model ]
         ]
+
 
 showModal : Model -> Html Msg
 showModal model =
     div [ class "modal__wrapper", onClickStopPropagation Show ]
         [ div [ class "modal__header" ]
-              [ text "New Slide" ]
+            [ text "New Slide" ]
         , showModalContent model
         , showModalFooter model
         ]
 
+
 showModalContent : Model -> Html Msg
 showModalContent model =
     div [ class "modal__content" ]
-        [ App.map CurrentSlide (Slide.editView model.slide)
+        [ map CurrentSlide (Slide.editView model.slide)
         ]
+
 
 showModalFooter : Model -> Html Msg
 showModalFooter model =
     div [ class "modal__footer" ]
         [ button [ class "button button--cancel", onClickStopPropagation Hide ]
-                 [ icon "close" ]
-        , button [ class "button button--ok modal__save"
-                 , onClickStopPropagation CreateSlide
-                 , disabled <| isEmpty model.slide ]
-                 [ icon "check" ]
+            [ icon "close" ]
+        , button
+            [ class "button button--ok modal__save"
+            , onClickStopPropagation CreateSlide
+            , disabled <| isEmpty model.slide
+            ]
+            [ icon "check" ]
         ]

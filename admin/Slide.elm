@@ -1,16 +1,15 @@
--- module Slide exposing (Model, Msg, decoder, update, view, createOrEditSlide, editView, initModel, subscriptions)
 module Slide exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, classList, style, type', id, value, draggable, placeholder, disabled, attribute, src)
+import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
 import Html.Events exposing (onClick, onInput, on)
-import Json.Decode.Extra exposing((|:))
-import Json.Decode exposing (Decoder, succeed, string, bool, (:=))
-import Http exposing (Request, Response, Body, defaultSettings, send, empty)
+import Json.Decode.Extra exposing ((|:))
+import Json.Decode exposing (Decoder, succeed, string, bool, field)
+import Http
 import Json.Encode as Encode exposing (Value, encode)
 import Events exposing (onClickStopPropagation)
-import Task
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
+
 
 type alias Model =
     { id : String
@@ -18,27 +17,28 @@ type alias Model =
     , body : String
     , visible : Bool
     , index : String
-    , type' : String
+    , type_ : String
     }
 
-initModel : Model
-initModel = Model "" "" "" False "" ""
 
-init : (Model, Cmd Msg)
-init = (initModel, Cmd.none)
+initModel : Model
+initModel =
+    Model "" "" "" False "" ""
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( initModel, Cmd.none )
+
 
 type Msg
     = ToggleVisibility
-    | ToggleFailed Http.RawError
-    | ToggleSucceeded Response
-    | EditFailed Http.RawError
-    | EditSucceeded Response
-    | CreateFailed Http.RawError
-    | CreateSucceeded Response
+    | ToggleResponse (Result Http.Error Model)
+    | CreateResponse (Result Http.Error Model)
     | Delete
+    | DeleteResponse (Result Http.Error String)
     | Edit
-    | DeleteFailed Http.RawError
-    | DeleteSucceeded Response
+    | EditResponse (Result Http.Error Model)
     | Title String
     | Body String
     | Index String
@@ -48,286 +48,330 @@ type Msg
     | FileUploaded FileData
     | FileUploadFailed String
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ToggleVisibility ->
             let
-                newModel = {model | visible = not model.visible}
+                newModel =
+                    { model | visible = not model.visible }
+
+                _ =
+                    Debug.log "model" newModel
             in
-                (newModel, toggle newModel)
+                ( newModel, edit newModel ToggleResponse )
 
-        ToggleFailed _ ->
-            (model, Cmd.none)
-
-        ToggleSucceeded _ ->
-            (model, Cmd.none)
-
-        EditFailed _ ->
-            (model, Cmd.none)
-
-        EditSucceeded _ ->
-            (model, Cmd.none)
-
-        CreateFailed _ ->
-            (model, Cmd.none)
-
-        CreateSucceeded _ ->
-            (model, Cmd.none)
-
-        Delete ->
-            (model, delete model)
+        ToggleResponse _ ->
+            ( model, Cmd.none )
 
         Edit ->
-            (model, edit model)
+            ( model, edit model EditResponse )
 
-        DeleteSucceeded _ ->
-            (model, Cmd.none)
+        EditResponse _ ->
+            ( model, Cmd.none )
 
-        DeleteFailed _ ->
-            (model, Cmd.none)
+        CreateResponse _ ->
+            ( model, Cmd.none )
+
+        Delete ->
+            ( model, delete model )
+
+        DeleteResponse _ ->
+            ( model, Cmd.none )
 
         Title newTitle ->
-            ({model | title = newTitle}, Cmd.none)
+            ( { model | title = newTitle }, Cmd.none )
 
         Body newBody ->
-            ({model | body = newBody}, Cmd.none)
+            ( { model | body = newBody }, Cmd.none )
 
         Index newIndex ->
-            ({model | index = newIndex}, Cmd.none)
+            ( { model | index = newIndex }, Cmd.none )
 
         TextSlide ->
-            ({model | type' = "text"}, Cmd.none)
+            ( { model | type_ = "text" }, Cmd.none )
 
         MediaSlide ->
-            ({model | type' = "media"}, Cmd.none)
+            ( { model | type_ = "media" }, Cmd.none )
 
         FileSelected ->
-            (model, fileSelected "MediaInputId")
+            ( model, fileSelected "MediaInputId" )
 
         FileUploaded fileData ->
-            ({model | title = fileData.location, body = fileData.location, type' = fileData.filetype}, Cmd.none)
+            ( { model | title = fileData.location, body = fileData.location, type_ = fileData.filetype }, Cmd.none )
 
         FileUploadFailed error ->
-            (initModel, Cmd.none)
+            ( initModel, Cmd.none )
+
 
 decoder : Decoder Model
 decoder =
     succeed Model
-        |: ("_id" := string)
-        |: ("title" := string)
-        |: ("body" := string)
-        |: ("visible" := bool)
-        |: ("index" := string)
-        |: ("type" := string)
+        |: field "_id" string
+        |: field "title" string
+        |: field "body" string
+        |: field "visible" bool
+        |: field "index" string
+        |: field "type" string
+
 
 encodeSlide : Model -> Value
 encodeSlide model =
     Encode.object <|
-        ( if model.id == "" then
-            []
-        else
-            [("_id", Encode.string model.id)] )
-            `List.append`
-            [ ("title", Encode.string model.title)
-            , ("body", Encode.string model.body)
-            , ("visible", Encode.bool model.visible)
-            , ("index", Encode.string model.index)
-            , ("type", Encode.string model.type')
+        List.append
+            (if model.id == "" then
+                []
+             else
+                [ ( "_id", Encode.string model.id ) ]
+            )
+            [ ( "title", Encode.string model.title )
+            , ( "body", Encode.string model.body )
+            , ( "visible", Encode.bool model.visible )
+            , ( "index", Encode.string model.index )
+            , ( "type", Encode.string model.type_ )
             ]
 
-editSlide : Model -> Platform.Task Http.RawError Response
-editSlide model =
-    send defaultSettings
-        { verb = "PUT"
-        , headers = [("Content-Type", "application/json")]
-        , url = "/slides/" ++ model.id
-        , body = Http.string <| encode 0 <| encodeSlide model
-        }
 
-createSlide : Model -> Platform.Task Http.RawError Response
-createSlide model =
-    send defaultSettings
-        { verb = "POST"
-        , headers = [("Content-Type", "application/json")]
-        , url = "/slides"
-        , body = Http.string <| encode 0 <| encodeSlide model
-        }
+edit : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
+edit model msg =
+    let
+        s =
+            Debug.log "edit" <| encodeSlide model
+    in
+        Http.send msg <|
+            Http.request
+                { method = "PUT"
+                , headers = []
+                , url = "/slides/" ++ model.id
+                , body = Http.jsonBody <| encodeSlide model
+                , expect = Http.expectJson decoder
+                , timeout = Nothing
+                , withCredentials = False
+                }
 
-createOrEditSlide : Model -> Platform.Task Http.RawError Response
-createOrEditSlide model =
+
+create : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
+create model msg =
+    Http.send msg <|
+        Http.request
+            { method = "POST"
+            , headers = []
+            , url = "/slides"
+            , body = Http.jsonBody <| encodeSlide model
+            , expect = Http.expectJson decoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+createOrEditSlide : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
+createOrEditSlide model msg =
     if model.id == "" then
-        createSlide model
+        create model msg
     else
-        editSlide model
+        edit model msg
 
-deleteSlide : Model -> Platform.Task Http.RawError Response
-deleteSlide model =
-    send defaultSettings
-        { verb = "DELETE"
-        , headers = []
-        , url = "/slides/" ++ model.id
-        , body = empty
-        }
 
 delete : Model -> Cmd Msg
-delete model = Task.perform DeleteFailed DeleteSucceeded <| deleteSlide model
+delete model =
+    Http.send DeleteResponse <|
+        Http.request
+            { method = "DELETE"
+            , headers = []
+            , url = "/slides/" ++ model.id
+            , body = Http.emptyBody
+            , expect = Http.expectString
+            , timeout = Nothing
+            , withCredentials = False
+            }
 
-edit : Model -> Cmd Msg
-edit model = Task.perform EditFailed EditSucceeded <| editSlide model
-
-toggle : Model -> Cmd Msg
-toggle model = Task.perform ToggleFailed ToggleSucceeded <| editSlide model
-
-create : Model -> Cmd Msg
-create model = Task.perform CreateFailed CreateSucceeded <| createSlide model
 
 subscriptions : Model -> Sub Msg
-subscriptions model = Sub.batch [fileUploadSucceeded FileUploaded, fileUploadFailed FileUploadFailed]
+subscriptions model =
+    Sub.batch [ fileUploadSucceeded FileUploaded, fileUploadFailed FileUploadFailed ]
+
 
 icon : String -> Html msg
 icon c =
     i [ class <| "icon-" ++ c ] []
 
+
 view : Model -> Html Msg
 view model =
-    case model.type' of
-        "text" -> viewText model
-        "image" -> viewImage model
-        _      -> viewVideo model
+    case model.type_ of
+        "text" ->
+            viewText model
+
+        "image" ->
+            viewImage model
+
+        _ ->
+            viewVideo model
+
 
 deleteButton : Model -> Html Msg
-deleteButton model = button [ class "slide__delete", onClickStopPropagation Delete ] [ icon "trash" ]
+deleteButton model =
+    button [ class "slide__delete", onClickStopPropagation Delete ] [ icon "trash" ]
+
 
 editButton : Model -> Html Msg
-editButton model = button [ class "slide__edit", onClickStopPropagation Edit ] [ icon "pencil" ]
+editButton model =
+    button [ class "slide__edit", onClickStopPropagation Edit ] [ icon "pencil" ]
+
 
 slideIndex : Model -> Html Msg
-slideIndex model = div [ class "slide__index" ] [ text model.index ]
+slideIndex model =
+    div [ class "slide__index" ] [ text model.index ]
+
 
 viewText : Model -> Html Msg
 viewText model =
-    li [ class "slide"
-       , onClick ToggleVisibility
-       ]
-       [ div [ classList [ ("slide__content", True)
-                         , ("slide__content--visible", model.visible)
-                         ]
-             ]
-             [ div [ class "slide__title" ] [ text model.title ]
-             , div [ class "slide__body" ] [ text model.body ]
-             ]
-       , deleteButton model
-       , editButton model
-       , slideIndex model
-       ]
+    li
+        [ class "slide"
+        , onClick ToggleVisibility
+        ]
+        [ div
+            [ classList
+                [ ( "slide__content", True )
+                , ( "slide__content--visible", model.visible )
+                ]
+            ]
+            [ div [ class "slide__title" ] [ text model.title ]
+            , div [ class "slide__body" ] [ text model.body ]
+            ]
+        , deleteButton model
+        , editButton model
+        , slideIndex model
+        ]
+
 
 viewImage : Model -> Html Msg
 viewImage model =
-    li [ class "slide slide--image"
-       , onClick ToggleVisibility
-       ]
-       [ div [ classList [ ("slide__content slide__content--image", True)
-                         , ("slide__content--visible", model.visible)
-                         ]
-             , style [("background-image", "url(" ++ model.body ++ ")")]
-             ]
-             []
-       , deleteButton model
-       , editButton model
-       , slideIndex model
-       ]
+    li
+        [ class "slide slide--image"
+        , onClick ToggleVisibility
+        ]
+        [ div
+            [ classList
+                [ ( "slide__content slide__content--image", True )
+                , ( "slide__content--visible", model.visible )
+                ]
+            , style [ ( "background-image", "url(" ++ model.body ++ ")" ) ]
+            ]
+            []
+        , deleteButton model
+        , editButton model
+        , slideIndex model
+        ]
+
 
 viewVideo : Model -> Html Msg
 viewVideo model =
-    li [ class "slide slide--video"
-       , onClick ToggleVisibility
-       ]
-       [ div [ classList [("slide__content slide__content--video", True)
-                         , ("slide__content--visible", model.visible)
-                         ]
-             ]
-             [ video [ src model.body
-                     , attribute "autoplay" "true"
-                     , attribute "loop" "true"
-                     , class "slide__video"
-                     ]
-                     []
-             ]
-       , deleteButton model
-       , editButton model
-       , slideIndex model
-       ]
+    li
+        [ class "slide slide--video"
+        , onClick ToggleVisibility
+        ]
+        [ div
+            [ classList
+                [ ( "slide__content slide__content--video", True )
+                , ( "slide__content--visible", model.visible )
+                ]
+            ]
+            [ video
+                [ src model.body
+                , attribute "autoplay" "true"
+                , attribute "loop" "true"
+                , class "slide__video"
+                ]
+                []
+            ]
+        , deleteButton model
+        , editButton model
+        , slideIndex model
+        ]
+
 
 editView : Model -> Html Msg
 editView model =
-    if model.type' == "text" then
+    if model.type_ == "text" then
         editTextView model
     else
         editMediaView model
+
 
 editMediaView : Model -> Html Msg
 editMediaView model =
     div []
         [ div [ class "tabs" ]
-              [ button [ class "tabs__tab tabs__tab--active"
-                       , disabled True
-                       ]
-                       [ text "Media" ]
-              , button [ class "tabs__tab"
-                       , onClickStopPropagation TextSlide
-                       ]
-                       [ text "Text"]
-              ]
+            [ button
+                [ class "tabs__tab tabs__tab--active"
+                , disabled True
+                ]
+                [ text "Media" ]
+            , button
+                [ class "tabs__tab"
+                , onClickStopPropagation TextSlide
+                ]
+                [ text "Text" ]
+            ]
         , div [ class "modal__slide" ]
-              [ input [ type' "text"
-                      , class "input modal__index"
-                      , onInput Index
-                      , value model.index
-                      , placeholder "Index"
-                      ]
-                      []
-              , input [ type' "file"
-                      , id "MediaInputId"
-                      , on "change" (succeed FileSelected)
-                      ]
-                      []
-              ]
+            [ input
+                [ type_ "text"
+                , class "input modal__index"
+                , onInput Index
+                , value model.index
+                , placeholder "Index"
+                ]
+                []
+            , input
+                [ type_ "file"
+                , id "MediaInputId"
+                , on "change" (succeed FileSelected)
+                ]
+                []
+            ]
         ]
+
 
 editTextView : Model -> Html Msg
 editTextView model =
     div []
         [ div [ class "tabs" ]
-              [ button [ class "tabs__tab"
-                       , onClickStopPropagation MediaSlide
-                       ]
-                       [ text "Media" ]
-              , button [ class "tabs__tab tabs__tab--active"
-                       , disabled True
-                       ]
-                       [ text "Text"]
-              ]
+            [ button
+                [ class "tabs__tab"
+                , onClickStopPropagation MediaSlide
+                ]
+                [ text "Media" ]
+            , button
+                [ class "tabs__tab tabs__tab--active"
+                , disabled True
+                ]
+                [ text "Text" ]
+            ]
         , div [ class "modal__slide" ]
-              [ input [ type' "text"
-                      , class "input modal__index"
-                      , onInput Index
-                      , value model.index
-                      , placeholder "Index"
-                      ]
-                      []
-              , input [ type' "text"
-                      , class "input modal__title"
-                      , onInput Title
-                      , value model.title
-                      , placeholder "Title"
-                      ]
-                      []
-              , textarea [ onInput Body
-                        , class "input modal__body"
-                        , value model.body
-                        , placeholder "Body"
-                        ]
-                        []
-              ]
+            [ input
+                [ type_ "text"
+                , class "input modal__index"
+                , onInput Index
+                , value model.index
+                , placeholder "Index"
+                ]
+                []
+            , input
+                [ type_ "text"
+                , class "input modal__title"
+                , onInput Title
+                , value model.title
+                , placeholder "Title"
+                ]
+                []
+            , textarea
+                [ onInput Body
+                , class "input modal__body"
+                , value model.body
+                , placeholder "Body"
+                ]
+                []
+            ]
         ]

@@ -3,11 +3,11 @@ module Setting exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
-import Json.Decode exposing (Decoder, Value, succeed, string, bool, (:=))
+import Json.Decode exposing (Decoder, Value, succeed, string, bool, field)
 import Json.Decode.Extra exposing ((|:))
 import Json.Encode as Encode
-import Http exposing (Request, Response, Body, defaultSettings, send, empty)
-import Task
+import Http
+
 
 type alias Model =
     { id : String
@@ -15,76 +15,101 @@ type alias Model =
     , value : Bool
     }
 
-init : (Model, Cmd Msg)
-init = (Model "" "" False, Cmd.none)
+
+init : ( Model, Cmd Msg )
+init =
+    ( Model "" "" False, Cmd.none )
+
 
 decoder : Decoder Model
 decoder =
     succeed Model
-        |: ("_id" := string)
-        |: ("key" := string)
-        |: ("value" := bool)
+        |: field "_id" string
+        |: field "key" string
+        |: field "value" bool
+
 
 encoder : Model -> Value
 encoder model =
     Encode.object
-        [ ("_id", Encode.string model.id)
-        , ("key", Encode.string model.key)
-        , ("value", Encode.bool model.value)
+        [ ( "_id", Encode.string model.id )
+        , ( "key", Encode.string model.key )
+        , ( "value", Encode.bool model.value )
         ]
+
 
 type Msg
     = Toggle
-    | ToggleFailed Http.RawError
-    | ToggleSucceeded Response
+    | Toggled (Result Http.Error String)
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Toggle ->
             let
-                newModel = {model | value = not model.value}
+                newModel =
+                    { model | value = not model.value }
             in
-                (newModel, toggleSetting newModel)
+                ( newModel, toggleSetting newModel )
 
-        ToggleFailed _ ->
-            ({model | value = not model.value}, Cmd.none)
+        Toggled (Err _) ->
+            ( { model | value = not model.value }, Cmd.none )
 
-        ToggleSucceeded _ ->
-            (model, Cmd.none)
+        Toggled (Ok _) ->
+            ( model, Cmd.none )
 
-toggleRequest : Model -> Platform.Task Http.RawError Response
-toggleRequest model =
-    send defaultSettings
-        { verb = "PUT"
-        , headers = [("Content-Type", "application/json")]
-        , url = "/settings/" ++ model.id
-        , body = Http.string <| Encode.encode 0 <| encoder model
-        }
 
 toggleSetting : Model -> Cmd Msg
-toggleSetting model = Task.perform ToggleFailed ToggleSucceeded <| toggleRequest model
+toggleSetting model =
+    Http.send Toggled <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "Content-Type" "application/json" ]
+            , url = "/setting/" ++ model.id
+            , body = Http.emptyBody
+            , expect = Http.expectString
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
 
 label : Model -> String
 label model =
     case model.key of
-        "twitter-enabled" -> "Twitter"
-        "instagram-enabled" -> "Instagram"
-        "program-enabled" -> "Program"
-        "votes-enabled" -> "Votes"
-        _ -> "Error"
+        "twitter-enabled" ->
+            "Twitter"
+
+        "instagram-enabled" ->
+            "Instagram"
+
+        "program-enabled" ->
+            "Program"
+
+        "votes-enabled" ->
+            "Votes"
+
+        _ ->
+            "Error"
+
 
 icon : String -> Html msg
 icon c =
     i [ class <| "setting__icon icon-" ++ c ] []
 
+
 view : Model -> Html Msg
 view model =
     li [ class "settings__setting" ]
-       [ button [ classList [ ("settings__toggle", True), ("settings__toggle--enabled", model.value) ]
-                , onClick Toggle
-                ]
-                [ icon <| if model.value then "check" else "close"
-                , text <| label model
-                ]
-       ]
+        [ button
+            [ classList [ ( "settings__toggle", True ), ( "settings__toggle--enabled", model.value ) ]
+            , onClick Toggle
+            ]
+            [ icon <|
+                if model.value then
+                    "check"
+                else
+                    "close"
+            , text <| label model
+            ]
+        ]

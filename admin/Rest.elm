@@ -1,1 +1,0 @@
-module Rest exposing (editSlide)

@@ -1,31 +1,38 @@
 module Models.Program exposing (Model, view, decoder)
 
-import Html exposing (..)
-import Html.App as App
+import Html exposing (Html, map, div, h1, ul, text)
 import Html.Attributes exposing (class)
-import Json.Decode exposing (Decoder, list, object2, (:=), string)
+import Json.Decode exposing (Decoder, list, map2, field, string)
 import Models.Slot as Slot
+
 
 type alias Model =
     { presentations : List Slot.Model
     , heading : String
     }
 
-type Msg = Update
+
+type Msg
+    = Update
+
 
 decoder : Decoder Model
-decoder = object2 Model ("presentations" := list Slot.decoder) ("heading" := string)
+decoder =
+    map2 Model (field "presentations" <| list Slot.decoder) (field "heading" string)
+
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Update -> model
+        Update ->
+            model
+
 
 view : Model -> Html Msg
 view model =
     div [ class "slides__slide program" ]
-        [ h1 [ class "program__header"]
-             [ text model.heading ]
-        , ul [ class "program__program" ]
-             <| List.map (\entry -> App.map (\_ -> Update) (Slot.view entry)) model.presentations
+        [ h1 [ class "program__header" ]
+            [ text model.heading ]
+        , ul [ class "program__program" ] <|
+            List.map (\entry -> map (\_ -> Update) (Slot.view entry)) model.presentations
         ]
