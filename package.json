@@ -4,10 +4,7 @@
   "description": "Information monitor system",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js",
-    "watch": "webpack --watch",
-    "watch-elm": "elm-live v2/Main.elm --output=dist/public2/app.js --open"
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
