@@ -2,11 +2,9 @@ var express = require('express');
 var config = require('./server/config');
 var Program = require('./server/services/program');
 var Twitter = require('./server/services/twitter');
-var mongoose = require('node-restful').mongoose;
 var server = require('./server/server');
+const models = require('./server/models');
 var basePath = __dirname;
-
-mongoose.connect(config.mongodb.connection_string);
 
 Program.get();
 Twitter.get();
@@ -15,6 +13,8 @@ var app = express();
 
 server.configure(app, express, basePath);
 
-app.listen(app.get('port'), function() {
-	console.log('Server listening on http://localhost:' + app.get('port'));
+models.sequelize.sync().then(() => {
+    app.listen(app.get('port'), function() {
+	      console.log('Server listening on http://localhost:' + app.get('port'));
+    });
 });

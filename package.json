@@ -4,7 +4,7 @@
   "description": "Information monitor system",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "DATABASE_URL=postgres://switcharoo:switcharoo@localhost:5432/switcharoo node index.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,9 @@
     "morgan": "^1.1.1",
     "multer": "^1.2.0",
     "node-restful": "^0.2.5",
+    "pg": "^6.1.0",
     "request": "^2.39.0",
+    "sequelize": "^3.27.0",
     "twit": "^1.1.15"
   },
   "devDependencies": {

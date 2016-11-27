@@ -1,7 +1,5 @@
 var Twitter = require('./services/twitter');
 var Program = require('./services/program');
-var Slide = require('./models/slide');
-var Setting = require('./models/setting');
 var Status = require('./services/status');
 var Votes = require('./services/votes');
 var morgan = require('morgan');
@@ -47,6 +45,9 @@ function configure(app, express, basePath) {
         var all = (typeof req.query.all !== 'undefined');
         Program.program(all, res);
     });
+
+    require('./routes/slides')(app);
+    require('./routes/settings')(app);
 
     app.get('/votes', function(req, res) {
         Votes.votes(res);
@@ -98,9 +99,6 @@ function configure(app, express, basePath) {
                 });
         }
     });
-
-    Slide.register(app, '/slides');
-    Setting.register(app, '/settings');
 
     app.use(basicAuth);
     app.use('/admin', express.static(path.join(basePath, 'dist', 'admin2')));
