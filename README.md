@@ -4,6 +4,12 @@
 
 Information monitor system
 
+## Requirements
+
+- Semi-new Node.js (guessing 6+)
+- Postgresql (9.5+)
+- Elm (0.18+)
+
 ### Howto
 - `git clone git@github.com:javaBin/Switcharoo.git`
 - `cd Switcharoo`
