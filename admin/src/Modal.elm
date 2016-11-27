@@ -25,7 +25,7 @@ type Msg
     | Hide
     | Edit Slide.Model
     | CreateSlide
-    | CreateResponse (Result Http.Error String)
+    | CreateResponse (Result Http.Error Slide.Model)
     | CurrentSlide Slide.Msg
 
 

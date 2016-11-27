@@ -13395,48 +13395,6 @@ var _user$project$Slide$encodeSlide = function (model) {
 				}
 			}));
 };
-var _user$project$Slide$edit = F2(
-	function (model, msg) {
-		var s = A2(
-			_elm_lang$core$Debug$log,
-			'edit',
-			_user$project$Slide$encodeSlide(model));
-		return A2(
-			_elm_lang$http$Http$send,
-			msg,
-			_elm_lang$http$Http$request(
-				{
-					method: 'PUT',
-					headers: {ctor: '[]'},
-					url: A2(_elm_lang$core$Basics_ops['++'], '/slides/', model.id),
-					body: _elm_lang$http$Http$jsonBody(
-						_user$project$Slide$encodeSlide(model)),
-					expect: _elm_lang$http$Http$expectString,
-					timeout: _elm_lang$core$Maybe$Nothing,
-					withCredentials: false
-				}));
-	});
-var _user$project$Slide$create = F2(
-	function (model, msg) {
-		return A2(
-			_elm_lang$http$Http$send,
-			msg,
-			_elm_lang$http$Http$request(
-				{
-					method: 'POST',
-					headers: {ctor: '[]'},
-					url: '/slides',
-					body: _elm_lang$http$Http$jsonBody(
-						_user$project$Slide$encodeSlide(model)),
-					expect: _elm_lang$http$Http$expectString,
-					timeout: _elm_lang$core$Maybe$Nothing,
-					withCredentials: false
-				}));
-	});
-var _user$project$Slide$createOrEditSlide = F2(
-	function (model, msg) {
-		return _elm_lang$core$Native_Utils.eq(model.id, '') ? A2(_user$project$Slide$create, model, msg) : A2(_user$project$Slide$edit, model, msg);
-	});
 var _user$project$Slide$Model = F6(
 	function (a, b, c, d, e, f) {
 		return {id: a, title: b, body: c, visible: d, index: e, type_: f};
@@ -13462,6 +13420,48 @@ var _user$project$Slide$decoder = A2(
 			A2(_elm_lang$core$Json_Decode$field, 'visible', _elm_lang$core$Json_Decode$bool)),
 		A2(_elm_lang$core$Json_Decode$field, 'index', _elm_lang$core$Json_Decode$string)),
 	A2(_elm_lang$core$Json_Decode$field, 'type', _elm_lang$core$Json_Decode$string));
+var _user$project$Slide$edit = F2(
+	function (model, msg) {
+		var s = A2(
+			_elm_lang$core$Debug$log,
+			'edit',
+			_user$project$Slide$encodeSlide(model));
+		return A2(
+			_elm_lang$http$Http$send,
+			msg,
+			_elm_lang$http$Http$request(
+				{
+					method: 'PUT',
+					headers: {ctor: '[]'},
+					url: A2(_elm_lang$core$Basics_ops['++'], '/slides/', model.id),
+					body: _elm_lang$http$Http$jsonBody(
+						_user$project$Slide$encodeSlide(model)),
+					expect: _elm_lang$http$Http$expectJson(_user$project$Slide$decoder),
+					timeout: _elm_lang$core$Maybe$Nothing,
+					withCredentials: false
+				}));
+	});
+var _user$project$Slide$create = F2(
+	function (model, msg) {
+		return A2(
+			_elm_lang$http$Http$send,
+			msg,
+			_elm_lang$http$Http$request(
+				{
+					method: 'POST',
+					headers: {ctor: '[]'},
+					url: '/slides',
+					body: _elm_lang$http$Http$jsonBody(
+						_user$project$Slide$encodeSlide(model)),
+					expect: _elm_lang$http$Http$expectJson(_user$project$Slide$decoder),
+					timeout: _elm_lang$core$Maybe$Nothing,
+					withCredentials: false
+				}));
+	});
+var _user$project$Slide$createOrEditSlide = F2(
+	function (model, msg) {
+		return _elm_lang$core$Native_Utils.eq(model.id, '') ? A2(_user$project$Slide$create, model, msg) : A2(_user$project$Slide$edit, model, msg);
+	});
 var _user$project$Slide$FileUploadFailed = function (a) {
 	return {ctor: 'FileUploadFailed', _0: a};
 };
@@ -14998,7 +14998,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Setting.Msg":{"args":[],"tags":{"Toggle":[],"Toggled":["Result.Result Http.Error String"]}},"Modal.Msg":{"args":[],"tags":{"Edit":["Slide.Model"],"Hide":[],"CurrentSlide":["Slide.Msg"],"CreateResponse":["Result.Result Http.Error String"],"Show":[],"CreateSlide":[]}},"Main.Msg":{"args":[],"tags":{"SlideList":["Slides.Msg"],"SettingsMsg":["Settings.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Settings.Msg":{"args":[],"tags":{"Settings":["Result.Result Http.Error (List Setting.Model)"],"SettingMsg":["Setting.Model","Setting.Msg"]}},"Slide.Msg":{"args":[],"tags":{"FileUploaded":["Ports.FileData"],"Edit":[],"FileSelected":[],"EditResponse":["Result.Result Http.Error String"],"Body":["String"],"ToggleResponse":["Result.Result Http.Error String"],"ToggleVisibility":[],"CreateResponse":["Result.Result Http.Error String"],"TextSlide":[],"DeleteResponse":["Result.Result Http.Error String"],"Title":["String"],"MediaSlide":[],"Index":["String"],"FileUploadFailed":["String"],"Delete":[]}},"Slides.Msg":{"args":[],"tags":{"Slide":["Slide.Model","Slide.Msg"],"SlidesResponse":["Result.Result Http.Error (List Slide.Model)"],"NewSlideModal":["Modal.Msg"],"GetSlides":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Ports.FileData":{"args":[],"type":"{ location : String, filetype : String }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Setting.Model":{"args":[],"type":"{ id : String, key : String, value : Bool }"},"Slide.Model":{"args":[],"type":"{ id : String , title : String , body : String , visible : Bool , index : String , type_ : String }"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Dict.LeafColor":{"args":[],"tags":{"LBBlack":[],"LBlack":[]}},"Dict.Dict":{"args":["k","v"],"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]}},"Setting.Msg":{"args":[],"tags":{"Toggle":[],"Toggled":["Result.Result Http.Error String"]}},"Modal.Msg":{"args":[],"tags":{"Edit":["Slide.Model"],"Hide":[],"CurrentSlide":["Slide.Msg"],"CreateResponse":["Result.Result Http.Error Slide.Model"],"Show":[],"CreateSlide":[]}},"Main.Msg":{"args":[],"tags":{"SlideList":["Slides.Msg"],"SettingsMsg":["Settings.Msg"]}},"Dict.NColor":{"args":[],"tags":{"BBlack":[],"Red":[],"NBlack":[],"Black":[]}},"Settings.Msg":{"args":[],"tags":{"Settings":["Result.Result Http.Error (List Setting.Model)"],"SettingMsg":["Setting.Model","Setting.Msg"]}},"Slide.Msg":{"args":[],"tags":{"FileUploaded":["Ports.FileData"],"Edit":[],"FileSelected":[],"EditResponse":["Result.Result Http.Error Slide.Model"],"Body":["String"],"ToggleResponse":["Result.Result Http.Error Slide.Model"],"ToggleVisibility":[],"CreateResponse":["Result.Result Http.Error Slide.Model"],"TextSlide":[],"DeleteResponse":["Result.Result Http.Error String"],"Title":["String"],"MediaSlide":[],"Index":["String"],"FileUploadFailed":["String"],"Delete":[]}},"Slides.Msg":{"args":[],"tags":{"Slide":["Slide.Model","Slide.Msg"],"SlidesResponse":["Result.Result Http.Error (List Slide.Model)"],"NewSlideModal":["Modal.Msg"],"GetSlides":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String"],"NetworkError":[],"Timeout":[],"BadStatus":["Http.Response String"],"BadPayload":["String","Http.Response String"]}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}},"aliases":{"Ports.FileData":{"args":[],"type":"{ location : String, filetype : String }"},"Http.Response":{"args":["body"],"type":"{ url : String , status : { code : Int, message : String } , headers : Dict.Dict String String , body : body }"},"Setting.Model":{"args":[],"type":"{ id : String, key : String, value : Bool }"},"Slide.Model":{"args":[],"type":"{ id : String , title : String , body : String , visible : Bool , index : String , type_ : String }"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
