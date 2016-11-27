@@ -1,7 +1,7 @@
 var cron = require('cron').CronJob;
 var config = require('../config');
 var twit = require('twit');
-var Setting = require('../models/setting');
+var Setting = require('../models').Setting;
 
 var Twitter = new twit(config.twitter);
 
@@ -51,9 +51,8 @@ function get() {
 function tweets(res) {
     Setting.findOne({
         key: 'twitter-enabled'
-    }, function(err, setting) {
-        console.log('Returning tweets');
-        if (err || !setting || !setting.value)
+    }).then(function(setting) {
+        if (setting && !setting.value)
             res.json({
                 tweets: []
             });
@@ -85,7 +84,7 @@ function asJson() {
             key: 'twitter-enabled'
         })
         .then((setting) => {
-            if (!setting || !setting.value) {
+            if (setting && !setting.value) {
                 return [];
             }
 

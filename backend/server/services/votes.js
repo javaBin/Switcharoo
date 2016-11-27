@@ -1,6 +1,6 @@
 var cron = require('cron').CronJob;
 var config = require('../config').votes;
-var Setting = require('../models/setting');
+var Setting = require('../models').Setting;
 var request = require('request');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
@@ -40,8 +40,8 @@ function get() {
 }
 
 function votes(res) {
-    Setting.findOne({key: 'votes-enabled'}, function(err, setting) {
-        if (err || !setting || !setting.value) {
+    Setting.findOne({key: 'votes-enabled'}).then(function(setting) {
+        if (setting && !setting.value) {
             res.json({});
             return;
         }
@@ -69,7 +69,7 @@ function status() {
 
 function asJson() {
     return Setting.findOne({key: 'votes-enabled'}).then((setting) => {
-        if (!setting || !setting.value) {
+        if (setting && !setting.value) {
             return [];
         }
 
