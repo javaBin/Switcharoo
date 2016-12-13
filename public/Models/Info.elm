@@ -42,7 +42,7 @@ info =
     succeed Model
         |: (field "title" string)
         |: (field "body" string)
-        |: ((field "index" string) |> andThen decodeIndex)
+        |: (field "index" int)
         |: ((field "type" string) |> andThen decodeType)
 
 

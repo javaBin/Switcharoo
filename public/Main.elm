@@ -34,7 +34,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
+    case Debug.log (toString msg) msg of
         GetSlides ->
             ( model, getSlides )
 

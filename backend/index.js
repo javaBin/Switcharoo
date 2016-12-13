@@ -11,7 +11,7 @@ Twitter.get();
 
 var app = express();
 
-server.configure(app, express, basePath);
+server.configure(app, express, basePath, models);
 
 models.sequelize.sync().then(() => {
     app.listen(app.get('port'), function() {

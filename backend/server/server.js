@@ -10,15 +10,15 @@ var bodyParser = require('body-parser');
 var path = require('path');
 var ffmpeg = require('fluent-ffmpeg');
 
-function configure(app, express, basePath) {
+function configure(app, express, basePath, models) {
     app.set('port', config.app.port);
     app.use(bodyParser.json());
-    app.use(express.static(path.join(basePath, 'dist', 'public2')));
+    app.use(express.static(path.join(basePath, '..', 'dist', 'public')));
     app.use(morgan('combined'));
 
     var storage = multer.diskStorage({
         destination: function(req, file, cb) {
-            cb(null, path.resolve(basePath, 'dist', 'public2', 'uploads'));
+            cb(null, path.resolve(basePath, '..', 'dist', 'public', 'uploads'));
         },
         filename: function(req, file, cb) {
             var f = file.originalname.split('.');
@@ -57,13 +57,14 @@ function configure(app, express, basePath) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         Promise.all([
-            Slide.find({visible: true}),
-            Twitter.asJson(),
-            Program.asJson(),
-            Votes.asJson()
+            models.Slide.findAll({where: {visible: true}})
+            /* Twitter.asJson(),
+             * Program.asJson(),
+             * Votes.asJson()*/
         ]).then((r) => {
             const program = r[0].sort((a, b) => parseInt(a.index) > parseInt(b.index));
-            res.json({slides: program.concat(r[1]).concat(r[2]).concat(r[3])});
+            res.json({slides: program});
+            /* res.json({slides: program.concat(r[1]).concat(r[2]).concat(r[3])});*/
         }).catch(() => {
             res.status(500).send();
         });
@@ -88,21 +89,21 @@ function configure(app, express, basePath) {
         if (type === 'image') {
             res.json({location: '/uploads/' + filename, filetype: type});
         } else {
-            ffmpeg(path.resolve(basePath, 'dist', 'public2', 'uploads', filename))
+            ffmpeg(path.resolve(basePath, 'dist', 'public', 'uploads', filename))
                 .on('end', function() {
                     res.json({location: '/uploads/' + filename, filetype: type, thumbnail: '/uploads/' + filename + '.png'});
                 }).screenshots({
                     timestamps: ['50%'],
                     filename: '%f.png',
-                    folder: path.resolve(basePath, 'dist', 'public2', 'uploads'),
+                    folder: path.resolve(basePath, 'dist', 'public', 'uploads'),
                     size: '368x230'
                 });
         }
     });
 
     app.use(basicAuth);
-    app.use('/admin', express.static(path.join(basePath, 'dist', 'admin2')));
-    app.use('/adminold', express.static(path.join(basePath, 'dist', 'admin')));
+    app.use('/admin', express.static(path.join(basePath, '..', 'dist', 'admin')));
+    // app.use('/adminold', express.static(path.join(basePath, 'dist', 'admin')));
 }
 
 module.exports = {

@@ -3,14 +3,14 @@ module Setting exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
-import Json.Decode exposing (Decoder, Value, succeed, string, bool, field)
+import Json.Decode exposing (Decoder, Value, succeed, string, bool, field, int)
 import Json.Decode.Extra exposing ((|:))
 import Json.Encode as Encode
 import Http
 
 
 type alias Model =
-    { id : String
+    { id : Int
     , key : String
     , value : Bool
     }
@@ -18,13 +18,13 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model "" "" False, Cmd.none )
+    ( Model -1 "" False, Cmd.none )
 
 
 decoder : Decoder Model
 decoder =
     succeed Model
-        |: field "_id" string
+        |: field "id" int
         |: field "key" string
         |: field "value" bool
 
@@ -32,7 +32,7 @@ decoder =
 encoder : Model -> Value
 encoder model =
     Encode.object
-        [ ( "_id", Encode.string model.id )
+        [ ( "id", Encode.int model.id )
         , ( "key", Encode.string model.key )
         , ( "value", Encode.bool model.value )
         ]
@@ -66,7 +66,7 @@ toggleSetting model =
         Http.request
             { method = "PUT"
             , headers = [ Http.header "Content-Type" "application/json" ]
-            , url = "/setting/" ++ model.id
+            , url = "/setting/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing

@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
 import Html.Events exposing (onClick, onInput, on)
 import Json.Decode.Extra exposing ((|:))
-import Json.Decode exposing (Decoder, succeed, string, bool, field)
+import Json.Decode exposing (Decoder, succeed, string, bool, field, int)
 import Http
 import Json.Encode as Encode exposing (Value, encode)
 import Events exposing (onClickStopPropagation)
@@ -12,18 +12,19 @@ import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFa
 
 
 type alias Model =
-    { id : String
+    { id : Int
+    , name : String
     , title : String
     , body : String
     , visible : Bool
-    , index : String
+    , index : Int
     , type_ : String
     }
 
 
 initModel : Model
 initModel =
-    Model "" "" "" False "" ""
+    Model -1 "" "" "" False 10 ""
 
 
 init : ( Model, Cmd Msg )
@@ -39,6 +40,7 @@ type Msg
     | DeleteResponse (Result Http.Error String)
     | Edit
     | EditResponse (Result Http.Error Model)
+    | Name String
     | Title String
     | Body String
     | Index String
@@ -80,6 +82,9 @@ update msg model =
         DeleteResponse _ ->
             ( model, Cmd.none )
 
+        Name newName ->
+            ( { model | name = newName }, Cmd.none )
+
         Title newTitle ->
             ( { model | title = newTitle }, Cmd.none )
 
@@ -87,7 +92,12 @@ update msg model =
             ( { model | body = newBody }, Cmd.none )
 
         Index newIndex ->
-            ( { model | index = newIndex }, Cmd.none )
+            case String.toInt newIndex of
+                Ok n ->
+                    ( { model | index = n }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
         TextSlide ->
             ( { model | type_ = "text" }, Cmd.none )
@@ -108,11 +118,12 @@ update msg model =
 decoder : Decoder Model
 decoder =
     succeed Model
-        |: field "_id" string
+        |: field "id" int
+        |: field "name" string
         |: field "title" string
         |: field "body" string
         |: field "visible" bool
-        |: field "index" string
+        |: field "index" int
         |: field "type" string
 
 
@@ -120,15 +131,16 @@ encodeSlide : Model -> Value
 encodeSlide model =
     Encode.object <|
         List.append
-            (if model.id == "" then
+            (if model.id == -1 then
                 []
              else
-                [ ( "_id", Encode.string model.id ) ]
+                [ ( "id", Encode.int model.id ) ]
             )
-            [ ( "title", Encode.string model.title )
+            [ ( "name", Encode.string model.name )
+            , ( "title", Encode.string model.title )
             , ( "body", Encode.string model.body )
             , ( "visible", Encode.bool model.visible )
-            , ( "index", Encode.string model.index )
+            , ( "index", Encode.int model.index )
             , ( "type", Encode.string model.type_ )
             ]
 
@@ -143,7 +155,7 @@ edit model msg =
             Http.request
                 { method = "PUT"
                 , headers = []
-                , url = "/slides/" ++ model.id
+                , url = "/slides/" ++ toString model.id
                 , body = Http.jsonBody <| encodeSlide model
                 , expect = Http.expectJson decoder
                 , timeout = Nothing
@@ -167,7 +179,7 @@ create model msg =
 
 createOrEditSlide : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
 createOrEditSlide model msg =
-    if model.id == "" then
+    if model.id == -1 then
         create model msg
     else
         edit model msg
@@ -179,7 +191,7 @@ delete model =
         Http.request
             { method = "DELETE"
             , headers = []
-            , url = "/slides/" ++ model.id
+            , url = "/slides/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing
@@ -222,7 +234,7 @@ editButton model =
 
 slideIndex : Model -> Html Msg
 slideIndex model =
-    div [ class "slide__index" ] [ text model.index ]
+    div [ class "slide__index" ] [ text <| toString model.index ]
 
 
 viewText : Model -> Html Msg
@@ -319,8 +331,16 @@ editMediaView model =
             [ input
                 [ type_ "text"
                 , class "input modal__index"
+                , onInput Name
+                , value model.name
+                , placeholder "Name"
+                ]
+                []
+            , input
+                [ type_ "text"
+                , class "input modal__index"
                 , onInput Index
-                , value model.index
+                , value <| toString model.index
                 , placeholder "Index"
                 ]
                 []
@@ -353,8 +373,16 @@ editTextView model =
             [ input
                 [ type_ "text"
                 , class "input modal__index"
+                , onInput Name
+                , value model.name
+                , placeholder "Name"
+                ]
+                []
+            , input
+                [ type_ "text"
+                , class "input modal__index"
                 , onInput Index
-                , value model.index
+                , value <| toString model.index
                 , placeholder "Index"
                 ]
                 []
