@@ -57,7 +57,7 @@ function configure(app, express, basePath, models) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         Promise.all([
-            models.Slide.findAll({where: {visible: true}})
+            models.Slide.findAll({where: {visible: true}, order: 'index'})
             /* Twitter.asJson(),
              * Program.asJson(),
              * Votes.asJson()*/

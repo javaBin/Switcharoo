@@ -3,7 +3,7 @@ const Slide = require('../models').Slide;
 module.exports = function(app) {
 
     app.get('/slides', (req, res) => {
-        Slide.findAll().then(slides => res.json(slides));
+        Slide.findAll({order: 'index'}).then(slides => res.json(slides));
     });
 
     app.get('/slides/:id', (req, res) => {
