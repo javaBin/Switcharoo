@@ -10,13 +10,12 @@ import Time exposing (Time, second, millisecond)
 
 type alias Model =
     { slides : Slides.Model
-    , nextSlides : Maybe Slides.Model
     }
 
 
 initModel : Model
 initModel =
-    Model (Slides.init) Nothing
+    Model (Slides.init [])
 
 
 init : ( Model, Cmd Msg )
@@ -34,12 +33,12 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log (toString msg) msg of
+    case msg of
         GetSlides ->
             ( model, getSlides )
 
         Slides (Ok slideList) ->
-            ( Model (Slides.fromList slideList) Nothing, Cmd.none )
+            ( Model (Slides.init slideList), Cmd.none )
 
         Slides (Err _) ->
             ( model, Cmd.none )
@@ -48,10 +47,11 @@ update msg model =
             ( model, refetchSlides )
 
         RefetchSlides (Ok slideList) ->
-            if Slides.zipperEquals (Slides.fromList slideList).slides model.slides.slides then
-                ( model, Cmd.none )
-            else
-                ( { model | nextSlides = Just (Slides.fromList slideList) }, Cmd.none )
+            let
+                s =
+                    model.slides
+            in
+                ( { model | slides = { s | nextSlides = Just (Slides.fromList slideList) } }, Cmd.none )
 
         RefetchSlides (Err _) ->
             ( model, Cmd.none )
@@ -63,11 +63,8 @@ update msg model =
 
                 mappedCmd =
                     Cmd.map SlidesMsg slidesCmd
-
-                ( slides, nextSlides ) =
-                    Slides.updateIfPossible newSlides model.nextSlides
             in
-                ( { model | slides = slides, nextSlides = nextSlides }, mappedCmd )
+                ( { model | slides = newSlides }, mappedCmd )
 
 
 getSlides : Cmd Msg
