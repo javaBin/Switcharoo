@@ -90,7 +90,6 @@ function configure(app, express, basePath, models) {
 
     app.use(basicAuth);
     app.use('/admin', express.static(path.join(basePath, '..', 'dist', 'admin')));
-    // app.use('/adminold', express.static(path.join(basePath, 'dist', 'admin')));
 }
 
 module.exports = {
