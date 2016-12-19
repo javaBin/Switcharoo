@@ -8,17 +8,17 @@ var config = require('./config');
 var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
 var bodyParser = require('body-parser');
 var path = require('path');
-var ffmpeg = require('fluent-ffmpeg');
 
 function configure(app, express, basePath, models) {
     app.set('port', config.app.port);
     app.use(bodyParser.json());
     app.use(express.static(path.join(basePath, '..', 'dist', 'public')));
+    app.use('/uploads', express.static(path.resolve(config.app.uploadDir)));
     app.use(morgan('combined'));
 
     var storage = multer.diskStorage({
         destination: function(req, file, cb) {
-            cb(null, path.resolve(basePath, '..', 'dist', 'public', 'uploads'));
+            cb(null, path.resolve(config.app.uploadDir));
         },
         filename: function(req, file, cb) {
             var f = file.originalname.split('.');
@@ -83,22 +83,9 @@ function configure(app, express, basePath, models) {
     }
 
     app.post('/image', upload.single('image'), function(req, res) {
-        console.log(req.file);
         var filename = req.file.filename;
         var type = getType(req.file.mimetype);
-        if (type === 'image') {
-            res.json({location: '/uploads/' + filename, filetype: type});
-        } else {
-            ffmpeg(path.resolve(basePath, 'dist', 'public', 'uploads', filename))
-                .on('end', function() {
-                    res.json({location: '/uploads/' + filename, filetype: type, thumbnail: '/uploads/' + filename + '.png'});
-                }).screenshots({
-                    timestamps: ['50%'],
-                    filename: '%f.png',
-                    folder: path.resolve(basePath, 'dist', 'public', 'uploads'),
-                    size: '368x230'
-                });
-        }
+        res.json({location: '/uploads/' + filename, filetype: type});
     });
 
     app.use(basicAuth);
