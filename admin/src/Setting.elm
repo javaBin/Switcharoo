@@ -66,7 +66,7 @@ toggleSetting model =
         Http.request
             { method = "PUT"
             , headers = [ Http.header "Content-Type" "application/json" ]
-            , url = "/setting/" ++ toString model.id
+            , url = "/settings/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing
