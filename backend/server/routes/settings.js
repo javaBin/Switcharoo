@@ -2,7 +2,7 @@ const Setting = require('../models').Setting;
 
 module.exports = function(app) {
     app.get('/settings', (req, res) => {
-        Setting.findAll().then(settings => res.json(settings));
+        Setting.findAll({order: 'id'}).then(settings => res.json(settings));
     });
 
     app.post('/settings', (req, res) => {
@@ -28,8 +28,7 @@ module.exports = function(app) {
             }
 
             setting.update({
-                key: req.body.key,
-                value: req.body.value
+                value: !setting.get('value')
             }).then(newSetting => {
                 res.json(newSetting.toJSON());
             });
