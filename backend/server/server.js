@@ -57,13 +57,13 @@ function configure(app, express, basePath, models) {
         res.header('Access-Control-Allow-Origin', '*');
         res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         Promise.all([
-            models.Slide.findAll({where: {visible: true}, order: 'index'})
-            /* Twitter.asJson(),
-             * Program.asJson(),
-             * Votes.asJson()*/
+            models.Slide.findAll({where: {visible: true}, order: 'index'}),
+            Twitter.asJson(),
+            Program.asJson()
+            /* Votes.asJson()*/
         ]).then((r) => {
-            const program = r[0].sort((a, b) => parseInt(a.index) > parseInt(b.index));
-            res.json({slides: program});
+            const slides = r[0].map(slide => slide.get({plain: true}));
+            res.json({slides: slides.concat(r[1]).concat(r[2])});
             /* res.json({slides: program.concat(r[1]).concat(r[2]).concat(r[3])});*/
         }).catch(() => {
             res.status(500).send();

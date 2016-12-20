@@ -182,7 +182,7 @@ function status() {
 }
 
 function asJson() {
-    return Setting.findOne({key: 'program-enabled'})
+    return Setting.findOne({where: {key: 'program-enabled'}})
         .then((setting) => {
             if (setting && !setting.value) {
                 return [];

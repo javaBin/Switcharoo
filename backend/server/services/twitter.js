@@ -13,7 +13,7 @@ var job = new cron(cronPattern, getTweets);
 
 function getTweets(complete) {
     Twitter.get('search/tweets', {
-        q: 'ehinetc16 exclude:retweets',
+        q: 'javazone exclude:retweets',
         count: 4,
         result_type: 'recent'
     }, function(err, data, response) {
@@ -34,6 +34,7 @@ function getTweets(complete) {
             };
         });
 
+
         // Seems we sometimes get more than 5 tweets, so we limit it to 5 here
         current_tweets = data.slice(0, 4);
 
@@ -50,9 +51,9 @@ function get() {
 
 function tweets(res) {
     Setting.findOne({
-        key: 'twitter-enabled'
+        where: {key: 'twitter-enabled'}
     }).then(function(setting) {
-        if (setting && !setting.value)
+        if (setting && !setting.get('value'))
             res.json({
                 tweets: []
             });
@@ -81,7 +82,7 @@ function status() {
 
 function asJson() {
     return Setting.findOne({
-            key: 'twitter-enabled'
+            where: {key: 'twitter-enabled'}
         })
         .then((setting) => {
             if (setting && !setting.value) {
