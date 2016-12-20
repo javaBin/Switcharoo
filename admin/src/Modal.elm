@@ -15,9 +15,9 @@ type alias Model =
     }
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( Model False "MediaInputId" Slide.initModel, Cmd.none )
+    Model False "MediaInputId" Slide.initModel
 
 
 type Msg
@@ -36,7 +36,7 @@ update msg model =
             ( { model | show = True }, Cmd.none )
 
         Hide ->
-            init
+            ( init, Cmd.none )
 
         Edit editSlide ->
             let

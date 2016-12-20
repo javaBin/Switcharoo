@@ -16,11 +16,7 @@ type alias Model =
 
 init : ( Model, Cmd Msg )
 init =
-    let
-        ( newModal, newModalCmd ) =
-            Modal.init
-    in
-        ( Model [] newModal, Cmd.batch [ Cmd.map NewSlideModal newModalCmd, getSlides ] )
+    ( Model [] Modal.init, getSlides )
 
 
 type Msg
