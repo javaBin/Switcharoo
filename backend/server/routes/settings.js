@@ -1,11 +1,11 @@
 const Setting = require('../models').Setting;
 
-module.exports = function(app) {
-    app.get('/settings', (req, res) => {
+module.exports = function(app, security) {
+    app.get('/settings', security, (req, res) => {
         Setting.findAll({order: 'id'}).then(settings => res.json(settings));
     });
 
-    app.post('/settings', (req, res) => {
+    app.post('/settings', security, (req, res) => {
         Setting.create({
             key: req.body.key,
             value: req.body.value
@@ -20,7 +20,7 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/settings/:id', (req, res) => {
+    app.put('/settings/:id', security, (req, res) => {
         Setting.findById(req.params.id).then(setting => {
             if (!setting) {
                 res.status(404).send();

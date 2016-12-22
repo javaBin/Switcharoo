@@ -1,12 +1,12 @@
 const Slide = require('../models').Slide;
 
-module.exports = function(app) {
+module.exports = function(app, security) {
 
-    app.get('/slides', (req, res) => {
+    app.get('/slides', security, (req, res) => {
         Slide.findAll({order: 'index'}).then(slides => res.json(slides));
     });
 
-    app.get('/slides/:id', (req, res) => {
+    app.get('/slides/:id', security, (req, res) => {
         Slide.findById(req.params.id).then(slide => {
             if (!slide) {
                 res.status(404).send();
@@ -17,7 +17,7 @@ module.exports = function(app) {
         });
     });
 
-    app.post('/slides', (req, res) => {
+    app.post('/slides', security, (req, res) => {
         Slide.create({
             title: req.body.title,
             body: req.body.body,
@@ -36,7 +36,7 @@ module.exports = function(app) {
         });
     });
 
-    app.put('/slides/:id', (req, res) => {
+    app.put('/slides/:id', security, (req, res) => {
         Slide.findById(req.params.id).then(slide => {
             if (!slide) {
                 res.status(404).send();
@@ -57,7 +57,7 @@ module.exports = function(app) {
         });
     });
 
-    app.delete('/slides/:id', (req, res) => {
+    app.delete('/slides/:id', security, (req, res) => {
         Slide.findById(req.params.id).then(slide => {
             if (!slide) {
                 res.status(404).send();

@@ -7,7 +7,13 @@ var multer = require('multer');
 var config = require('./config');
 var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
 var bodyParser = require('body-parser');
+var jwt = require('express-jwt');
 var path = require('path');
+
+var security = jwt({
+    secret: config.security.secret,
+    audience: config.security.audience
+});
 
 function configure(app, express, basePath, models) {
     app.set('port', config.app.port);
@@ -46,8 +52,8 @@ function configure(app, express, basePath, models) {
         Program.program(all, res);
     });
 
-    require('./routes/slides')(app);
-    require('./routes/settings')(app);
+    require('./routes/slides')(app, security);
+    require('./routes/settings')(app, security);
 
     app.get('/votes', function(req, res) {
         Votes.votes(res);
@@ -88,7 +94,6 @@ function configure(app, express, basePath, models) {
         res.json({location: '/uploads/' + filename, filetype: type});
     });
 
-    app.use(basicAuth);
     app.use('/admin', express.static(path.join(basePath, '..', 'dist', 'admin')));
 }
 

@@ -1,79 +1,93 @@
 module Main exposing (..)
 
-import Html exposing (Html, program, map, div, h1, text, ul)
+import Html exposing (Html, programWithFlags, map, div, button, text)
 import Html.Attributes exposing (class)
-import Slides
-import Settings
+import Html.Events exposing (onClick)
+import Admin.Model
+import Admin.Messages
+import Admin.View
+import Admin.Update
+import Admin.Subscriptions
+import Auth
 
 
-type alias Model =
-    { slides : Slides.Model
-    , settings : Settings.Model
+type alias Flags =
+    { loggedIn : Bool
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    let
-        ( slides, slidesCmd ) =
-            Slides.init
+type alias Model =
+    { admin : Admin.Model.Model
+    , auth : Auth.AuthStatus
+    , flags : Flags
+    }
 
-        ( settings, settingsCmd ) =
-            Settings.init
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    let
+        ( admin, adminCmd ) =
+            Admin.Model.initModel
     in
-        ( Model slides settings
-        , Cmd.batch
-            [ Cmd.map SlideList slidesCmd
-            , Cmd.map SettingsMsg settingsCmd
-            ]
-        )
+        ( Model admin Auth.LoggedOut flags, Cmd.batch [ Cmd.map AdminMsg adminCmd ] )
 
 
 type Msg
-    = SlideList Slides.Msg
-    | SettingsMsg Settings.Msg
+    = Login
+    | LoginResult Auth.UserData
+    | AdminMsg Admin.Messages.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        SlideList msg ->
+        AdminMsg msg ->
             let
-                ( slides, cmd ) =
-                    Slides.update msg model.slides
-            in
-                ( { model | slides = slides }, Cmd.map SlideList cmd )
+                ( admin, cmd ) =
+                    Admin.Update.update msg model.admin
 
-        SettingsMsg msg ->
-            let
-                ( settings, cmd ) =
-                    Settings.update msg model.settings
+                mappedCmd =
+                    Cmd.map AdminMsg cmd
             in
-                ( { model | settings = settings }, Cmd.map SettingsMsg cmd )
+                ( { model | admin = admin }, mappedCmd )
+
+        Login ->
+            ( model, Auth.login () )
+
+        LoginResult userData ->
+            ( { model | auth = Auth.LoggedIn userData }, Cmd.none )
 
 
 view : Model -> Html Msg
 view model =
-    let
-        slides =
-            List.map (\slide -> map SlideList slide) <| Slides.view model.slides
+    case model.auth of
+        Auth.LoggedOut ->
+            loginView model
 
-        settings =
-            map SettingsMsg <| Settings.view model.settings
-    in
-        div []
-            [ h1 [] [ text "Switcharoo" ]
-            , settings
-            , ul [ class "slides" ] <|
-                slides
-            ]
+        Auth.LoggedIn _ ->
+            Html.map AdminMsg <| Admin.View.view model.admin
+
+
+loginView : Model -> Html Msg
+loginView model =
+    div [ class "login" ]
+        [ button [ onClick Login ] [ text "Logg inn" ]
+        ]
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.map SlideList <| Slides.subscriptions model.slides
+    Sub.batch
+        [ Sub.map AdminMsg <| Admin.Subscriptions.subscriptions model.admin
+        , Auth.loginResult LoginResult
+        ]
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    program { init = init, view = view, update = update, subscriptions = subscriptions }
+    programWithFlags
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
