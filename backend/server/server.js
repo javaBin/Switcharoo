@@ -5,7 +5,6 @@ var Votes = require('./services/votes');
 var morgan = require('morgan');
 var multer = require('multer');
 var config = require('./config');
-var basicAuth = require('./basicAuth')(config.app.user, config.app.pass);
 var bodyParser = require('body-parser');
 var jwt = require('express-jwt');
 var path = require('path');
