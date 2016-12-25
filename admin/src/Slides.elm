@@ -6,6 +6,7 @@ import Http
 import Task
 import Slide
 import Modal
+import LocalStorage
 
 
 type alias Model =
@@ -99,7 +100,25 @@ decoder =
 getSlides : Cmd Msg
 getSlides =
     Http.send SlidesResponse <|
-        Http.get "/slides" decoder
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "authorization" authorization ]
+            , url = "/slides"
+            , body = Http.emptyBody
+            , expect = Http.expectJson decoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+authorization : String
+authorization =
+    case LocalStorage.get "login_token" of
+        Just token ->
+            "Bearer " ++ token
+
+        Nothing ->
+            ""
 
 
 subscriptions : Model -> Sub Msg
