@@ -1,54 +1,20 @@
-module Slide exposing (..)
+module Slide.Slide exposing (..)
 
+import Slide.Model exposing (..)
+import Slide.Messages exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
 import Html.Events exposing (onClick, onInput, on)
-import Json.Decode.Extra exposing ((|:))
 import Json.Decode exposing (Decoder, succeed, string, bool, field, int)
 import Http
-import Json.Encode as Encode exposing (Value, encode)
 import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
-
-
-type alias Model =
-    { id : Int
-    , name : String
-    , title : String
-    , body : String
-    , visible : Bool
-    , index : Int
-    , type_ : String
-    }
-
-
-initModel : Model
-initModel =
-    Model -1 "" "" "" False 10 ""
+import Backend exposing (editSlide, createSlide)
 
 
 init : ( Model, Cmd Msg )
 init =
     ( initModel, Cmd.none )
-
-
-type Msg
-    = ToggleVisibility
-    | ToggleResponse (Result Http.Error Model)
-    | CreateResponse (Result Http.Error Model)
-    | Delete
-    | DeleteResponse (Result Http.Error String)
-    | Edit
-    | EditResponse (Result Http.Error Model)
-    | Name String
-    | Title String
-    | Body String
-    | Index String
-    | TextSlide
-    | MediaSlide
-    | FileSelected
-    | FileUploaded FileData
-    | FileUploadFailed String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -62,13 +28,13 @@ update msg model =
                 _ =
                     Debug.log "model" newModel
             in
-                ( newModel, edit newModel ToggleResponse )
+                ( newModel, editSlide newModel ToggleResponse )
 
         ToggleResponse _ ->
             ( model, Cmd.none )
 
         Edit ->
-            ( model, edit model EditResponse )
+            ( model, editSlide model EditResponse )
 
         EditResponse _ ->
             ( model, Cmd.none )
@@ -115,74 +81,12 @@ update msg model =
             ( initModel, Cmd.none )
 
 
-decoder : Decoder Model
-decoder =
-    succeed Model
-        |: field "id" int
-        |: field "name" string
-        |: field "title" string
-        |: field "body" string
-        |: field "visible" bool
-        |: field "index" int
-        |: field "type" string
-
-
-encodeSlide : Model -> Value
-encodeSlide model =
-    Encode.object <|
-        List.append
-            (if model.id == -1 then
-                []
-             else
-                [ ( "id", Encode.int model.id ) ]
-            )
-            [ ( "name", Encode.string model.name )
-            , ( "title", Encode.string model.title )
-            , ( "body", Encode.string model.body )
-            , ( "visible", Encode.bool model.visible )
-            , ( "index", Encode.int model.index )
-            , ( "type", Encode.string model.type_ )
-            ]
-
-
-edit : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
-edit model msg =
-    let
-        s =
-            Debug.log "edit" <| encodeSlide model
-    in
-        Http.send msg <|
-            Http.request
-                { method = "PUT"
-                , headers = []
-                , url = "/slides/" ++ toString model.id
-                , body = Http.jsonBody <| encodeSlide model
-                , expect = Http.expectJson decoder
-                , timeout = Nothing
-                , withCredentials = False
-                }
-
-
-create : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
-create model msg =
-    Http.send msg <|
-        Http.request
-            { method = "POST"
-            , headers = []
-            , url = "/slides"
-            , body = Http.jsonBody <| encodeSlide model
-            , expect = Http.expectJson decoder
-            , timeout = Nothing
-            , withCredentials = False
-            }
-
-
 createOrEditSlide : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
 createOrEditSlide model msg =
     if model.id == -1 then
-        create model msg
+        createSlide model msg
     else
-        edit model msg
+        editSlide model msg
 
 
 delete : Model -> Cmd Msg

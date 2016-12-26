@@ -1,31 +1,16 @@
-module Settings exposing (..)
+module Settings.Settings exposing (..)
 
+import Settings.Model exposing (..)
+import Settings.Messages exposing (..)
 import Html exposing (Html, map, ul)
 import Html.Attributes exposing (class)
 import Json.Decode exposing (Decoder, list)
 import Setting
-import Http
-import LocalStorage
-
-
-type alias Model =
-    { settings : List Setting.Model
-    }
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( Model [], getSettings )
 
 
 decoder : Decoder (List Setting.Model)
 decoder =
     list Setting.decoder
-
-
-type Msg
-    = SettingMsg Setting.Model Setting.Msg
-    | Settings (Result Http.Error (List Setting.Model))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -55,30 +40,6 @@ updateSetting newModel msg currentModel =
             ( newSetting, Cmd.map (SettingMsg newSetting) newCmd )
     else
         ( currentModel, Cmd.none )
-
-
-getSettings : Cmd Msg
-getSettings =
-    Http.send Settings <|
-        Http.request
-            { method = "GET"
-            , headers = [ Http.header "authorization" authorization ]
-            , url = "/settings"
-            , body = Http.emptyBody
-            , expect = Http.expectJson decoder
-            , timeout = Nothing
-            , withCredentials = False
-            }
-
-
-authorization : String
-authorization =
-    case LocalStorage.get "login_token" of
-        Just token ->
-            "Bearer " ++ token
-
-        Nothing ->
-            ""
 
 
 view : Model -> Html Msg

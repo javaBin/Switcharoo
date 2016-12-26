@@ -1,32 +1,15 @@
-module Modal exposing (..)
+module Modal.Modal exposing (..)
 
+import Modal.Model exposing (..)
+import Modal.Messages exposing (..)
 import Html exposing (Html, div, button, text, i, input, map)
 import Html.Attributes exposing (class, classList, attribute, type_, id, disabled)
 import Html.Events exposing (onClick, on, onInput)
 import Events exposing (onClickStopPropagation)
-import Slide
+import Slide.Model
+import Slide.Messages
+import Slide.Slide
 import Http exposing (Response)
-
-
-type alias Model =
-    { show : Bool
-    , id : String
-    , slide : Slide.Model
-    }
-
-
-init : Model
-init =
-    Model False "MediaInputId" Slide.initModel
-
-
-type Msg
-    = Show
-    | Hide
-    | Edit Slide.Model
-    | CreateSlide
-    | CreateResponse (Result Http.Error Slide.Model)
-    | CurrentSlide Slide.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -57,19 +40,19 @@ update msg model =
         CurrentSlide msg ->
             let
                 ( newSlide, newCmd ) =
-                    Slide.update msg model.slide
+                    Slide.Slide.update msg model.slide
             in
                 ( { model | slide = newSlide }, Cmd.map CurrentSlide newCmd )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.map CurrentSlide <| Slide.subscriptions model.slide
+    Sub.map CurrentSlide <| Slide.Slide.subscriptions model.slide
 
 
-createSlide : Slide.Model -> Cmd Msg
+createSlide : Slide.Model.Model -> Cmd Msg
 createSlide model =
-    Slide.createOrEditSlide model CreateResponse
+    Slide.Slide.createOrEditSlide model CreateResponse
 
 
 icon : String -> Html msg
@@ -77,7 +60,7 @@ icon c =
     i [ class <| "icon-" ++ c ] []
 
 
-isEmpty : Slide.Model -> Bool
+isEmpty : Slide.Model.Model -> Bool
 isEmpty m =
     if m.body == "" then
         True
@@ -115,7 +98,7 @@ showModal model =
 showModalContent : Model -> Html Msg
 showModalContent model =
     div [ class "modal__content" ]
-        [ map CurrentSlide (Slide.editView model.slide)
+        [ map CurrentSlide (Slide.Slide.editView model.slide)
         ]
 
 

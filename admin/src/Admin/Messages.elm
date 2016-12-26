@@ -1,9 +1,9 @@
 module Admin.Messages exposing (Msg(..))
 
-import Slides
-import Settings
+import Slides.Messages
+import Settings.Messages
 
 
 type Msg
-    = SlideList Slides.Msg
-    | SettingsMsg Settings.Msg
+    = SlideList Slides.Messages.Msg
+    | SettingsMsg Settings.Messages.Msg
