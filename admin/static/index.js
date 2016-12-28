@@ -24,6 +24,9 @@
     function getUserInfo(result) {
         lock.getProfile(result.idToken, function(error, profile) {
             if (error) {
+                if (error.error === 401) {
+                    localStorage.removeItem('login_token');
+                }
                 console.log(error);
                 return;
             }
