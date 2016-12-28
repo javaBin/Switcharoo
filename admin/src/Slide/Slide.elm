@@ -194,13 +194,8 @@ viewVideo model =
                 , ( "slide__content--visible", model.visible )
                 ]
             ]
-            [ video
-                [ src model.body
-                , attribute "autoplay" "true"
-                , attribute "loop" "true"
-                , class "slide__video"
-                ]
-                []
+            [ div [ class "slide__title" ] [ text model.name ]
+            , div [ class "slide__body" ] [ text "(video)" ]
             ]
         , deleteButton model
         , editButton model
