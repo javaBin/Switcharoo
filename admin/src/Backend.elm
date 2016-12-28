@@ -59,20 +59,16 @@ encodeSlide model =
 
 editSlide : Slide.Model.Model -> (Result.Result Http.Error Slide.Model.Model -> msg) -> Cmd msg
 editSlide model msg =
-    let
-        s =
-            Debug.log "edit" <| encodeSlide model
-    in
-        Http.send msg <|
-            Http.request
-                { method = "PUT"
-                , headers = []
-                , url = "/slides/" ++ toString model.id
-                , body = Http.jsonBody <| encodeSlide model
-                , expect = Http.expectJson slideDecoder
-                , timeout = Nothing
-                , withCredentials = False
-                }
+    Http.send msg <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "authorization" authorization ]
+            , url = "/slides/" ++ toString model.id
+            , body = Http.jsonBody <| encodeSlide model
+            , expect = Http.expectJson slideDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
 
 
 createSlide : Slide.Model.Model -> (Result.Result Http.Error Slide.Model.Model -> msg) -> Cmd msg
@@ -80,7 +76,7 @@ createSlide model msg =
     Http.send msg <|
         Http.request
             { method = "POST"
-            , headers = []
+            , headers = [ Http.header "authorization" authorization ]
             , url = "/slides"
             , body = Http.jsonBody <| encodeSlide model
             , expect = Http.expectJson slideDecoder
