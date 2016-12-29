@@ -2,8 +2,8 @@ module Backend exposing (..)
 
 import Slides.Messages
 import Slide.Model
-import Settings.Messages
-import Setting
+import Services.Messages
+import Service
 import LocalStorage
 import Http
 import Json.Decode as Decode exposing (Decoder)
@@ -11,9 +11,9 @@ import Json.Encode as Encode
 import Json.Decode.Extra exposing ((|:))
 
 
-getSettings : Decoder (List Setting.Model) -> Cmd Settings.Messages.Msg
+getSettings : Decoder (List Service.Model) -> Cmd Services.Messages.Msg
 getSettings decoder =
-    Http.send Settings.Messages.Settings <|
+    Http.send Services.Messages.Settings <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" authorization ]

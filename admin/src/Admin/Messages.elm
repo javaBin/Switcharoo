@@ -1,11 +1,11 @@
 module Admin.Messages exposing (Msg(..))
 
 import Slides.Messages
-import Settings.Messages
+import Services.Messages
 import Nav.Model
 
 
 type Msg
     = SlideList Slides.Messages.Msg
-    | SettingsMsg Settings.Messages.Msg
+    | SettingsMsg Services.Messages.Msg
     | UrlUpdate Nav.Model.Page

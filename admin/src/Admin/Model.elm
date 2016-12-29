@@ -2,8 +2,8 @@ module Admin.Model exposing (Model, initModel)
 
 import Slides.Model
 import Slides.Slides
-import Settings.Settings
-import Settings.Model
+import Services.Services
+import Services.Model
 import Admin.Messages exposing (..)
 import Nav.Model
 import Nav.Nav exposing (hashParser)
@@ -13,7 +13,7 @@ import Backend
 
 type alias Model =
     { slides : Slides.Model.Model
-    , settings : Settings.Model.Model
+    , settings : Services.Model.Model
     , page : Nav.Model.Page
     }
 
@@ -25,7 +25,7 @@ initModel location =
             ( Slides.Model.init, Backend.getSlides Slides.Slides.decoder )
 
         ( settings, settingsCmd ) =
-            ( Settings.Model.init, Backend.getSettings Settings.Settings.decoder )
+            ( Services.Model.init, Backend.getSettings Services.Services.decoder )
 
         page =
             hashParser location

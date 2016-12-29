@@ -3,7 +3,7 @@ module Admin.Update exposing (update)
 import Admin.Model exposing (..)
 import Admin.Messages exposing (..)
 import Slides.Slides
-import Settings.Settings
+import Services.Services
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -19,7 +19,7 @@ update msg model =
         SettingsMsg msg ->
             let
                 ( settings, cmd ) =
-                    Settings.Settings.update msg model.settings
+                    Services.Services.update msg model.settings
             in
                 ( { model | settings = settings }, Cmd.map SettingsMsg cmd )
 
