@@ -22,3 +22,6 @@ update msg model =
                     Settings.Settings.update msg model.settings
             in
                 ( { model | settings = settings }, Cmd.map SettingsMsg cmd )
+
+        UrlUpdate page ->
+            ( { model | page = page }, Cmd.none )

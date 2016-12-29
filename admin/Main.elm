@@ -3,6 +3,8 @@ module Main exposing (..)
 import Html exposing (Html, programWithFlags, map, div, button, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Navigation
+import Nav.Nav exposing (hashParser)
 import Admin.Model
 import Admin.Messages
 import Admin.View
@@ -23,11 +25,11 @@ type alias Model =
     }
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
+init flags location =
     let
         ( admin, adminCmd ) =
-            Admin.Model.initModel
+            Admin.Model.initModel location
     in
         ( Model admin Auth.LoggedOut flags, Cmd.batch [ Cmd.map AdminMsg adminCmd ] )
 
@@ -85,7 +87,8 @@ subscriptions model =
 
 main : Program Flags Model Msg
 main =
-    programWithFlags
+    Navigation.programWithFlags
+        (AdminMsg << Admin.Messages.UrlUpdate << hashParser)
         { init = init
         , view = view
         , update = update
