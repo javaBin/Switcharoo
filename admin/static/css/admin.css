@@ -22,6 +22,10 @@ h1 {
     text-align: center;
 }
 
+.app {
+    display: flex;
+}
+
 .slides {
     display: flex;
     flex-wrap: wrap;
