@@ -1,15 +1,21 @@
 module Main exposing (..)
 
-import Html exposing (Html, programWithFlags, map, div, button, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, programWithFlags, map, div, button, text, ul, li, a, h1)
+import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 import Navigation
-import Nav.Nav exposing (hashParser)
-import Admin.Model
-import Admin.Messages
-import Admin.View
-import Admin.Update
-import Admin.Subscriptions
+import Nav.Nav exposing (hashParser, toHash)
+import Nav.Model exposing (Page(..))
+import Slides.Model
+import Slides.Messages
+import Slides.Slides
+import Settings.Model
+import Settings.Messages
+import Settings.Update
+import Settings.View
+import Services.Services
+import Styles.Decoder
+import Backend
 import Auth
 
 
@@ -19,45 +25,103 @@ type alias Flags =
 
 
 type alias Model =
-    { admin : Admin.Model.Model
+    { slides : Slides.Model.Model
+    , settings : Settings.Model.Model
     , auth : Auth.AuthStatus
     , flags : Flags
+    , page : Nav.Model.Page
     }
+
+
+initModel : Flags -> Page -> Model
+initModel flags page =
+    Model Slides.Model.init
+        Settings.Model.initModel
+        Auth.LoggedOut
+        flags
+        page
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     let
-        ( admin, adminCmd ) =
-            Admin.Model.initModel location
+        page =
+            hashParser location
+
+        cmd =
+            if page /= LoggedOut then
+                Navigation.newUrl <| toHash page
+            else
+                Cmd.none
     in
-        ( Model admin Auth.LoggedOut flags, Cmd.batch [ Cmd.map AdminMsg adminCmd ] )
+        ( initModel flags page, cmd )
 
 
 type Msg
     = Login
     | LoginResult Auth.UserData
-    | AdminMsg Admin.Messages.Msg
+    | SlidesMsg Slides.Messages.Msg
+    | SettingsMsg Settings.Messages.Msg
+    | PageChanged Page
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        AdminMsg msg ->
+        SlidesMsg msg ->
             let
-                ( admin, cmd ) =
-                    Admin.Update.update msg model.admin
+                ( newSlides, cmd ) =
+                    Slides.Slides.update msg model.slides
 
                 mappedCmd =
-                    Cmd.map AdminMsg cmd
+                    Cmd.map SlidesMsg cmd
             in
-                ( { model | admin = admin }, mappedCmd )
+                ( { model | slides = newSlides }, mappedCmd )
+
+        SettingsMsg msg ->
+            let
+                ( newSettings, settingsCmd ) =
+                    Settings.Update.update msg model.settings
+            in
+                ( { model | settings = newSettings }, Cmd.map SettingsMsg settingsCmd )
 
         Login ->
             ( model, Auth.login () )
 
         LoginResult userData ->
-            ( { model | auth = Auth.LoggedIn userData }, Cmd.none )
+            let
+                cmd =
+                    if model.page == LoggedOut then
+                        Navigation.newUrl <| toHash SlidesPage
+                    else
+                        Cmd.none
+            in
+                ( { model | auth = Auth.LoggedIn userData }, cmd )
+
+        PageChanged page ->
+            updatePage page { model | page = page }
+
+
+updatePage : Page -> Model -> ( Model, Cmd Msg )
+updatePage page model =
+    case page of
+        SlidesPage ->
+            ( model, Cmd.map SlidesMsg <| Backend.getSlides Slides.Slides.decoder )
+
+        SettingsPage ->
+            ( model
+            , Cmd.batch
+                [ Cmd.map SettingsMsg <|
+                    Cmd.map Settings.Messages.ServicesMsg <|
+                        Backend.getSettings Services.Services.decoder
+                , Cmd.map SettingsMsg <|
+                    Cmd.map Settings.Messages.StylesMsg <|
+                        Backend.getStyles Styles.Decoder.decoder
+                ]
+            )
+
+        LoggedOut ->
+            ( model, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -67,7 +131,7 @@ view model =
             loginView model
 
         Auth.LoggedIn _ ->
-            Html.map AdminMsg <| Admin.View.view model.admin
+            loggedInView model
 
 
 loginView : Model -> Html Msg
@@ -77,18 +141,95 @@ loginView model =
         ]
 
 
+loggedInView : Model -> Html Msg
+loggedInView model =
+    div [ class "app" ]
+        [ viewSidebar model
+        , viewMain model
+        ]
+
+
+linkText : Page -> String
+linkText page =
+    case page of
+        SlidesPage ->
+            "Slides"
+
+        SettingsPage ->
+            "Settings"
+
+        _ ->
+            ""
+
+
+viewLink : Model -> Page -> Html Msg
+viewLink model page =
+    let
+        linkClass =
+            if model.page == page then
+                "sidebar__link sidebar__link--active"
+            else
+                "sidebar__link"
+    in
+        li [ class linkClass ]
+            [ a [ href <| toHash page ] [ text <| linkText page ]
+            ]
+
+
+viewSidebar : Model -> Html Msg
+viewSidebar model =
+    div [ class "app__sidebar sidebar" ]
+        [ h1 [] [ text "Switcharoo" ]
+        , ul [ class "sidebar__menu" ]
+            [ viewLink model SlidesPage
+            , viewLink model SettingsPage
+            ]
+        ]
+
+
+viewMain : Model -> Html Msg
+viewMain model =
+    let
+        content =
+            case model.page of
+                SlidesPage ->
+                    viewSlides model
+
+                SettingsPage ->
+                    viewSettings model
+
+                _ ->
+                    div [] []
+    in
+        div [ class "app__main" ] [ content ]
+
+
+viewSlides : Model -> Html Msg
+viewSlides model =
+    let
+        slides =
+            List.map (\slide -> map SlidesMsg slide) <| Slides.Slides.view model.slides
+    in
+        ul [ class "slides" ] slides
+
+
+viewSettings : Model -> Html Msg
+viewSettings model =
+    map SettingsMsg <| Settings.View.view model.settings
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Sub.map AdminMsg <| Admin.Subscriptions.subscriptions model.admin
-        , Auth.loginResult LoginResult
+        -- [ Sub.map AdminMsg <| Admin.Subscriptions.subscriptions model.admin
+        [ Auth.loginResult LoginResult
         ]
 
 
 main : Program Flags Model Msg
 main =
     Navigation.programWithFlags
-        (AdminMsg << Admin.Messages.UrlUpdate << hashParser)
+        (PageChanged << hashParser)
         { init = init
         , view = view
         , update = update

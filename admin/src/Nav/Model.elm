@@ -2,5 +2,6 @@ module Nav.Model exposing (Page(..))
 
 
 type Page
-    = SlidesPage
+    = LoggedOut
+    | SlidesPage
     | SettingsPage

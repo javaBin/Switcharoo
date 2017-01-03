@@ -2,15 +2,17 @@ module Services.Services exposing (..)
 
 import Services.Model exposing (..)
 import Services.Messages exposing (..)
-import Html exposing (Html, map, ul)
+import Html exposing (Html, map, ul, h2, text, div)
 import Html.Attributes exposing (class)
 import Json.Decode exposing (Decoder, list)
-import Service
+import Service.Service
+import Service.Model
+import Service.Messages
 
 
-decoder : Decoder (List Service.Model)
+decoder : Decoder (List Service.Model.Model)
 decoder =
-    list Service.decoder
+    list Service.Service.decoder
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -30,12 +32,12 @@ update msg model =
             ( Model settings, Cmd.none )
 
 
-updateSetting : Service.Model -> Service.Msg -> Service.Model -> ( Service.Model, Cmd Msg )
+updateSetting : Service.Model.Model -> Service.Messages.Msg -> Service.Model.Model -> ( Service.Model.Model, Cmd Msg )
 updateSetting newModel msg currentModel =
     if newModel.id == currentModel.id then
         let
             ( newSetting, newCmd ) =
-                Service.update msg newModel
+                Service.Service.update msg newModel
         in
             ( newSetting, Cmd.map (SettingMsg newSetting) newCmd )
     else
@@ -44,5 +46,14 @@ updateSetting newModel msg currentModel =
 
 view : Model -> Html Msg
 view model =
-    ul [ class "settings" ] <|
-        List.map (\setting -> map (SettingMsg setting) (Service.view setting)) model.settings
+    div [ class "settings" ]
+        [ viewSettings model ]
+
+
+viewSettings : Model -> Html Msg
+viewSettings model =
+    ul [ class "services" ]
+        [ h2 [] [ text "Services" ]
+        , div [] <|
+            List.map (\setting -> map (SettingMsg setting) (Service.Service.view setting)) model.settings
+        ]

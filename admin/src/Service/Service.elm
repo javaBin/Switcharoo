@@ -1,5 +1,7 @@
-module Service exposing (..)
+module Service.Service exposing (..)
 
+import Service.Model exposing (..)
+import Service.Messages exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
@@ -7,13 +9,7 @@ import Json.Decode exposing (Decoder, Value, succeed, string, bool, field, int)
 import Json.Decode.Extra exposing ((|:))
 import Json.Encode as Encode
 import Http
-
-
-type alias Model =
-    { id : Int
-    , key : String
-    , value : Bool
-    }
+import Backend exposing (toggleSetting)
 
 
 init : ( Model, Cmd Msg )
@@ -38,11 +34,6 @@ encoder model =
         ]
 
 
-type Msg
-    = Toggle
-    | Toggled (Result Http.Error String)
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -58,20 +49,6 @@ update msg model =
 
         Toggled (Ok _) ->
             ( model, Cmd.none )
-
-
-toggleSetting : Model -> Cmd Msg
-toggleSetting model =
-    Http.send Toggled <|
-        Http.request
-            { method = "PUT"
-            , headers = [ Http.header "Content-Type" "application/json" ]
-            , url = "/settings/" ++ toString model.id
-            , body = Http.emptyBody
-            , expect = Http.expectString
-            , timeout = Nothing
-            , withCredentials = False
-            }
 
 
 label : Model -> String

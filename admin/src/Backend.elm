@@ -3,7 +3,10 @@ module Backend exposing (..)
 import Slides.Messages
 import Slide.Model
 import Services.Messages
-import Service
+import Service.Messages
+import Service.Model
+import Styles.Messages
+import Css.Model
 import LocalStorage
 import Http
 import Json.Decode as Decode exposing (Decoder)
@@ -11,13 +14,41 @@ import Json.Encode as Encode
 import Json.Decode.Extra exposing ((|:))
 
 
-getSettings : Decoder (List Service.Model) -> Cmd Services.Messages.Msg
+getSettings : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
 getSettings decoder =
     Http.send Services.Messages.Settings <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" authorization ]
             , url = "/settings"
+            , body = Http.emptyBody
+            , expect = Http.expectJson decoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+toggleSetting : Service.Model.Model -> Cmd Service.Messages.Msg
+toggleSetting model =
+    Http.send Service.Messages.Toggled <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "authorization" authorization ]
+            , url = "/settings/" ++ toString model.id
+            , body = Http.emptyBody
+            , expect = Http.expectString
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+getStyles : Decoder (List Css.Model.Model) -> Cmd Styles.Messages.Msg
+getStyles decoder =
+    Http.send Styles.Messages.GotStyles <|
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "authorization" authorization ]
+            , url = "/css"
             , body = Http.emptyBody
             , expect = Http.expectJson decoder
             , timeout = Nothing

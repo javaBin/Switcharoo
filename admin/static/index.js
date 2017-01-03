@@ -3,8 +3,8 @@
     var app = Elm.Main.fullscreen({
         loggedIn: (token ? true : false)
     });
-    var lock = new Auth0Lock('CF27t8eOHL1aPxAMgI10LsairXK4B2Ap', 'switcharoo.eu.auth0.com');
 
+    var lock = new Auth0Lock('CF27t8eOHL1aPxAMgI10LsairXK4B2Ap', 'switcharoo.eu.auth0.com');
     if (token) {
         getUserInfo({
             idToken: token

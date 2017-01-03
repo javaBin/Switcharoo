@@ -8,28 +8,54 @@
 
 html {
     font-size: 16px;
+    height: 100%;
 }
 
 body {
     background: #eee;
     font-family: 'Open Sans', sans-serif;
+    height: 100%;
     margin: 0;
     padding: 0;
-    padding-bottom: 50px;
 }
 
 h1 {
-    text-align: center;
+    margin: 0;
+}
+
+h2 {
+    margin: 0;
 }
 
 .app {
     display: flex;
+    height: 100%;
+}
+
+.app__sidebar {
+    height: 100%;
+    padding: 10px;
+    width: 250px;
+}
+
+.app__main {
+    height: 100%;
+    overflow-y: scroll;
+    padding: 20px;
+}
+
+.sidebar__menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .slides {
     display: flex;
     flex-wrap: wrap;
     list-style: none;
+    margin: -20px;
+    padding: 0;
 }
 
 .slide {
@@ -44,7 +70,7 @@ h1 {
     align-items: center;
     background: #111;
     border-radius: 2px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, .5);
+    box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     color: white;
     cursor: pointer;
     display: flex;
@@ -247,15 +273,15 @@ h1 {
 }
 
 .settings {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
 }
 
 .settings__setting {
     display: inline-block;
     margin: 0 20px;
+}
+
+.settings__setting:first-child {
+    margin-left: 0;
 }
 
 .settings__toggle {
@@ -276,4 +302,10 @@ h1 {
 
 .setting__icon {
     margin-right: 10px;
+}
+
+.services {
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
