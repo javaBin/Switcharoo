@@ -9,7 +9,7 @@ import Json.Decode exposing (Decoder, succeed, string, bool, field, int)
 import Http
 import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
-import Backend exposing (editSlide, createSlide)
+import Backend exposing (editSlide, createSlide, deleteSlide)
 
 
 init : ( Model, Cmd Msg )
@@ -43,7 +43,7 @@ update msg model =
             ( model, Cmd.none )
 
         Delete ->
-            ( model, delete model )
+            ( model, deleteSlide model )
 
         DeleteResponse _ ->
             ( model, Cmd.none )
@@ -87,20 +87,6 @@ createOrEditSlide model msg =
         createSlide model msg
     else
         editSlide model msg
-
-
-delete : Model -> Cmd Msg
-delete model =
-    Http.send DeleteResponse <|
-        Http.request
-            { method = "DELETE"
-            , headers = []
-            , url = "/slides/" ++ toString model.id
-            , body = Http.emptyBody
-            , expect = Http.expectString
-            , timeout = Nothing
-            , withCredentials = False
-            }
 
 
 subscriptions : Model -> Sub Msg

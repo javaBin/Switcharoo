@@ -2,6 +2,7 @@ module Backend exposing (..)
 
 import Slides.Messages
 import Slide.Model
+import Slide.Messages
 import Services.Messages
 import Service.Messages
 import Service.Model
@@ -112,6 +113,20 @@ createSlide model msg =
             , url = "/slides"
             , body = Http.jsonBody <| encodeSlide model
             , expect = Http.expectJson slideDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+deleteSlide : Slide.Model.Model -> Cmd Slide.Messages.Msg
+deleteSlide model =
+    Http.send Slide.Messages.DeleteResponse <|
+        Http.request
+            { method = "DELETE"
+            , headers = [ Http.header "authorization" authorization ]
+            , url = "/slides/" ++ toString model.id
+            , body = Http.emptyBody
+            , expect = Http.expectString
             , timeout = Nothing
             , withCredentials = False
             }

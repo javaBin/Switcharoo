@@ -48,6 +48,7 @@ body {
     color: white;
     font-size: 6rem;
     margin: 0 0 10px 0;
+    text-align: center;
     text-transform: uppercase;
 }
 
@@ -72,6 +73,10 @@ body {
 }
 
 .slide--video {
+    padding: 0;
+}
+
+.slide--image {
     padding: 0;
 }
 
