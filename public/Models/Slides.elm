@@ -51,7 +51,7 @@ update msg model =
                 shouldChange =
                     zipperLength model.slides > 1
             in
-                if shouldChange || isJust model.nextSlides then
+                if shouldChange || isNew model.slides model.nextSlides then
                     ( { model | switching = True }, hideSlide )
                 else
                     ( model, Cmd.none )
@@ -168,11 +168,14 @@ zipperEquals a b =
     toList a == toList b
 
 
-isJust : Maybe a -> Bool
-isJust m =
+isNew : Zipper SlideWrapper -> Maybe (Zipper SlideWrapper) -> Bool
+isNew n m =
     case m of
-        Just _ ->
-            True
+        Just new ->
+            if n == new then
+                False
+            else
+                True
 
         Nothing ->
             False
