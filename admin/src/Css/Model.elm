@@ -2,7 +2,7 @@ module Css.Model exposing (Model, initModel)
 
 
 type alias Model =
-    { id : Maybe Int
+    { id : Int
     , selector : String
     , property : String
     , value : String
@@ -13,4 +13,4 @@ type alias Model =
 
 initModel : Model
 initModel =
-    Model Nothing "" "" "" "" ""
+    Model -1 "" "" "" "" ""

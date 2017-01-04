@@ -4,7 +4,7 @@ import Styles.Model exposing (..)
 import Styles.Messages exposing (..)
 import Css.Model
 import Css.View
-import Html exposing (Html, div, text, h2)
+import Html exposing (Html, div, text, h2, ul)
 import Html.Attributes exposing (class)
 
 
@@ -12,7 +12,7 @@ view : Model -> Html Msg
 view model =
     div [ class "styles" ]
         [ h2 [] [ text "Styles" ]
-        , div [] <|
+        , ul [ class "styles-list" ] <|
             List.map viewStyle model.styles
         ]
 

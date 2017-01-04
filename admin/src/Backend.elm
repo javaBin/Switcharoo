@@ -7,6 +7,7 @@ import Service.Messages
 import Service.Model
 import Styles.Messages
 import Css.Model
+import Css.Messages
 import LocalStorage
 import Http
 import Json.Decode as Decode exposing (Decoder)
@@ -126,6 +127,30 @@ slideDecoder =
         |: Decode.field "visible" Decode.bool
         |: Decode.field "index" Decode.int
         |: Decode.field "type" Decode.string
+
+
+editStyle : Css.Model.Model -> Cmd Css.Messages.Msg
+editStyle model =
+    Http.send Css.Messages.Request <|
+        Http.request <|
+            { method = "PUT"
+            , headers = [ Http.header "authorization" authorization ]
+            , url = "/css/" ++ toString model.id
+            , body = Http.jsonBody <| styleEncoder model
+            , expect = Http.expectString
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+styleEncoder : Css.Model.Model -> Encode.Value
+styleEncoder model =
+    Encode.object <|
+        [ ( "selector", Encode.string model.selector )
+        , ( "property", Encode.string model.property )
+        , ( "value", Encode.string model.value )
+        , ( "type", Encode.string model.type_ )
+        ]
 
 
 authorization : String

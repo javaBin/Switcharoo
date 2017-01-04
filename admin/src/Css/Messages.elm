@@ -1,5 +1,9 @@
 module Css.Messages exposing (Msg(..))
 
+import Http
+
 
 type Msg
-    = Message
+    = Update String
+    | Save
+    | Request (Result Http.Error String)
