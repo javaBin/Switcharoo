@@ -223,6 +223,7 @@ subscriptions model =
     Sub.batch
         -- [ Sub.map AdminMsg <| Admin.Subscriptions.subscriptions model.admin
         [ Auth.loginResult LoginResult
+        , Sub.map SlidesMsg <| Slides.Slides.subscriptions model.slides
         ]
 
 
