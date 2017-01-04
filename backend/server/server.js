@@ -2,6 +2,7 @@ var Twitter = require('./services/twitter');
 var Program = require('./services/program');
 var Status = require('./services/status');
 var Votes = require('./services/votes');
+var CssGenerator = require('./services/css-generator');
 var morgan = require('morgan');
 var multer = require('multer');
 var config = require('./config');
@@ -49,6 +50,10 @@ function configure(app, express, basePath, models) {
     app.get('/program', function(req, res) {
         var all = (typeof req.query.all !== 'undefined');
         Program.program(all, res);
+    });
+
+    app.get('/custom.css', function(req, res) {
+        CssGenerator.css(res);
     });
 
     require('./routes/slides')(app, security);
