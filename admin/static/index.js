@@ -32,10 +32,12 @@
             }
 
             localStorage.setItem('login_token', result.idToken);
-            app.ports.loginResult.send({
-                token: result.idToken,
-                profile: profile
-            });
+            setTimeout(function() {
+                app.ports.loginResult.send({
+                    token: result.idToken,
+                    profile: profile
+                });
+            }, 100);
         });
     }
 

@@ -21,7 +21,7 @@ getSettings decoder =
     Http.send Services.Messages.Settings <|
         Http.request
             { method = "GET"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/settings"
             , body = Http.emptyBody
             , expect = Http.expectJson decoder
@@ -35,7 +35,7 @@ toggleSetting model =
     Http.send Service.Messages.Toggled <|
         Http.request
             { method = "PUT"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/settings/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
@@ -49,7 +49,7 @@ getStyles decoder =
     Http.send Styles.Messages.GotStyles <|
         Http.request
             { method = "GET"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/css"
             , body = Http.emptyBody
             , expect = Http.expectJson decoder
@@ -63,7 +63,7 @@ getSlides decoder =
     Http.send Slides.Messages.SlidesResponse <|
         Http.request
             { method = "GET"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/slides"
             , body = Http.emptyBody
             , expect = Http.expectJson decoder
@@ -95,7 +95,7 @@ editSlide model msg =
     Http.send msg <|
         Http.request
             { method = "PUT"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/slides/" ++ toString model.id
             , body = Http.jsonBody <| encodeSlide model
             , expect = Http.expectJson slideDecoder
@@ -109,7 +109,7 @@ createSlide model msg =
     Http.send msg <|
         Http.request
             { method = "POST"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/slides"
             , body = Http.jsonBody <| encodeSlide model
             , expect = Http.expectJson slideDecoder
@@ -123,7 +123,7 @@ deleteSlide model =
     Http.send Slide.Messages.DeleteResponse <|
         Http.request
             { method = "DELETE"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/slides/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
@@ -149,7 +149,7 @@ editStyle model =
     Http.send Css.Messages.Request <|
         Http.request <|
             { method = "PUT"
-            , headers = [ Http.header "authorization" authorization ]
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/css/" ++ toString model.id
             , body = Http.jsonBody <| styleEncoder model
             , expect = Http.expectString
@@ -168,9 +168,9 @@ styleEncoder model =
         ]
 
 
-authorization : String
-authorization =
-    case LocalStorage.get "login_token" of
+authorization : String -> String
+authorization loginToken =
+    case LocalStorage.get loginToken of
         Just token ->
             "Bearer " ++ token
 
