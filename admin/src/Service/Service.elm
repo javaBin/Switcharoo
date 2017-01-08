@@ -72,14 +72,14 @@ label model =
 
 icon : String -> Html msg
 icon c =
-    i [ class <| "setting__icon icon-" ++ c ] []
+    i [ class <| "service-list__icon icon-" ++ c ] []
 
 
 view : Model -> Html Msg
 view model =
-    li [ class "settings__setting" ]
+    li [ class "service-list__service" ]
         [ button
-            [ classList [ ( "settings__toggle", True ), ( "settings__toggle--enabled", model.value ) ]
+            [ classList [ ( "service-list__toggle", True ), ( "service-list__toggle--enabled", model.value ) ]
             , onClick Toggle
             ]
             [ icon <|

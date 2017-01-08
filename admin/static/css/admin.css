@@ -286,16 +286,20 @@ h2 {
 .settings {
 }
 
-.settings__setting {
+.settings__section {
+    margin-bottom: 50px;
+}
+
+.service-list__service {
     display: inline-block;
     margin: 0 20px;
 }
 
-.settings__setting:first-child {
+.service-list__service:first-child {
     margin-left: 0;
 }
 
-.settings__toggle {
+.service-list__toggle {
     background: rgba(0, 0, 0, .5);
     border: 0;
     border-radius: 2px;
@@ -307,18 +311,40 @@ h2 {
     transition: background .2s ease-in-out;
 }
 
-.settings__toggle--enabled {
+.service-list__toggle--enabled {
     background: #149089;
 }
 
-.setting__icon {
+.service-list__icon {
     margin-right: 10px;
 }
 
-.services {
+.service-list {
     list-style: none;
     margin: 0;
     padding: 0;
+}
+
+.styles-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.style {
+    margin-bottom: 10px;
+}
+
+.style__input {
+    margin-left: 20px;
+}
+
+.style__save {
+    background: #54a3da;
+    color: white;
+    border: 0;
+    margin-left: 20px;
+    padding: 10px 20px;
 }
 
 .login {

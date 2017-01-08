@@ -46,14 +46,15 @@ updateSetting newModel msg currentModel =
 
 view : Model -> Html Msg
 view model =
-    div [ class "settings" ]
-        [ viewSettings model ]
+    div [ class "services" ]
+        [ h2 [] [ text "Services" ]
+        , viewSettings model
+        ]
 
 
 viewSettings : Model -> Html Msg
 viewSettings model =
-    ul [ class "services" ]
-        [ h2 [] [ text "Services" ]
-        , div [] <|
-            List.map (\setting -> map (SettingMsg setting) (Service.Service.view setting)) model.settings
-        ]
+    ul [ class "service-list" ] <|
+        List.map
+            (\setting -> map (SettingMsg setting) (Service.Service.view setting))
+            model.settings
