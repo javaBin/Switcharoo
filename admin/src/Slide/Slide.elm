@@ -141,6 +141,7 @@ viewText model =
         [ div
             [ classList
                 [ ( "slide__content", True )
+                , ( "slide__content--text", True )
                 , ( "slide__content--visible", model.visible )
                 ]
             ]

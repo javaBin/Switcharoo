@@ -66,6 +66,12 @@ h2 {
     width: 300px;
 }
 
+.slide__title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
 .slide__content {
     align-items: center;
     background: #111;
@@ -102,8 +108,13 @@ h2 {
     background-size: cover;
 }
 
+.slide__content--text {
+    padding: 10px;
+}
+
 .slide__body {
     text-align: center;
+    font-size: .8rem;
 }
 
 .slide__video {
