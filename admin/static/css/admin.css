@@ -309,3 +309,17 @@ h2 {
     margin: 0;
     padding: 0;
 }
+
+.login {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+}
+
+.login__button {
+    background: #54a3da;
+    color: white;
+    border: 0;
+    padding: 10px 20px;
+}

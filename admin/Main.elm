@@ -137,7 +137,7 @@ view model =
 loginView : Model -> Html Msg
 loginView model =
     div [ class "login" ]
-        [ button [ onClick Login ] [ text "Logg inn" ]
+        [ button [ class "login__button", onClick Login ] [ text "Logg inn" ]
         ]
 
 

@@ -19,14 +19,11 @@ init =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
+    case Debug.log (toString msg) msg of
         ToggleVisibility ->
             let
                 newModel =
                     { model | visible = not model.visible }
-
-                _ =
-                    Debug.log "model" newModel
             in
                 ( newModel, editSlide newModel ToggleResponse )
 
@@ -75,10 +72,18 @@ update msg model =
             ( model, fileSelected "MediaInputId" )
 
         FileUploaded fileData ->
-            ( { model | title = fileData.location, body = fileData.location, type_ = fileData.filetype }, Cmd.none )
+            let
+                _ =
+                    Debug.log (toString fileData) "yes"
+            in
+                ( { model | title = fileData.location, body = fileData.location, type_ = fileData.filetype }, Cmd.none )
 
         FileUploadFailed error ->
-            ( initModel, Cmd.none )
+            let
+                _ =
+                    Debug.log (toString error) "no"
+            in
+                ( initModel, Cmd.none )
 
 
 createOrEditSlide : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
