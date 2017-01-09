@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Html exposing (Html, programWithFlags, map, div, button, text, ul, li, a, h1)
+import Html exposing (Html, programWithFlags, map, div, button, text, ul, li, a, h1, i)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
 import Navigation
@@ -137,7 +137,7 @@ view model =
 loginView : Model -> Html Msg
 loginView model =
     div [ class "login" ]
-        [ button [ class "login__button", onClick Login ] [ text "Logg inn" ]
+        [ button [ class "login__button button", onClick Login ] [ text "Logg inn" ]
         ]
 
 
@@ -153,10 +153,10 @@ linkText : Page -> String
 linkText page =
     case page of
         SlidesPage ->
-            "Slides"
+            "icon-screen-desktop"
 
         SettingsPage ->
-            "Settings"
+            "icon-settings"
 
         _ ->
             ""
@@ -171,15 +171,16 @@ viewLink model page =
             else
                 "sidebar__link"
     in
-        li [ class linkClass ]
-            [ a [ href <| toHash page ] [ text <| linkText page ]
+        li [ class "sidebar__menu-link" ]
+            [ a [ href <| toHash page, class linkClass ]
+                [ i [ class <| linkText page ] [ text "" ] ]
             ]
 
 
 viewSidebar : Model -> Html Msg
 viewSidebar model =
     div [ class "app__sidebar sidebar" ]
-        [ h1 [] [ text "Switcharoo" ]
+        [ div [ class "app__logo" ] [ text "S" ]
         , ul [ class "sidebar__menu" ]
             [ viewLink model SlidesPage
             , viewLink model SettingsPage
@@ -201,7 +202,10 @@ viewMain model =
                 _ ->
                     div [] []
     in
-        div [ class "app__main" ] [ content ]
+        div [ class "app__main" ]
+            [ div [ class "app__content" ]
+                [ content ]
+            ]
 
 
 viewSlides : Model -> Html Msg

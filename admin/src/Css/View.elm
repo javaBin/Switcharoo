@@ -13,5 +13,5 @@ view model =
         li [ class "styles-list__style style" ]
             [ span [ class "style__label" ] [ text model.title ]
             , input [ class "style__input", type_ "color", value model.value, onInput Update ] []
-            , button [ class "style__save", onClick Save ] [ text "Save" ]
+            , button [ class "button style__save", onClick Save ] [ text "Save" ]
             ]
