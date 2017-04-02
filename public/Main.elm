@@ -6,11 +6,7 @@ import Html.Attributes exposing (class)
 import Http
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
-
-
-type alias Model =
-    { slides : Slides.Model
-    }
+import Models exposing (Model, Slides, SlideWrapper)
 
 
 initModel : Model
@@ -24,14 +20,14 @@ init =
 
 
 type Msg
-    = Slides (Result Http.Error (List Slides.SlideWrapper))
+    = Slides (Result Http.Error (List SlideWrapper))
     | Refetch
-    | RefetchSlides (Result Http.Error (List Slides.SlideWrapper))
+    | RefetchSlides (Result Http.Error (List SlideWrapper))
     | SlidesMsg Slides.Msg
 
 
 type alias SlidesResult =
-    Result.Result Http.Error (List Slides.SlideWrapper) -> Msg
+    Result.Result Http.Error (List SlideWrapper) -> Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

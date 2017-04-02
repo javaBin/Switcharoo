@@ -12,29 +12,17 @@ import Time exposing (Time, second, millisecond)
 import Task
 import Process exposing (sleep)
 import List.Zipper exposing (Zipper, withDefault, first, next, current, toList)
+import Models exposing (Slides, SlideWrapper(..))
 
 
-type alias Model =
-    { switching : Bool
-    , nextSlides : Maybe (Zipper SlideWrapper)
-    , slides : Zipper SlideWrapper
-    }
-
-
-init : List SlideWrapper -> Model
-init l =
-    Model False Nothing <| fromList l
+init : List SlideWrapper -> Slides
+init =
+    Slides False Nothing << fromList
 
 
 fromList : List SlideWrapper -> Zipper SlideWrapper
 fromList =
     withDefault (InfoWrapper Info.empty) << List.Zipper.fromList
-
-
-type SlideWrapper
-    = InfoWrapper Info.Model
-    | TweetsWrapper Tweets.Model
-    | ProgramWrapper Program.Model
 
 
 type Msg
@@ -43,7 +31,7 @@ type Msg
     | ShowSlide
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Slides -> ( Slides, Cmd Msg )
 update msg model =
     case msg of
         HideSlide ->
@@ -115,7 +103,7 @@ slideWrapper t =
             fail <| "Unknown slideType " ++ unknown
 
 
-view : Model -> Html Msg
+view : Slides -> Html Msg
 view model =
     let
         slide =
@@ -138,12 +126,12 @@ viewSlide slide =
             Html.map (\_ -> NextSlide) (Program.view s)
 
 
-subscriptions : Model -> Sub Msg
+subscriptions : Slides -> Sub Msg
 subscriptions model =
     Time.every (10 * second) (\_ -> HideSlide)
 
 
-updateIfPossible : Model -> Maybe Model -> ( Model, Maybe Model )
+updateIfPossible : Slides -> Maybe Slides -> ( Slides, Maybe Slides )
 updateIfPossible current new =
     case next current.slides of
         Just _ ->
