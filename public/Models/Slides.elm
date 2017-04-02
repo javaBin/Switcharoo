@@ -16,18 +16,19 @@ import List.Zipper exposing (Zipper, withDefault, first, next, current, toList)
 
 type alias Model =
     { switching : Bool
+    , nextSlides : Maybe (Zipper SlideWrapper)
     , slides : Zipper SlideWrapper
     }
 
 
-init : Model
-init =
-    fromList []
+init : List SlideWrapper -> Model
+init l =
+    Model False Nothing <| fromList l
 
 
-fromList : List SlideWrapper -> Model
+fromList : List SlideWrapper -> Zipper SlideWrapper
 fromList =
-    Model False << withDefault (InfoWrapper Info.empty) << List.Zipper.fromList
+    withDefault (InfoWrapper Info.empty) << List.Zipper.fromList
 
 
 type SlideWrapper
@@ -50,18 +51,23 @@ update msg model =
                 shouldChange =
                     zipperLength model.slides > 1
             in
-                if shouldChange then
+                if shouldChange || isNew model.slides model.nextSlides then
                     ( { model | switching = True }, hideSlide )
                 else
                     ( model, Cmd.none )
 
         NextSlide ->
-            case (next model.slides) of
+            case next model.slides of
                 Just z ->
                     ( { model | slides = z }, showSlide )
 
                 Nothing ->
-                    ( { model | slides = first model.slides }, showSlide )
+                    case model.nextSlides of
+                        Just n ->
+                            ( { model | slides = n, nextSlides = Nothing }, showSlide )
+
+                        Nothing ->
+                            ( { model | slides = first model.slides }, showSlide )
 
         ShowSlide ->
             ( { model | switching = False }, Cmd.none )
@@ -160,3 +166,16 @@ zipperLength =
 zipperEquals : Zipper a -> Zipper a -> Bool
 zipperEquals a b =
     toList a == toList b
+
+
+isNew : Zipper SlideWrapper -> Maybe (Zipper SlideWrapper) -> Bool
+isNew n m =
+    case m of
+        Just new ->
+            if n == new then
+                False
+            else
+                True
+
+        Nothing ->
+            False

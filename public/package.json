@@ -1,17 +1,22 @@
 {
-  "name": "v2",
+  "name": "admin-v2",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "../node_modules/.bin/elm-live Main.elm --output=../dist/public2/app.js",
-    "build": "elm make Main.elm --output=../dist/public2/app.js"
+    "clean": "rm -rf ../dist/public && mkdir -p ../dist/public",
+    "copy": "cp -a static/. ../dist/public/",
+    "build:elm": "elm-make Main.elm --output=../dist/public/app.js",
+    "watch:elm": "elm-live Main.elm --output=../dist/public/app.js -- --debug",
+    "watch": "npm-run-all clean copy --parallel watch:elm",
+    "build": "npm-run-all clean copy build:elm"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "elm-live": "^2.4.1"
+    "elm-live": "^2.4.1",
+    "less": "^2.7.1",
+    "npm-run-all": "^3.1.2"
   }
 }
