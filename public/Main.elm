@@ -20,23 +20,23 @@ initModel =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initModel, getSlides )
+    ( initModel, getSlides Slides )
 
 
 type Msg
-    = GetSlides
-    | Slides (Result Http.Error (List Slides.SlideWrapper))
+    = Slides (Result Http.Error (List Slides.SlideWrapper))
     | Refetch
     | RefetchSlides (Result Http.Error (List Slides.SlideWrapper))
     | SlidesMsg Slides.Msg
 
 
+type alias SlidesResult =
+    Result.Result Http.Error (List Slides.SlideWrapper) -> Msg
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        GetSlides ->
-            ( model, getSlides )
-
         Slides (Ok slideList) ->
             ( Model (Slides.init slideList), Cmd.none )
 
@@ -44,7 +44,7 @@ update msg model =
             ( model, Cmd.none )
 
         Refetch ->
-            ( model, refetchSlides )
+            ( model, getSlides RefetchSlides )
 
         RefetchSlides (Ok slideList) ->
             let
@@ -67,20 +67,15 @@ update msg model =
                 ( { model | slides = newSlides }, mappedCmd )
 
 
-getSlides : Cmd Msg
-getSlides =
-    Http.send Slides <| Http.get "/data" Slides.slides
-
-
-refetchSlides : Cmd Msg
-refetchSlides =
-    Http.send RefetchSlides <| Http.get "/data" Slides.slides
+getSlides : SlidesResult -> Cmd Msg
+getSlides message =
+    Http.send message <| Http.get "/data" Slides.slides
 
 
 view : Model -> Html Msg
 view model =
     div [ class "switcharoo" ]
-        [ map (\_ -> GetSlides) (Slides.view model.slides) ]
+        [ map (\_ -> Refetch) (Slides.view model.slides) ]
 
 
 subscription : Model -> Sub Msg
