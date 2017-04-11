@@ -19,19 +19,22 @@ init =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log (toString msg) msg of
+    case msg of
         ToggleVisibility ->
             let
-                newModel =
-                    { model | visible = not model.visible }
+                slideModel =
+                    model.slide
+
+                newSlide =
+                    { slideModel | visible = not slideModel.visible }
             in
-                ( newModel, editSlide newModel ToggleResponse )
+                ( { model | slide = newSlide }, editSlide newSlide ToggleResponse )
 
         ToggleResponse _ ->
             ( model, Cmd.none )
 
         Edit ->
-            ( model, editSlide model EditResponse )
+            ( model, editSlide model.slide EditResponse )
 
         EditResponse _ ->
             ( model, Cmd.none )
@@ -39,44 +42,49 @@ update msg model =
         CreateResponse _ ->
             ( model, Cmd.none )
 
+        ToggleDelete ->
+            ( model, Cmd.none )
+
         Delete ->
-            ( model, deleteSlide model )
+            ( model, deleteSlide model.slide )
 
         DeleteResponse _ ->
             ( model, Cmd.none )
 
         Name newName ->
-            ( { model | name = newName }, Cmd.none )
+            ( updateSlide model <| \s -> { s | name = newName }, Cmd.none )
 
         Title newTitle ->
-            ( { model | title = newTitle }, Cmd.none )
+            ( updateSlide model <| \s -> { s | title = newTitle }, Cmd.none )
 
         Body newBody ->
-            ( { model | body = newBody }, Cmd.none )
+            ( updateSlide model <| \s -> { s | body = newBody }, Cmd.none )
 
         Index newIndex ->
             case String.toInt newIndex of
                 Ok n ->
-                    ( { model | index = n }, Cmd.none )
+                    ( updateSlide model <| \s -> { s | index = n }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
 
         TextSlide ->
-            ( { model | type_ = "text" }, Cmd.none )
+            ( updateSlide model <| \s -> { s | type_ = "text" }, Cmd.none )
 
         MediaSlide ->
-            ( { model | type_ = "media" }, Cmd.none )
+            ( updateSlide model <| \s -> { s | type_ = "media" }, Cmd.none )
 
         FileSelected ->
             ( model, fileSelected "MediaInputId" )
 
-        FileUploaded fileData ->
+        FileUploaded f ->
             let
                 _ =
-                    Debug.log (toString fileData) "yes"
+                    Debug.log (toString f) "yes"
             in
-                ( { model | title = fileData.location, body = fileData.location, type_ = fileData.filetype }, Cmd.none )
+                ( updateSlide model <| \s -> { s | title = f.location, body = f.location, type_ = f.filetype }
+                , Cmd.none
+                )
 
         FileUploadFailed error ->
             let
@@ -86,7 +94,12 @@ update msg model =
                 ( initModel, Cmd.none )
 
 
-createOrEditSlide : Model -> (Result.Result Http.Error Model -> msg) -> Cmd msg
+updateSlide : Model -> (Slide -> Slide) -> Model
+updateSlide model fn =
+    { model | slide = (fn model.slide) }
+
+
+createOrEditSlide : Slide -> (Result.Result Http.Error Slide -> msg) -> Cmd msg
 createOrEditSlide model msg =
     if model.id == -1 then
         createSlide model msg
@@ -106,33 +119,33 @@ icon c =
 
 view : Model -> Html Msg
 view model =
-    case model.type_ of
+    case model.slide.type_ of
         "text" ->
-            viewText model
+            viewText model.slide
 
         "image" ->
-            viewImage model
+            viewImage model.slide
 
         _ ->
-            viewVideo model
+            viewVideo model.slide
 
 
-deleteButton : Model -> Html Msg
+deleteButton : Slide -> Html Msg
 deleteButton model =
     button [ class "slide__delete", onClickStopPropagation Delete ] [ icon "trash" ]
 
 
-editButton : Model -> Html Msg
+editButton : Slide -> Html Msg
 editButton model =
     button [ class "slide__edit", onClickStopPropagation Edit ] [ icon "pencil" ]
 
 
-slideIndex : Model -> Html Msg
+slideIndex : Slide -> Html Msg
 slideIndex model =
     div [ class "slide__index" ] [ text <| toString model.index ]
 
 
-viewText : Model -> Html Msg
+viewText : Slide -> Html Msg
 viewText model =
     li
         [ class "slide"
@@ -154,7 +167,7 @@ viewText model =
         ]
 
 
-viewImage : Model -> Html Msg
+viewImage : Slide -> Html Msg
 viewImage model =
     li
         [ class "slide slide--image"
@@ -174,7 +187,7 @@ viewImage model =
         ]
 
 
-viewVideo : Model -> Html Msg
+viewVideo : Slide -> Html Msg
 viewVideo model =
     li
         [ class "slide slide--video"
@@ -195,7 +208,7 @@ viewVideo model =
         ]
 
 
-editView : Model -> Html Msg
+editView : Slide -> Html Msg
 editView model =
     if model.type_ == "text" then
         editTextView model
@@ -203,7 +216,7 @@ editView model =
         editMediaView model
 
 
-editMediaView : Model -> Html Msg
+editMediaView : Slide -> Html Msg
 editMediaView model =
     div []
         [ div [ class "tabs" ]
@@ -245,7 +258,7 @@ editMediaView model =
         ]
 
 
-editTextView : Model -> Html Msg
+editTextView : Slide -> Html Msg
 editTextView model =
     div []
         [ div [ class "tabs" ]

@@ -7,12 +7,13 @@ import Ports exposing (FileData)
 
 type Msg
     = ToggleVisibility
-    | ToggleResponse (Result Http.Error Model)
-    | CreateResponse (Result Http.Error Model)
+    | ToggleResponse (Result Http.Error Slide)
+    | CreateResponse (Result Http.Error Slide)
+    | ToggleDelete
     | Delete
     | DeleteResponse (Result Http.Error String)
     | Edit
-    | EditResponse (Result Http.Error Model)
+    | EditResponse (Result Http.Error Slide)
     | Name String
     | Title String
     | Body String

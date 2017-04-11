@@ -2,6 +2,12 @@ module Slide.Model exposing (..)
 
 
 type alias Model =
+    { slide : Slide
+    , deleteMode : Bool
+    }
+
+
+type alias Slide =
     { id : Int
     , name : String
     , title : String
@@ -12,6 +18,11 @@ type alias Model =
     }
 
 
+initSlide : Slide
+initSlide =
+    Slide -1 "" "" "" False 10 ""
+
+
 initModel : Model
 initModel =
-    Model -1 "" "" "" False 10 ""
+    Model initSlide False

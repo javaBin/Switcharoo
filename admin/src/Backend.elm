@@ -58,7 +58,7 @@ getStyles decoder =
             }
 
 
-getSlides : Decoder (List Slide.Model.Model) -> Cmd Slides.Messages.Msg
+getSlides : Decoder (List Slide.Model.Slide) -> Cmd Slides.Messages.Msg
 getSlides decoder =
     Http.send Slides.Messages.SlidesResponse <|
         Http.request
@@ -72,7 +72,7 @@ getSlides decoder =
             }
 
 
-encodeSlide : Slide.Model.Model -> Encode.Value
+encodeSlide : Slide.Model.Slide -> Encode.Value
 encodeSlide model =
     Encode.object <|
         List.append
@@ -90,7 +90,7 @@ encodeSlide model =
             ]
 
 
-editSlide : Slide.Model.Model -> (Result.Result Http.Error Slide.Model.Model -> msg) -> Cmd msg
+editSlide : Slide.Model.Slide -> (Result.Result Http.Error Slide.Model.Slide -> msg) -> Cmd msg
 editSlide model msg =
     Http.send msg <|
         Http.request
@@ -104,7 +104,7 @@ editSlide model msg =
             }
 
 
-createSlide : Slide.Model.Model -> (Result.Result Http.Error Slide.Model.Model -> msg) -> Cmd msg
+createSlide : Slide.Model.Slide -> (Result.Result Http.Error Slide.Model.Slide -> msg) -> Cmd msg
 createSlide model msg =
     Http.send msg <|
         Http.request
@@ -118,7 +118,7 @@ createSlide model msg =
             }
 
 
-deleteSlide : Slide.Model.Model -> Cmd Slide.Messages.Msg
+deleteSlide : Slide.Model.Slide -> Cmd Slide.Messages.Msg
 deleteSlide model =
     Http.send Slide.Messages.DeleteResponse <|
         Http.request
@@ -132,9 +132,9 @@ deleteSlide model =
             }
 
 
-slideDecoder : Decoder Slide.Model.Model
+slideDecoder : Decoder Slide.Model.Slide
 slideDecoder =
-    Decode.succeed Slide.Model.Model
+    Decode.succeed Slide.Model.Slide
         |: Decode.field "id" Decode.int
         |: Decode.field "name" Decode.string
         |: Decode.field "title" Decode.string

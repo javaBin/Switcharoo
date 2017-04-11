@@ -52,7 +52,7 @@ subscriptions model =
 
 createSlide : Slide.Model.Model -> Cmd Msg
 createSlide model =
-    Slide.Slide.createOrEditSlide model CreateResponse
+    Slide.Slide.createOrEditSlide model.slide CreateResponse
 
 
 icon : String -> Html msg
@@ -60,7 +60,7 @@ icon c =
     i [ class <| "icon-" ++ c ] []
 
 
-isEmpty : Slide.Model.Model -> Bool
+isEmpty : Slide.Model.Slide -> Bool
 isEmpty m =
     if m.body == "" then
         True
@@ -98,7 +98,7 @@ showModal model =
 showModalContent : Model -> Html Msg
 showModalContent model =
     div [ class "modal__content" ]
-        [ map CurrentSlide (Slide.Slide.editView model.slide)
+        [ map CurrentSlide (Slide.Slide.editView model.slide.slide)
         ]
 
 
@@ -110,7 +110,7 @@ showModalFooter model =
         , button
             [ class "button button--ok modal__save"
             , onClickStopPropagation CreateSlide
-            , disabled <| isEmpty model.slide
+            , disabled <| isEmpty model.slide.slide
             ]
             [ icon "check" ]
         ]

@@ -8,6 +8,6 @@ import Modal.Messages
 
 type Msg
     = GetSlides
-    | SlidesResponse (Result Http.Error (List Slide.Model.Model))
+    | SlidesResponse (Result Http.Error (List Slide.Model.Slide))
     | Slide Slide.Model.Model Slide.Messages.Msg
     | NewSlideModal Modal.Messages.Msg

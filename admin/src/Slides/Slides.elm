@@ -19,7 +19,11 @@ update msg model =
             ( model, Backend.getSlides decoder )
 
         SlidesResponse (Ok newSlides) ->
-            ( { model | slides = newSlides }, Cmd.none )
+            let
+                slides =
+                    List.map (\slide -> Slide.Model.Model slide False) newSlides
+            in
+                ( { model | slides = slides }, Cmd.none )
 
         SlidesResponse (Err _) ->
             ( model, Cmd.none )
@@ -62,7 +66,7 @@ update msg model =
 
 updateSlide : Slide.Model.Model -> Slide.Messages.Msg -> Slide.Model.Model -> ( Slide.Model.Model, Cmd Msg )
 updateSlide newModel msg currentModel =
-    if newModel.id == currentModel.id then
+    if newModel.slide.id == currentModel.slide.id then
         let
             ( newSlide, newCmd ) =
                 Slide.Slide.update msg newModel
@@ -81,7 +85,7 @@ editSlide model newSlides slide =
         ( { model | slides = newSlides, modal = newModal }, Cmd.map NewSlideModal newModalCmd )
 
 
-decoder : Decoder (List Slide.Model.Model)
+decoder : Decoder (List Slide.Model.Slide)
 decoder =
     list Backend.slideDecoder
 
