@@ -98,7 +98,7 @@ showModal model =
 showModalContent : Model -> Html Msg
 showModalContent model =
     div [ class "modal__content" ]
-        [ map CurrentSlide (Slide.Slide.editView model.slide.slide)
+        [ map CurrentSlide (Slide.Slide.editView model.slide)
         ]
 
 

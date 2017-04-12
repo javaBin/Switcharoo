@@ -43,7 +43,7 @@ update msg model =
             ( model, Cmd.none )
 
         ToggleDelete ->
-            ( model, Cmd.none )
+            ( { model | deleteMode = not model.deleteMode }, Cmd.none )
 
         Delete ->
             ( model, deleteSlide model.slide )
@@ -121,18 +121,18 @@ view : Model -> Html Msg
 view model =
     case model.slide.type_ of
         "text" ->
-            viewText model.slide
+            viewText model
 
         "image" ->
-            viewImage model.slide
+            viewImage model
 
         _ ->
-            viewVideo model.slide
+            viewVideo model
 
 
 deleteButton : Slide -> Html Msg
 deleteButton model =
-    button [ class "slide__delete", onClickStopPropagation Delete ] [ icon "trash" ]
+    button [ class "slide__delete", onClickStopPropagation ToggleDelete ] [ icon "trash" ]
 
 
 editButton : Slide -> Html Msg
@@ -145,7 +145,7 @@ slideIndex model =
     div [ class "slide__index" ] [ text <| toString model.index ]
 
 
-viewText : Slide -> Html Msg
+viewText : Model -> Html Msg
 viewText model =
     li
         [ class "slide"
@@ -155,19 +155,20 @@ viewText model =
             [ classList
                 [ ( "slide__content", True )
                 , ( "slide__content--text", True )
-                , ( "slide__content--visible", model.visible )
+                , ( "slide__content--visible", model.slide.visible )
                 ]
             ]
-            [ div [ class "slide__title" ] [ text model.title ]
-            , div [ class "slide__body" ] [ text model.body ]
+            [ div [ class "slide__title" ] [ text model.slide.title ]
+            , div [ class "slide__body" ] [ text model.slide.body ]
             ]
-        , deleteButton model
-        , editButton model
-        , slideIndex model
+        , deleteButton model.slide
+        , editButton model.slide
+        , slideIndex model.slide
+        , confirmDeleteView model
         ]
 
 
-viewImage : Slide -> Html Msg
+viewImage : Model -> Html Msg
 viewImage model =
     li
         [ class "slide slide--image"
@@ -176,18 +177,18 @@ viewImage model =
         [ div
             [ classList
                 [ ( "slide__content slide__content--image", True )
-                , ( "slide__content--visible", model.visible )
+                , ( "slide__content--visible", model.slide.visible )
                 ]
-            , style [ ( "background-image", "url(" ++ model.body ++ ")" ) ]
+            , style [ ( "background-image", "url(" ++ model.slide.body ++ ")" ) ]
             ]
             []
-        , deleteButton model
-        , editButton model
-        , slideIndex model
+        , deleteButton model.slide
+        , editButton model.slide
+        , slideIndex model.slide
         ]
 
 
-viewVideo : Slide -> Html Msg
+viewVideo : Model -> Html Msg
 viewVideo model =
     li
         [ class "slide slide--video"
@@ -196,27 +197,27 @@ viewVideo model =
         [ div
             [ classList
                 [ ( "slide__content slide__content--video", True )
-                , ( "slide__content--visible", model.visible )
+                , ( "slide__content--visible", model.slide.visible )
                 ]
             ]
-            [ div [ class "slide__title" ] [ text model.name ]
+            [ div [ class "slide__title" ] [ text model.slide.name ]
             , div [ class "slide__body" ] [ text "(video)" ]
             ]
-        , deleteButton model
-        , editButton model
-        , slideIndex model
+        , deleteButton model.slide
+        , editButton model.slide
+        , slideIndex model.slide
         ]
 
 
-editView : Slide -> Html Msg
+editView : Model -> Html Msg
 editView model =
-    if model.type_ == "text" then
+    if model.slide.type_ == "text" then
         editTextView model
     else
         editMediaView model
 
 
-editMediaView : Slide -> Html Msg
+editMediaView : Model -> Html Msg
 editMediaView model =
     div []
         [ div [ class "tabs" ]
@@ -236,7 +237,7 @@ editMediaView model =
                 [ type_ "text"
                 , class "input modal__index"
                 , onInput Name
-                , value model.name
+                , value model.slide.name
                 , placeholder "Name"
                 ]
                 []
@@ -244,7 +245,7 @@ editMediaView model =
                 [ type_ "text"
                 , class "input modal__index"
                 , onInput Index
-                , value <| toString model.index
+                , value <| toString model.slide.index
                 , placeholder "Index"
                 ]
                 []
@@ -258,7 +259,7 @@ editMediaView model =
         ]
 
 
-editTextView : Slide -> Html Msg
+editTextView : Model -> Html Msg
 editTextView model =
     div []
         [ div [ class "tabs" ]
@@ -278,7 +279,7 @@ editTextView model =
                 [ type_ "text"
                 , class "input modal__index"
                 , onInput Name
-                , value model.name
+                , value model.slide.name
                 , placeholder "Name"
                 ]
                 []
@@ -286,7 +287,7 @@ editTextView model =
                 [ type_ "text"
                 , class "input modal__index"
                 , onInput Index
-                , value <| toString model.index
+                , value <| toString model.slide.index
                 , placeholder "Index"
                 ]
                 []
@@ -294,16 +295,24 @@ editTextView model =
                 [ type_ "text"
                 , class "input modal__title"
                 , onInput Title
-                , value model.title
+                , value model.slide.title
                 , placeholder "Title"
                 ]
                 []
             , textarea
                 [ onInput Body
                 , class "input modal__body"
-                , value model.body
+                , value model.slide.body
                 , placeholder "Body"
                 ]
                 []
             ]
+        ]
+
+
+confirmDeleteView : Model -> Html Msg
+confirmDeleteView model =
+    div [ classList [ ( "slide__confirm-delete", True ), ( "slide__confirm-delete--visible", model.deleteMode ) ] ]
+        [ button [ class "button button--cancel", onClickStopPropagation ToggleDelete ] [ text "Cancel" ]
+        , button [ class "button slide__delete-button", onClickStopPropagation Delete ] [ text "Delete" ]
         ]
