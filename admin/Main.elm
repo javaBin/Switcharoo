@@ -12,9 +12,9 @@ import Settings.Update
 import Settings.View
 import Services.Services
 import Backend
-import Model exposing (Model, Flags, initModel)
+import Model exposing (Model, Flags, initModel, CssModel)
 import Auth
-import Messages exposing (Msg(..))
+import Messages exposing (Msg(..), CssMsg(..))
 import Styles exposing (viewStyles)
 import Decoder exposing (stylesDecoder)
 
@@ -76,7 +76,32 @@ update msg model =
         GotStyles (Err err) ->
             ( model, Cmd.none )
 
-        Css cssMsg ->
+        Css cssModel cssMsg ->
+            let
+                ( newStyles, newCmds ) =
+                    List.unzip <| List.map (findAndUpdateCss cssModel cssMsg) model.styles
+            in
+                ( { model | styles = newStyles }, Cmd.batch newCmds )
+
+
+findAndUpdateCss : CssModel -> CssMsg -> CssModel -> ( CssModel, Cmd Msg )
+findAndUpdateCss selectedModel msg model =
+    if selectedModel.id == model.id then
+        updateCss model msg
+    else
+        ( model, Cmd.none )
+
+
+updateCss : CssModel -> CssMsg -> ( CssModel, Cmd Msg )
+updateCss model msg =
+    case msg of
+        Update value ->
+            ( { model | value = value }, Cmd.none )
+
+        Save ->
+            ( model, Backend.editStyle model )
+
+        Request _ ->
             ( model, Cmd.none )
 
 

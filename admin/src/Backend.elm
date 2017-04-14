@@ -144,18 +144,19 @@ slideDecoder =
         |: Decode.field "type" Decode.string
 
 
-editStyle : Css.Model.Model -> Cmd CssMsg
+editStyle : CssModel -> Cmd Msg
 editStyle model =
-    Http.send Request <|
-        Http.request <|
-            { method = "PUT"
-            , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/css/" ++ toString model.id
-            , body = Http.jsonBody <| styleEncoder model
-            , expect = Http.expectString
-            , timeout = Nothing
-            , withCredentials = False
-            }
+    Cmd.map (Css model) <|
+        Http.send Request <|
+            Http.request
+                { method = "PUT"
+                , headers = [ Http.header "authorization" <| authorization "login_token" ]
+                , url = "/css/" ++ toString model.id
+                , body = Http.jsonBody <| styleEncoder model
+                , expect = Http.expectString
+                , timeout = Nothing
+                , withCredentials = False
+                }
 
 
 styleEncoder : Css.Model.Model -> Encode.Value

@@ -5,7 +5,7 @@ import Slides.Messages
 import Settings.Messages
 import Nav.Model exposing (Page)
 import Http
-import Css.Model
+import Model exposing (CssModel)
 
 
 type Msg
@@ -14,8 +14,8 @@ type Msg
     | SlidesMsg Slides.Messages.Msg
     | SettingsMsg Settings.Messages.Msg
     | PageChanged Page
-    | GotStyles (Result Http.Error (List Css.Model.Model))
-    | Css CssMsg
+    | GotStyles (Result Http.Error (List CssModel))
+    | Css CssModel CssMsg
 
 
 type CssMsg

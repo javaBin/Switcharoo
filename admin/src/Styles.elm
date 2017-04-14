@@ -20,6 +20,6 @@ viewStyle : CssModel -> Html Msg
 viewStyle model =
     li [ class "styles-list__style style" ]
         [ span [ class "style__label" ] [ text model.title ]
-        , input [ class "style__input", type_ "color", value model.value, onInput (\s -> Css <| Update s) ] []
-        , button [ class "button style__save", onClick <| Css Save ] [ text "Save" ]
+        , input [ class "style__input", type_ "color", value model.value, onInput (\s -> Css model <| Update s) ] []
+        , button [ class "button style__save", onClick <| Css model Save ] [ text "Save" ]
         ]
