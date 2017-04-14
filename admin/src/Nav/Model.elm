@@ -5,3 +5,4 @@ type Page
     = LoggedOut
     | SlidesPage
     | SettingsPage
+    | StylesPage

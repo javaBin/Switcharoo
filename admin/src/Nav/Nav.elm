@@ -18,6 +18,9 @@ toHash page =
         SettingsPage ->
             "#settings"
 
+        StylesPage ->
+            "#styles"
+
 
 hashParser : Navigation.Location -> Page
 hashParser location =
@@ -42,4 +45,5 @@ pageParser =
         [ map LoggedOut (top)
         , map SlidesPage (s "slides")
         , map SettingsPage (s "settings")
+        , map StylesPage (s "styles")
         ]

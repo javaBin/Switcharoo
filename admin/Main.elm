@@ -6,40 +6,17 @@ import Html.Events exposing (onClick)
 import Navigation
 import Nav.Nav exposing (hashParser, toHash)
 import Nav.Model exposing (Page(..))
-import Slides.Model
-import Slides.Messages
 import Slides.Slides
-import Settings.Model
 import Settings.Messages
 import Settings.Update
 import Settings.View
 import Services.Services
-import Styles.Decoder
 import Backend
+import Model exposing (Model, Flags, initModel)
 import Auth
-
-
-type alias Flags =
-    { loggedIn : Bool
-    }
-
-
-type alias Model =
-    { slides : Slides.Model.Model
-    , settings : Settings.Model.Model
-    , auth : Auth.AuthStatus
-    , flags : Flags
-    , page : Nav.Model.Page
-    }
-
-
-initModel : Flags -> Page -> Model
-initModel flags page =
-    Model Slides.Model.init
-        Settings.Model.initModel
-        Auth.LoggedOut
-        flags
-        page
+import Messages exposing (Msg(..))
+import Styles exposing (viewStyles)
+import Decoder exposing (stylesDecoder)
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -55,14 +32,6 @@ init flags location =
                 Cmd.none
     in
         ( initModel flags page, cmd )
-
-
-type Msg
-    = Login
-    | LoginResult Auth.UserData
-    | SlidesMsg Slides.Messages.Msg
-    | SettingsMsg Settings.Messages.Msg
-    | PageChanged Page
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -101,6 +70,15 @@ update msg model =
         PageChanged page ->
             updatePage page { model | page = page }
 
+        GotStyles (Ok styles) ->
+            ( { model | styles = styles }, Cmd.none )
+
+        GotStyles (Err err) ->
+            ( model, Cmd.none )
+
+        Css cssMsg ->
+            ( model, Cmd.none )
+
 
 updatePage : Page -> Model -> ( Model, Cmd Msg )
 updatePage page model =
@@ -114,11 +92,11 @@ updatePage page model =
                 [ Cmd.map SettingsMsg <|
                     Cmd.map Settings.Messages.ServicesMsg <|
                         Backend.getSettings Services.Services.decoder
-                , Cmd.map SettingsMsg <|
-                    Cmd.map Settings.Messages.StylesMsg <|
-                        Backend.getStyles Styles.Decoder.decoder
                 ]
             )
+
+        StylesPage ->
+            ( model, Backend.getStyles stylesDecoder )
 
         LoggedOut ->
             ( model, Cmd.none )
@@ -158,6 +136,9 @@ linkText page =
         SettingsPage ->
             "icon-settings"
 
+        StylesPage ->
+            "icon-magic-wand"
+
         _ ->
             ""
 
@@ -184,6 +165,7 @@ viewSidebar model =
         , ul [ class "sidebar__menu" ]
             [ viewLink model SlidesPage
             , viewLink model SettingsPage
+            , viewLink model StylesPage
             ]
         ]
 
@@ -198,6 +180,9 @@ viewMain model =
 
                 SettingsPage ->
                     viewSettings model
+
+                StylesPage ->
+                    viewStyles model
 
                 _ ->
                     div [] []

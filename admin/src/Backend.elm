@@ -6,14 +6,14 @@ import Slide.Messages
 import Services.Messages
 import Service.Messages
 import Service.Model
-import Styles.Messages
 import Css.Model
-import Css.Messages
 import LocalStorage
 import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import Json.Decode.Extra exposing ((|:))
+import Model exposing (CssModel)
+import Messages exposing (Msg(..), CssMsg(..))
 
 
 getSettings : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
@@ -44,9 +44,9 @@ toggleSetting model =
             }
 
 
-getStyles : Decoder (List Css.Model.Model) -> Cmd Styles.Messages.Msg
+getStyles : Decoder (List CssModel) -> Cmd Msg
 getStyles decoder =
-    Http.send Styles.Messages.GotStyles <|
+    Http.send GotStyles <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
@@ -144,9 +144,9 @@ slideDecoder =
         |: Decode.field "type" Decode.string
 
 
-editStyle : Css.Model.Model -> Cmd Css.Messages.Msg
+editStyle : Css.Model.Model -> Cmd CssMsg
 editStyle model =
-    Http.send Css.Messages.Request <|
+    Http.send Request <|
         Http.request <|
             { method = "PUT"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
