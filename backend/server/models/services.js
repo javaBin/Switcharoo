@@ -12,5 +12,5 @@ function attributes(DataTypes) {
 }
 
 module.exports = function(sequelize, DataTypes) {
-    return sequelize.define('Setting', attributes(DataTypes));
+    return sequelize.define('Service', attributes(DataTypes));
 };

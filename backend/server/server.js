@@ -57,7 +57,7 @@ function configure(app, express, basePath, models) {
     });
 
     require('./routes/slides')(app, security);
-    require('./routes/settings')(app, security);
+    require('./routes/services')(app, security);
     require('./routes/css')(app, security);
 
     app.get('/votes', function(req, res) {

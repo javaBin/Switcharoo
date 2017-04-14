@@ -3,7 +3,7 @@ var config = require('../config').program;
 var request = require('request');
 var moment = require('moment');
 var _ = require('lodash');
-var Setting = require('../models').Setting;
+var Service = require('../models').Service;
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
@@ -131,8 +131,8 @@ function getSlotForTimestamp(time) {
 }
 
 function program(all, res) {
-    Setting.findOne({key: 'program-enabled'}).then(function(setting) {
-        if (setting && !setting.value) {
+    Service.findOne({key: 'program-enabled'}).then(function(service) {
+        if (service && !service.value) {
             res.json({heading: 'off'});
             return;
         }
@@ -182,9 +182,9 @@ function status() {
 }
 
 function asJson() {
-    return Setting.findOne({where: {key: 'program-enabled'}})
-        .then((setting) => {
-            if (setting && !setting.value) {
+    return Service.findOne({where: {key: 'program-enabled'}})
+        .then((service) => {
+            if (service && !service.value) {
                 return [];
             }
             if (Object.keys(current_program).length === 0) {

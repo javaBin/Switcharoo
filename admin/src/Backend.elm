@@ -22,7 +22,7 @@ getSettings decoder =
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/settings"
+            , url = "/services"
             , body = Http.emptyBody
             , expect = Http.expectJson decoder
             , timeout = Nothing
@@ -36,7 +36,7 @@ toggleSetting model =
         Http.request
             { method = "PUT"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/settings/" ++ toString model.id
+            , url = "/services/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing

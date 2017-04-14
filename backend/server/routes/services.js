@@ -1,12 +1,12 @@
-const Setting = require('../models').Setting;
+const Service = require('../models').Service;
 
 module.exports = function(app, security) {
-    app.get('/settings', security, (req, res) => {
-        Setting.findAll({order: 'id'}).then(settings => res.json(settings));
+    app.get('/services', security, (req, res) => {
+        Service.findAll({order: 'id'}).then(services => res.json(services));
     });
 
-    app.post('/settings', security, (req, res) => {
-        Setting.create({
+    app.post('/services', security, (req, res) => {
+        Service.create({
             key: req.body.key,
             value: req.body.value
         }).then((instance) => {
@@ -20,17 +20,17 @@ module.exports = function(app, security) {
         });
     });
 
-    app.put('/settings/:id', security, (req, res) => {
-        Setting.findById(req.params.id).then(setting => {
-            if (!setting) {
+    app.put('/services/:id', security, (req, res) => {
+        Service.findById(req.params.id).then(service => {
+            if (!service) {
                 res.status(404).send();
                 return;
             }
 
-            setting.update({
-                value: !setting.get('value')
-            }).then(newSetting => {
-                res.json(newSetting.toJSON());
+            service.update({
+                value: !service.get('value')
+            }).then(newService => {
+                res.json(newService.toJSON());
             });
         }).catch(() => {
             res.status(500).send();
