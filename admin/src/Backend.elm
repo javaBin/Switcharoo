@@ -16,8 +16,8 @@ import Model exposing (CssModel)
 import Messages exposing (Msg(..), CssMsg(..))
 
 
-getSettings : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
-getSettings decoder =
+getServices : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
+getServices decoder =
     Http.send Services.Messages.Settings <|
         Http.request
             { method = "GET"
@@ -30,8 +30,8 @@ getSettings decoder =
             }
 
 
-toggleSetting : Service.Model.Model -> Cmd Service.Messages.Msg
-toggleSetting model =
+toggleService : Service.Model.Model -> Cmd Service.Messages.Msg
+toggleService model =
     Http.send Service.Messages.Toggled <|
         Http.request
             { method = "PUT"

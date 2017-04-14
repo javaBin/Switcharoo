@@ -111,12 +111,12 @@ updatePage page model =
         SlidesPage ->
             ( model, Cmd.map SlidesMsg <| Backend.getSlides Slides.Slides.decoder )
 
-        SettingsPage ->
+        ServicesPage ->
             ( model
             , Cmd.batch
                 [ Cmd.map SettingsMsg <|
                     Cmd.map Settings.Messages.ServicesMsg <|
-                        Backend.getSettings Services.Services.decoder
+                        Backend.getServices Services.Services.decoder
                 ]
             )
 
@@ -158,8 +158,8 @@ linkText page =
         SlidesPage ->
             "icon-screen-desktop"
 
-        SettingsPage ->
-            "icon-settings"
+        ServicesPage ->
+            "icon-wrench"
 
         StylesPage ->
             "icon-magic-wand"
@@ -189,7 +189,7 @@ viewSidebar model =
         [ div [ class "app__logo" ] [ text "S" ]
         , ul [ class "sidebar__menu" ]
             [ viewLink model SlidesPage
-            , viewLink model SettingsPage
+            , viewLink model ServicesPage
             , viewLink model StylesPage
             ]
         ]
@@ -203,7 +203,7 @@ viewMain model =
                 SlidesPage ->
                     viewSlides model
 
-                SettingsPage ->
+                ServicesPage ->
                     viewSettings model
 
                 StylesPage ->

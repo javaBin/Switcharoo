@@ -8,8 +8,7 @@ import Html.Events exposing (onClick)
 import Json.Decode exposing (Decoder, Value, succeed, string, bool, field, int)
 import Json.Decode.Extra exposing ((|:))
 import Json.Encode as Encode
-import Http
-import Backend exposing (toggleSetting)
+import Backend exposing (toggleService)
 
 
 init : ( Model, Cmd Msg )
@@ -42,7 +41,7 @@ update msg model =
                 newModel =
                     { model | value = not model.value }
             in
-                ( newModel, toggleSetting newModel )
+                ( newModel, toggleService newModel )
 
         Toggled (Err _) ->
             ( { model | value = not model.value }, Cmd.none )
