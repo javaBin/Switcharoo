@@ -3,6 +3,7 @@ var config = require('../config');
 var twit = require('twit');
 var Service = require('../models').Service;
 var Setting = require('../models').Setting;
+const log = require('../log');
 
 var Twitter = new twit(config.twitter);
 
@@ -15,19 +16,19 @@ var job = new cron(cronPattern, getTweets);
 function getTweets(complete) {
     Setting.findOne({ where: {key: 'twitter-search'}}).then(twitterSearch => {
         const search = twitterSearch.toJSON().value.value;
-        console.log(`Getting tweets for search "${search}"`);
+        log.info(`Getting tweets for search "${search}"`);
         Twitter.get('search/tweets', {
             q: `${search} exclude:retweets`,
             count: 4,
             result_type: 'recent'
         }, function(err, data, response) {
             if (err) {
-                console.error('Error fetching tweets:');
-                console.error(err);
+                log.error('Error fetching tweets:');
+                log.error(err);
                 return;
             }
 
-            console.log(`Got new tweets for search "${search}"`);
+            log.info(`Got new tweets for search "${search}"`);
 
             data = data.statuses.map(function(tweet) {
                 return {

@@ -4,6 +4,7 @@ var request = require('request');
 var moment = require('moment');
 var _ = require('lodash');
 var Service = require('../models').Service;
+const log = require('../log');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
@@ -76,20 +77,20 @@ function comparator(param, compare_depth) {
 function getProgram(complete) {
 	request(config.url, function(error, response, body) {
 		if (error)
-			return console.error(error);
+			return log.error(error);
 
 		try {
 			body = JSON.parse(body);
 		} catch (e) {
-			console.error('Error trying to parse response from program:');
-			console.error(e);
+			log.error('Error trying to parse response from program:');
+			log.error(e);
 			return;
 		}
 
 		if (!Array.isArray(body))
-			return console.error("Response from \"" + config.url + "\" was not an array: " + body);
+			return log.error("Response from \"" + config.url + "\" was not an array: " + body);
 
-		console.log('Got new program from javazone server');
+		log.info('Got new program from javazone server');
 
 		current_program = groupSessions(body);
 		if (complete)
@@ -105,12 +106,12 @@ function get() {
 
 function now() {
 	var now = new moment();
-	console.log('Now: ' + now);
+	log.info('Now: ' + now);
 	return now;
 }
 
 function getSlotForTimestamp(time) {
-	console.log('Returning program for: ' + time);
+	log.info('Returning program for: ' + time);
 	var timestamps = Object.keys(current_program).sort();
 	if (time < timestamps[0])
 		return {"heading": "Next", "presentations": current_program[timestamps[0]], type: 'program'};

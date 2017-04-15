@@ -2,6 +2,7 @@ var cron = require('cron').CronJob;
 var config = require('../config').votes;
 var Service = require('../models').Service;
 var request = require('request');
+const log = require('../log');
 
 var cronPattern = config.cronPattern || '0 */10 * * * *';
 
@@ -12,13 +13,13 @@ var votes = -1;
 function getVotes(complete) {
     request(config.url, function(error, response, body) {
         if (error)
-            return console.error(error);
+            return log.error(error);
 
         try {
             body = JSON.parse(body);
         } catch (e) {
-            console.error('Error trying to parse response from votes');
-            console.error(e);
+            log.error('Error trying to parse response from votes');
+            log.error(e);
             return undefined;
         }
 
@@ -26,7 +27,7 @@ function getVotes(complete) {
             return undefined;
         }
         votes = body.votes;
-        console.log('Got new votes from backend');
+        log.info('Got new votes from backend');
 
         if (complete)
             complete();
