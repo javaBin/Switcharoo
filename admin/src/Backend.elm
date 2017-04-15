@@ -12,8 +12,10 @@ import Http
 import Json.Decode as Decode exposing (Decoder)
 import Json.Encode as Encode
 import Json.Decode.Extra exposing ((|:))
-import Model exposing (CssModel)
+import Model exposing (CssModel, SettingModel)
 import Messages exposing (Msg(..), CssMsg(..))
+import Decoder exposing (settingsDecoder)
+import Encoder exposing (settingsEncoder)
 
 
 getServices : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
@@ -167,6 +169,34 @@ styleEncoder model =
         , ( "value", Encode.string model.value )
         , ( "type", Encode.string model.type_ )
         ]
+
+
+getSettings : String -> Cmd Msg
+getSettings _ =
+    Http.send GetSettings <|
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/settings"
+            , body = Http.emptyBody
+            , expect = Http.expectJson settingsDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+saveSettings : List SettingModel -> Cmd Msg
+saveSettings settings =
+    Http.send SettingsSaved <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/settings"
+            , body = Http.jsonBody <| settingsEncoder settings
+            , expect = Http.expectJson settingsDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
 
 
 authorization : String -> String

@@ -5,4 +5,5 @@ type Page
     = LoggedOut
     | SlidesPage
     | ServicesPage
+    | SettingsPage
     | StylesPage

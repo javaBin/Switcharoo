@@ -13,18 +13,13 @@ type alias Flags =
 
 type alias Model =
     { slides : Slides.Model.Model
-    , settings : Settings.Model.Model
+    , services : Settings.Model.Model
+    , settings : List SettingModel
     , auth : Auth.AuthStatus
     , flags : Flags
     , page : Nav.Model.Page
     , styles : List CssModel
     }
-
-
-
--- type alias StylesModel =
---     { styles : List CssModel
---     }
 
 
 type alias CssModel =
@@ -37,10 +32,19 @@ type alias CssModel =
     }
 
 
+type alias SettingModel =
+    { id : Int
+    , key : String
+    , hint : String
+    , value : String
+    }
+
+
 initModel : Flags -> Page -> Model
 initModel flags page =
     Model Slides.Model.init
         Settings.Model.initModel
+        []
         Auth.LoggedOut
         flags
         page

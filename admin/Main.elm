@@ -12,11 +12,12 @@ import Settings.Update
 import Settings.View
 import Services.Services
 import Backend
-import Model exposing (Model, Flags, initModel, CssModel)
+import Model exposing (Model, Flags, initModel, CssModel, SettingModel)
 import Auth
 import Messages exposing (Msg(..), CssMsg(..))
 import Styles exposing (viewStyles)
 import Decoder exposing (stylesDecoder)
+import Settings exposing (viewSettings)
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -49,10 +50,10 @@ update msg model =
 
         SettingsMsg msg ->
             let
-                ( newSettings, settingsCmd ) =
-                    Settings.Update.update msg model.settings
+                ( newServices, servicesCmd ) =
+                    Settings.Update.update msg model.services
             in
-                ( { model | settings = newSettings }, Cmd.map SettingsMsg settingsCmd )
+                ( { model | services = newServices }, Cmd.map SettingsMsg servicesCmd )
 
         Login ->
             ( model, Auth.login () )
@@ -83,6 +84,24 @@ update msg model =
             in
                 ( { model | styles = newStyles }, Cmd.batch newCmds )
 
+        GetSettings (Ok settings) ->
+            ( { model | settings = settings }, Cmd.none )
+
+        GetSettings (Err err) ->
+            Debug.log (toString err) ( model, Cmd.none )
+
+        SettingChanged setting value ->
+            ( { model | settings = List.map (updateSetting setting value) model.settings }, Cmd.none )
+
+        SaveSettings ->
+            ( model, Backend.saveSettings model.settings )
+
+        SettingsSaved (Ok settings) ->
+            ( { model | settings = settings }, Cmd.none )
+
+        SettingsSaved (Err _) ->
+            ( model, Cmd.none )
+
 
 findAndUpdateCss : CssModel -> CssMsg -> CssModel -> ( CssModel, Cmd Msg )
 findAndUpdateCss selectedModel msg model =
@@ -105,6 +124,14 @@ updateCss model msg =
             ( model, Cmd.none )
 
 
+updateSetting : SettingModel -> String -> SettingModel -> SettingModel
+updateSetting setting value currentModel =
+    if setting.id == currentModel.id then
+        { setting | value = value }
+    else
+        setting
+
+
 updatePage : Page -> Model -> ( Model, Cmd Msg )
 updatePage page model =
     case page of
@@ -119,6 +146,9 @@ updatePage page model =
                         Backend.getServices Services.Services.decoder
                 ]
             )
+
+        SettingsPage ->
+            ( model, Backend.getSettings "hack" )
 
         StylesPage ->
             ( model, Backend.getStyles stylesDecoder )
@@ -161,6 +191,9 @@ linkText page =
         ServicesPage ->
             "icon-wrench"
 
+        SettingsPage ->
+            "icon-settings"
+
         StylesPage ->
             "icon-magic-wand"
 
@@ -190,6 +223,7 @@ viewSidebar model =
         , ul [ class "sidebar__menu" ]
             [ viewLink model SlidesPage
             , viewLink model ServicesPage
+            , viewLink model SettingsPage
             , viewLink model StylesPage
             ]
         ]
@@ -204,6 +238,9 @@ viewMain model =
                     viewSlides model
 
                 ServicesPage ->
+                    viewServices model
+
+                SettingsPage ->
                     viewSettings model
 
                 StylesPage ->
@@ -227,15 +264,14 @@ viewSlides model =
         ul [ class "slides" ] slides
 
 
-viewSettings : Model -> Html Msg
-viewSettings model =
-    map SettingsMsg <| Settings.View.view model.settings
+viewServices : Model -> Html Msg
+viewServices model =
+    map SettingsMsg <| Settings.View.view model.services
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        -- [ Sub.map AdminMsg <| Admin.Subscriptions.subscriptions model.admin
         [ Auth.loginResult LoginResult
         , Sub.map SlidesMsg <| Slides.Slides.subscriptions model.slides
         ]

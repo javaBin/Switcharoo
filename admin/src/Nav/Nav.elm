@@ -16,6 +16,9 @@ toHash page =
             "#slides"
 
         ServicesPage ->
+            "#services"
+
+        SettingsPage ->
             "#settings"
 
         StylesPage ->
@@ -44,6 +47,7 @@ pageParser =
     oneOf
         [ map LoggedOut (top)
         , map SlidesPage (s "slides")
-        , map ServicesPage (s "settings")
+        , map ServicesPage (s "services")
+        , map SettingsPage (s "settings")
         , map StylesPage (s "styles")
         ]
