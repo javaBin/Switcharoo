@@ -30,6 +30,11 @@ function getTweets(complete) {
 
             log.info(`Got new tweets for search "${search}"`);
 
+            if (!data.statuses || data.statuses.length == 0) {
+                log.info('Twitter search returned empty result, keeping old tweets');
+                return;
+            }
+
             data = data.statuses.map(function(tweet) {
                 return {
                     text: tweet.text,
