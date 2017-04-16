@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
 import Json.Decode exposing (Decoder, Value, succeed, string, bool, field, int)
-import Json.Decode.Extra exposing ((|:))
+import Json.Decode.Pipeline exposing (decode, required)
 import Json.Encode as Encode
 import Backend exposing (toggleService)
 
@@ -18,10 +18,10 @@ init =
 
 decoder : Decoder Model
 decoder =
-    succeed Model
-        |: field "id" int
-        |: field "key" string
-        |: field "value" bool
+    decode Model
+        |> required "id" int
+        |> required "key" string
+        |> required "value" bool
 
 
 encoder : Model -> Value

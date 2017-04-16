@@ -15,12 +15,13 @@ type alias Slide =
     , visible : Bool
     , index : Int
     , type_ : String
+    , color : Maybe String
     }
 
 
 initSlide : Slide
 initSlide =
-    Slide -1 "" "" "" False 10 ""
+    Slide -1 "" "" "" False 10 "" Nothing
 
 
 initModel : Model

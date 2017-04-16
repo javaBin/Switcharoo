@@ -23,6 +23,10 @@ function attributes(DataTypes) {
         name: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        color: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     };
 }

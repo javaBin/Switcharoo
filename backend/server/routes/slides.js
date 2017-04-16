@@ -24,7 +24,8 @@ module.exports = function(app, security) {
             visible: req.body.visible,
             type: req.body.type,
             index: req.body.index,
-            name: req.body.name
+            name: req.body.name,
+            color: req.body.color
         }).then((instance) => {
             if (!instance) {
                 res.status(500).send();
@@ -48,7 +49,8 @@ module.exports = function(app, security) {
                 body: req.body.body,
                 visible: req.body.visible,
                 index: req.body.index,
-                name: req.body.name
+                name: req.body.name,
+                color: req.body.color
             }).then(newSlide => {
                 res.json(newSlide.toJSON());
             });

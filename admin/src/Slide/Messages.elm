@@ -20,6 +20,7 @@ type Msg
     | Index String
     | TextSlide
     | MediaSlide
+    | Color (Maybe String)
     | FileSelected
     | FileUploaded FileData
     | FileUploadFailed String

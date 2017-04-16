@@ -88,6 +88,8 @@ h2 {
 
 .slide {
     background: transparent;
+    border: 5px solid transparent;
+    border-radius: 4px;
     height: 225px;
     margin: 20px;
     position: relative;
@@ -103,7 +105,6 @@ h2 {
 .slide__content {
     align-items: center;
     background: #111;
-    border-radius: 2px;
     box-shadow: 0 0 30px rgba(0, 0, 0, .5);
     color: white;
     cursor: pointer;
@@ -178,7 +179,7 @@ h2 {
     color: white;
     bottom: 0;
     position: absolute;
-    right: 3px;
+    right: 5px;
     text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
 }
 
@@ -236,7 +237,7 @@ h2 {
     color: #111;
     display: flex;
     flex-direction: column;
-    height: 450px;
+    height: 500px;
     width: 500px;
 }
 
@@ -260,6 +261,21 @@ h2 {
     margin-top: 10px;
 }
 
+.modal__color {
+    list-style: none;
+    margin-top: 10px;
+    padding: 0;
+}
+
+.modal__color-item {
+    display: inline-block;
+    padding: 5px;
+}
+
+.modal__color-item:first-child {
+    padding-left: 0;
+}
+
 .modal__footer {
     display: flex;
     justify-content: flex-end;
@@ -272,6 +288,17 @@ h2 {
 
 .modal__save[disabled] {
     opacity: .5;
+}
+
+.color-button {
+    border: 1px solid transparent;
+    height: 30px;
+    outline: 0;
+    width: 30px;
+}
+
+.color-button--selected {
+    border-color: black;
 }
 
 .button {

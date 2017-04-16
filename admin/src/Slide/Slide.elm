@@ -5,7 +5,7 @@ import Slide.Messages exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
 import Html.Events exposing (onClick, onInput, on)
-import Json.Decode exposing (Decoder, succeed, string, bool, field, int)
+import Json.Decode exposing (succeed)
 import Http
 import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
@@ -73,6 +73,9 @@ update msg model =
 
         MediaSlide ->
             ( updateSlide model <| \s -> { s | type_ = "media" }, Cmd.none )
+
+        Color color ->
+            ( updateSlide model <| \s -> { s | color = color }, Cmd.none )
 
         FileSelected ->
             ( model, fileSelected "MediaInputId" )
@@ -147,66 +150,83 @@ slideIndex model =
 
 viewText : Model -> Html Msg
 viewText model =
-    li
-        [ class "slide"
-        , onClick ToggleVisibility
-        ]
-        [ div
-            [ classList
-                [ ( "slide__content", True )
-                , ( "slide__content--text", True )
-                , ( "slide__content--visible", model.slide.visible )
+    let
+        borderStyle =
+            Maybe.withDefault "transparent" model.slide.color
+    in
+        li
+            [ class "slide"
+            , onClick ToggleVisibility
+            , style [ ( "borderColor", borderStyle ) ]
+            ]
+            [ div
+                [ classList
+                    [ ( "slide__content slide__content--text", True )
+                    , ( "slide__content--visible", model.slide.visible )
+                    ]
                 ]
+                [ div [ class "slide__title" ] [ text model.slide.title ]
+                , div [ class "slide__body" ] [ text model.slide.body ]
+                ]
+            , deleteButton model.slide
+            , editButton model.slide
+            , slideIndex model.slide
+            , confirmDeleteView model
             ]
-            [ div [ class "slide__title" ] [ text model.slide.title ]
-            , div [ class "slide__body" ] [ text model.slide.body ]
-            ]
-        , deleteButton model.slide
-        , editButton model.slide
-        , slideIndex model.slide
-        , confirmDeleteView model
-        ]
 
 
 viewImage : Model -> Html Msg
 viewImage model =
-    li
-        [ class "slide slide--image"
-        , onClick ToggleVisibility
-        ]
-        [ div
-            [ classList
-                [ ( "slide__content slide__content--image", True )
-                , ( "slide__content--visible", model.slide.visible )
-                ]
-            , style [ ( "background-image", "url(" ++ model.slide.body ++ ")" ) ]
+    let
+        borderStyle =
+            Maybe.withDefault "transparent" model.slide.color
+    in
+        li
+            [ class "slide slide--image"
+            , onClick ToggleVisibility
+            , style [ ( "borderColor", borderStyle ) ]
             ]
-            []
-        , deleteButton model.slide
-        , editButton model.slide
-        , slideIndex model.slide
-        ]
+            [ div
+                [ classList
+                    [ ( "slide__content slide__content--image", True )
+                    , ( "slide__content--visible", model.slide.visible )
+                    ]
+                , style
+                    [ ( "background-image", "url(" ++ model.slide.body ++ ")" ) ]
+                ]
+                []
+            , deleteButton model.slide
+            , editButton model.slide
+            , slideIndex model.slide
+            , confirmDeleteView model
+            ]
 
 
 viewVideo : Model -> Html Msg
 viewVideo model =
-    li
-        [ class "slide slide--video"
-        , onClick ToggleVisibility
-        ]
-        [ div
-            [ classList
-                [ ( "slide__content slide__content--video", True )
-                , ( "slide__content--visible", model.slide.visible )
+    let
+        borderStyle =
+            Maybe.withDefault "transparent" model.slide.color
+    in
+        li
+            [ class "slide slide--video"
+            , onClick ToggleVisibility
+            , style [ ( "borderColor", borderStyle ) ]
+            ]
+            [ div
+                [ classList
+                    [ ( "slide__content slide__content--video", True )
+                    , ( "slide__content--visible", model.slide.visible )
+                    ]
                 ]
+                [ div [ class "slide__title" ] [ text model.slide.name ]
+                , div [ class "slide__body" ] [ text "(video)" ]
+                ]
+            , deleteButton model.slide
+            , editButton model.slide
+            , slideIndex model.slide
+            , confirmDeleteView model
             ]
-            [ div [ class "slide__title" ] [ text model.slide.name ]
-            , div [ class "slide__body" ] [ text "(video)" ]
-            ]
-        , deleteButton model.slide
-        , editButton model.slide
-        , slideIndex model.slide
-        ]
 
 
 editView : Model -> Html Msg
@@ -255,6 +275,7 @@ editMediaView model =
                 , on "change" (succeed FileSelected)
                 ]
                 []
+            , selectColorView model
             ]
         ]
 
@@ -306,8 +327,36 @@ editTextView model =
                 , placeholder "Body"
                 ]
                 []
+            , selectColorView model
             ]
         ]
+
+
+selectColorView : Model -> Html Msg
+selectColorView model =
+    div []
+        [ ul [ class "modal__color" ] <|
+            List.map (singleColorView model) [ Nothing, Just "#0078c9", Just "#ef8717", Just "#58836a", Just "#874b85" ]
+        ]
+
+
+singleColorView : Model -> Maybe String -> Html Msg
+singleColorView model color =
+    let
+        currentColor =
+            Maybe.withDefault "#ffffff" color
+
+        selectedColor =
+            model.slide.color == color
+    in
+        li [ class "modal__color-item" ]
+            [ button
+                [ classList [ ( "color-button", True ), ( "color-button--selected", selectedColor ) ]
+                , style [ ( "background", currentColor ) ]
+                , onClick <| Color color
+                ]
+                []
+            ]
 
 
 confirmDeleteView : Model -> Html Msg

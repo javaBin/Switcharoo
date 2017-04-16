@@ -9,9 +9,9 @@ import Service.Model
 import Css.Model
 import LocalStorage
 import Http
-import Json.Decode as Decode exposing (Decoder)
+import Json.Decode as Decode exposing (Decoder, nullable)
 import Json.Encode as Encode
-import Json.Decode.Extra exposing ((|:))
+import Json.Decode.Pipeline exposing (decode, required, optional)
 import Model exposing (CssModel, SettingModel)
 import Messages exposing (Msg(..), CssMsg(..))
 import Decoder exposing (settingsDecoder)
@@ -89,6 +89,7 @@ encodeSlide model =
             , ( "visible", Encode.bool model.visible )
             , ( "index", Encode.int model.index )
             , ( "type", Encode.string model.type_ )
+            , ( "color", Maybe.map Encode.string model.color |> Maybe.withDefault Encode.null )
             ]
 
 
@@ -136,14 +137,15 @@ deleteSlide model =
 
 slideDecoder : Decoder Slide.Model.Slide
 slideDecoder =
-    Decode.succeed Slide.Model.Slide
-        |: Decode.field "id" Decode.int
-        |: Decode.field "name" Decode.string
-        |: Decode.field "title" Decode.string
-        |: Decode.field "body" Decode.string
-        |: Decode.field "visible" Decode.bool
-        |: Decode.field "index" Decode.int
-        |: Decode.field "type" Decode.string
+    decode Slide.Model.Slide
+        |> required "id" Decode.int
+        |> required "name" Decode.string
+        |> required "title" Decode.string
+        |> required "body" Decode.string
+        |> required "visible" Decode.bool
+        |> required "index" Decode.int
+        |> required "type" Decode.string
+        |> optional "color" (Decode.nullable Decode.string) Nothing
 
 
 editStyle : CssModel -> Cmd Msg

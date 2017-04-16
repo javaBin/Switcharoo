@@ -1,8 +1,8 @@
 module Decoder exposing (..)
 
 import Model exposing (..)
-import Json.Decode exposing (Decoder, succeed, field, string, int, list, at)
-import Json.Decode.Extra exposing ((|:))
+import Json.Decode exposing (Decoder, succeed, string, int, list, at)
+import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 
 
 stylesDecoder : Decoder (List CssModel)
@@ -12,13 +12,13 @@ stylesDecoder =
 
 cssDecoder : Decoder CssModel
 cssDecoder =
-    succeed CssModel
-        |: field "id" int
-        |: field "selector" string
-        |: field "property" string
-        |: field "value" string
-        |: field "type" string
-        |: field "title" string
+    decode CssModel
+        |> required "id" int
+        |> required "selector" string
+        |> required "property" string
+        |> required "value" string
+        |> required "type" string
+        |> required "title" string
 
 
 settingsDecoder : Decoder (List SettingModel)
@@ -28,8 +28,8 @@ settingsDecoder =
 
 settingDecoder : Decoder SettingModel
 settingDecoder =
-    succeed SettingModel
-        |: field "id" int
-        |: field "key" string
-        |: field "hint" string
-        |: at [ "value", "value" ] string
+    decode SettingModel
+        |> required "id" int
+        |> required "key" string
+        |> required "hint" string
+        |> requiredAt [ "value", "value" ] string
