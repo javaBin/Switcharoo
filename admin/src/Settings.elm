@@ -9,7 +9,7 @@ import Messages exposing (Msg(..))
 
 viewSettings : Model -> Html Msg
 viewSettings model =
-    div [ class "settings" ]
+    div []
         [ ul [ class "settings" ] <|
             List.map viewSetting model.settings
         , button [ class "button", onClick SaveSettings ] [ text "Save" ]
@@ -18,7 +18,7 @@ viewSettings model =
 
 viewSetting : SettingModel -> Html Msg
 viewSetting setting =
-    li [ class "setting" ]
-        [ text setting.hint
-        , input [ type_ "text", value setting.value, onInput <| SettingChanged setting ] []
+    li [ class "settings__setting" ]
+        [ div [ class "settings__setting-title" ] [ text setting.hint ]
+        , input [ type_ "text", value setting.value, onInput <| SettingChanged setting, class "input" ] []
         ]
