@@ -10,8 +10,7 @@ import Messages exposing (Msg(..), CssMsg(..))
 viewStyles : Model -> Html Msg
 viewStyles model =
     div [ class "styles" ]
-        [ h2 [] [ text "Styles" ]
-        , ul [ class "styles-list" ] <|
+        [ ul [ class "styles-list" ] <|
             List.map viewStyle model.styles
         ]
 

@@ -10,8 +10,7 @@ import Messages exposing (Msg(..))
 viewSettings : Model -> Html Msg
 viewSettings model =
     div [ class "settings" ]
-        [ h2 [] [ text "Settings" ]
-        , ul [ class "settings" ] <|
+        [ ul [ class "settings" ] <|
             List.map viewSetting model.settings
         , button [ class "button", onClick SaveSettings ] [ text "Save" ]
         ]

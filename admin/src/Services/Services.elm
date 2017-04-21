@@ -47,9 +47,7 @@ updateSetting newModel msg currentModel =
 view : Model -> Html Msg
 view model =
     div [ class "services" ]
-        [ h2 [] [ text "Services" ]
-        , viewSettings model
-        ]
+        [ viewSettings model ]
 
 
 viewSettings : Model -> Html Msg
