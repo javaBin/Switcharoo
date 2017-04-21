@@ -1,0 +1,47 @@
+@background: #474e6f;
+@size: 65px;
+
+.app {
+    display: flex;
+    height: 100%;
+}
+
+.app__logo {
+    background: #0078c9;
+    color: white;
+    font-size: 1.7rem;
+    font-weight: 100;
+    height: @size;
+    line-height: @size;
+}
+
+.app__sidebar {
+    background: @background;
+    height: 100%;
+    text-align: center;
+    width: @size;
+}
+
+.app__topbar {
+    background: @background;
+    color: #eee;
+    font-size: 1.5rem;
+    font-weight: 100;
+    height: @size;
+    line-height: @size;
+    padding-left: 20px;
+    width: 100%;
+}
+
+.app__main {
+    height: 100%;
+    width: 100%;
+}
+
+.app__content {
+}
+
+.app__page-content {
+    overflow-y: scroll;
+    padding: 20px;
+}

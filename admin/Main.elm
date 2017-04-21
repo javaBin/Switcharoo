@@ -1,7 +1,7 @@
 module Main exposing (..)
 
 import Html exposing (Html, programWithFlags, map, div, button, text, ul, li, a, h1, i)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (class, classList, href)
 import Html.Events exposing (onClick)
 import Navigation
 import Nav.Nav exposing (hashParser, toHash)
@@ -203,17 +203,13 @@ linkText page =
 
 viewLink : Model -> Page -> Html Msg
 viewLink model page =
-    let
-        linkClass =
-            if model.page == page then
-                "sidebar__link sidebar__link--active"
-            else
-                "sidebar__link"
-    in
-        li [ class "sidebar__menu-link" ]
-            [ a [ href <| toHash page, class linkClass ]
-                [ i [ class <| linkText page ] [ text "" ] ]
+    li [ classList [ ( "sidebar__menu-link", True ), ( "sidebar__menu-link--active", model.page == page ) ] ]
+        [ a
+            [ href <| toHash page
+            , classList [ ( "sidebar__link", True ), ( "sidebar__link--active", model.page == page ) ]
             ]
+            [ i [ class <| linkText page ] [ text "" ] ]
+        ]
 
 
 viewSidebar : Model -> Html Msg
@@ -227,6 +223,30 @@ viewSidebar model =
             , viewLink model StylesPage
             ]
         ]
+
+
+pageTitle : Page -> String
+pageTitle page =
+    case page of
+        LoggedOut ->
+            "Logged out"
+
+        SlidesPage ->
+            "Slides"
+
+        ServicesPage ->
+            "Services"
+
+        SettingsPage ->
+            "Settings"
+
+        StylesPage ->
+            "Styles"
+
+
+viewTopBar : Model -> Html Msg
+viewTopBar model =
+    div [ class "app__topbar" ] [ text <| pageTitle model.page ]
 
 
 viewMain : Model -> Html Msg
@@ -251,7 +271,9 @@ viewMain model =
     in
         div [ class "app__main" ]
             [ div [ class "app__content" ]
-                [ content ]
+                [ viewTopBar model
+                , div [ class "app__page-content" ] [ content ]
+                ]
             ]
 
 
