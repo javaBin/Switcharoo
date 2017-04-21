@@ -9,7 +9,8 @@
     "build:elm": "elm-make Main.elm --output=../dist/public/app.js",
     "watch:elm": "elm-live Main.elm --output=../dist/public/app.js -- --debug",
     "watch": "npm-run-all clean copy --parallel watch:elm",
-    "build": "npm-run-all clean copy build:elm"
+    "build": "npm-run-all clean copy build:elm",
+    "start": "npm run watch"
   },
   "keywords": [],
   "author": "",
