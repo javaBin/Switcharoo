@@ -1,15 +1,15 @@
 module Encoder exposing (..)
 
 import Json.Encode exposing (Value, list, object, int, string)
-import Model exposing (SettingModel)
+import Model exposing (Setting)
 
 
-settingsEncoder : List SettingModel -> Value
+settingsEncoder : List Setting -> Value
 settingsEncoder settings =
     list <| List.map settingEncoder settings
 
 
-settingEncoder : SettingModel -> Value
+settingEncoder : Setting -> Value
 settingEncoder setting =
     object
         [ ( "id", int setting.id )

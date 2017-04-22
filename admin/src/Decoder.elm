@@ -21,14 +21,14 @@ cssDecoder =
         |> required "title" string
 
 
-settingsDecoder : Decoder (List SettingModel)
+settingsDecoder : Decoder (List Setting)
 settingsDecoder =
     list settingDecoder
 
 
-settingDecoder : Decoder SettingModel
+settingDecoder : Decoder Setting
 settingDecoder =
-    decode SettingModel
+    decode Setting
         |> required "id" int
         |> required "key" string
         |> required "hint" string

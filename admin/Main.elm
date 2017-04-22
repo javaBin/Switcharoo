@@ -12,12 +12,15 @@ import Settings.Update
 import Settings.View
 import Services.Services
 import Backend
-import Model exposing (Model, Flags, initModel, CssModel, SettingModel)
+import Model exposing (Model, Flags, initModel, CssModel, Setting)
 import Auth
 import Messages exposing (Msg(..), CssMsg(..))
 import Styles exposing (viewStyles)
 import Decoder exposing (stylesDecoder)
 import Settings exposing (viewSettings)
+import Task
+import Process exposing (sleep)
+import Time exposing (millisecond)
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -85,22 +88,35 @@ update msg model =
                 ( { model | styles = newStyles }, Cmd.batch newCmds )
 
         GetSettings (Ok settings) ->
-            ( { model | settings = settings }, Cmd.none )
+            ( { model | settings = settings }
+            , Cmd.none
+            )
 
         GetSettings (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
 
         SettingChanged setting value ->
-            ( { model | settings = List.map (updateSetting setting value) model.settings }, Cmd.none )
+            ( { model | settings = List.map (updateSetting setting value) model.settings }
+            , Cmd.none
+            )
 
         SaveSettings ->
             ( model, Backend.saveSettings model.settings )
 
         SettingsSaved (Ok settings) ->
-            ( { model | settings = settings }, Cmd.none )
+            ( { model | settings = settings, savedSuccessfully = Just True }
+            , Task.perform (\_ -> DisableSavedSuccessfully) <| sleep (2000 * millisecond)
+            )
 
         SettingsSaved (Err _) ->
-            ( model, Cmd.none )
+            ( { model | savedSuccessfully = Just False }
+            , Task.perform (\_ -> DisableSavedSuccessfully) <| sleep (2000 * millisecond)
+            )
+
+        DisableSavedSuccessfully ->
+            ( { model | savedSuccessfully = Nothing }
+            , Cmd.none
+            )
 
 
 findAndUpdateCss : CssModel -> CssMsg -> CssModel -> ( CssModel, Cmd Msg )
@@ -124,7 +140,7 @@ updateCss model msg =
             ( model, Cmd.none )
 
 
-updateSetting : SettingModel -> String -> SettingModel -> SettingModel
+updateSetting : Setting -> String -> Setting -> Setting
 updateSetting setting value currentModel =
     if setting.id == currentModel.id then
         { setting | value = value }
@@ -249,6 +265,29 @@ viewTopBar model =
     div [ class "app__topbar" ] [ text <| pageTitle model.page ]
 
 
+viewMessageArea : Model -> Html Msg
+viewMessageArea model =
+    case model.savedSuccessfully of
+        Nothing ->
+            div [ class "app__message-area message-area" ]
+                []
+
+        Just success ->
+            div
+                [ classList
+                    [ ( "app__message-area message-area", True )
+                    , ( "message-area--success", success )
+                    , ( "message-area--failure", not success )
+                    ]
+                ]
+                [ text <|
+                    if success then
+                        "Saved"
+                    else
+                        "Could not save"
+                ]
+
+
 viewMain : Model -> Html Msg
 viewMain model =
     let
@@ -273,6 +312,7 @@ viewMain model =
             [ div [ class "app__content" ]
                 [ viewTopBar model
                 , div [ class "app__page-content" ] [ content ]
+                , viewMessageArea model
                 ]
             ]
 

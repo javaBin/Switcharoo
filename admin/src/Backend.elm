@@ -12,7 +12,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, nullable)
 import Json.Encode as Encode
 import Json.Decode.Pipeline exposing (decode, required, optional)
-import Model exposing (CssModel, SettingModel)
+import Model exposing (CssModel, Setting)
 import Messages exposing (Msg(..), CssMsg(..))
 import Decoder exposing (settingsDecoder)
 import Encoder exposing (settingsEncoder)
@@ -187,7 +187,7 @@ getSettings _ =
             }
 
 
-saveSettings : List SettingModel -> Cmd Msg
+saveSettings : List Setting -> Cmd Msg
 saveSettings settings =
     Http.send SettingsSaved <|
         Http.request

@@ -1,0 +1,24 @@
+@width: 200px;
+
+.message-area {
+    align-items: center;
+    background: transparent;
+    border-radius: 3px;
+    color: #eee;
+    display: flex;
+    height: 50px;
+    justify-content:center;
+    margin-left: -1 * (@width / 2);
+    pointer-events: none;
+    transition: background .25s ease-in-out;
+    width: @width;
+    z-index: 10;
+}
+
+.message-area--success {
+    background: #44c803;
+}
+
+.message-area--failure {
+    background: #E74C3C;
+}
