@@ -6,7 +6,6 @@ import Slide.Messages
 import Services.Messages
 import Service.Messages
 import Service.Model
-import Css.Model
 import LocalStorage
 import Http
 import Json.Decode as Decode exposing (Decoder, nullable)
@@ -14,8 +13,8 @@ import Json.Encode as Encode
 import Json.Decode.Pipeline exposing (decode, required, optional)
 import Model exposing (CssModel, Setting)
 import Messages exposing (Msg(..), CssMsg(..))
-import Decoder exposing (settingsDecoder)
-import Encoder exposing (settingsEncoder)
+import Decoder exposing (settingsDecoder, stylesDecoder)
+import Encoder exposing (settingsEncoder, stylesEncoder)
 
 
 getServices : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
@@ -148,29 +147,18 @@ slideDecoder =
         |> optional "color" (Decode.nullable Decode.string) Nothing
 
 
-editStyle : CssModel -> Cmd Msg
-editStyle model =
-    Cmd.map (Css model) <|
-        Http.send Request <|
-            Http.request
-                { method = "PUT"
-                , headers = [ Http.header "authorization" <| authorization "login_token" ]
-                , url = "/css/" ++ toString model.id
-                , body = Http.jsonBody <| styleEncoder model
-                , expect = Http.expectString
-                , timeout = Nothing
-                , withCredentials = False
-                }
-
-
-styleEncoder : Css.Model.Model -> Encode.Value
-styleEncoder model =
-    Encode.object <|
-        [ ( "selector", Encode.string model.selector )
-        , ( "property", Encode.string model.property )
-        , ( "value", Encode.string model.value )
-        , ( "type", Encode.string model.type_ )
-        ]
+editStyles : List CssModel -> Cmd Msg
+editStyles styles =
+    Http.send SavedStyles <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/css"
+            , body = Http.jsonBody <| stylesEncoder styles
+            , expect = Http.expectJson stylesDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
 
 
 getSettings : String -> Cmd Msg

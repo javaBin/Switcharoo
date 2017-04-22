@@ -55,6 +55,31 @@ module.exports = function(app, security) {
         });
     });
 
+    app.put('/css', security, (req, res) => {
+        const styles = req.body.map(stylesJson => {
+            return Css.findById(stylesJson.id).then(style => {
+                if (!style) {
+                    return Promise.resolve(stylesJson);
+                } else {
+                    return style.update({
+                        selector: stylesJson.selector,
+                        property: stylesJson.property,
+                        value: stylesJson.value,
+                        type: stylesJson.type
+                    }).then (newStyle => {
+                        return newStyle.toJSON();
+                    });
+                }
+            });
+        });
+
+        Promise.all(styles).then(updatedStyles => {
+            res.json(updatedStyles);
+        }).catch(reason => {
+            res.status(500).body(reason).send();
+        });
+    });
+
     app.delete('/css/:id', security, (req, res) => {
         Css.findById(req.params.id).then(css => {
             if (!css) {

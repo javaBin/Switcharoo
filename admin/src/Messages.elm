@@ -15,6 +15,8 @@ type Msg
     | SettingsMsg Settings.Messages.Msg
     | PageChanged Page
     | GotStyles (Result Http.Error (List CssModel))
+    | SaveStyles
+    | SavedStyles (Result Http.Error (List CssModel))
     | Css CssModel CssMsg
     | GetSettings (Result Http.Error (List Setting))
     | SettingChanged Setting String
@@ -25,5 +27,4 @@ type Msg
 
 type CssMsg
     = Update String
-    | Save
     | Request (Result Http.Error String)

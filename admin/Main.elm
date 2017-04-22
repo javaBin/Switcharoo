@@ -80,6 +80,15 @@ update msg model =
         GotStyles (Err err) ->
             ( model, Cmd.none )
 
+        SaveStyles ->
+            ( model, Backend.editStyles model.styles )
+
+        SavedStyles (Ok _) ->
+            ( { model | savedSuccessfully = Just True }, disableSavedSuccessfully )
+
+        SavedStyles (Err _) ->
+            ( { model | savedSuccessfully = Just False }, disableSavedSuccessfully )
+
         Css cssModel cssMsg ->
             let
                 ( newStyles, newCmds ) =
@@ -105,18 +114,23 @@ update msg model =
 
         SettingsSaved (Ok settings) ->
             ( { model | settings = settings, savedSuccessfully = Just True }
-            , Task.perform (\_ -> DisableSavedSuccessfully) <| sleep (2000 * millisecond)
+            , disableSavedSuccessfully
             )
 
         SettingsSaved (Err _) ->
             ( { model | savedSuccessfully = Just False }
-            , Task.perform (\_ -> DisableSavedSuccessfully) <| sleep (2000 * millisecond)
+            , disableSavedSuccessfully
             )
 
         DisableSavedSuccessfully ->
             ( { model | savedSuccessfully = Nothing }
             , Cmd.none
             )
+
+
+disableSavedSuccessfully : Cmd Msg
+disableSavedSuccessfully =
+    Task.perform (\_ -> DisableSavedSuccessfully) <| sleep <| 2000 * millisecond
 
 
 findAndUpdateCss : CssModel -> CssMsg -> CssModel -> ( CssModel, Cmd Msg )
@@ -132,9 +146,6 @@ updateCss model msg =
     case msg of
         Update value ->
             ( { model | value = value }, Cmd.none )
-
-        Save ->
-            ( model, Backend.editStyle model )
 
         Request _ ->
             ( model, Cmd.none )

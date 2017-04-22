@@ -12,6 +12,7 @@ viewStyles model =
     div [ class "styles" ]
         [ ul [ class "styles-list" ] <|
             List.map viewStyle model.styles
+        , button [ class "button style__save", onClick SaveStyles ] [ text "Save" ]
         ]
 
 
@@ -20,5 +21,4 @@ viewStyle model =
     li [ class "styles-list__style style" ]
         [ span [ class "style__label" ] [ text model.title ]
         , input [ class "style__input", type_ "color", value model.value, onInput (\s -> Css model <| Update s) ] []
-        , button [ class "button style__save", onClick <| Css model Save ] [ text "Save" ]
         ]
