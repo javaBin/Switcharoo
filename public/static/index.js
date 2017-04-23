@@ -1,5 +1,11 @@
+function getHost() {
+    return window.location.protocol + '//' + window.location.host;
+}
+
 (function() {
-    var app = Elm.Main.fullscreen();
+    var app = Elm.Main.fullscreen({
+        host: getHost()
+    });
 
     app.ports.connect.subscribe(function(url) {
         var socket = io(url);

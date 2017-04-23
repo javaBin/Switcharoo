@@ -36,7 +36,7 @@ init flags location =
             else
                 Cmd.none
     in
-        ( initModel flags page, Cmd.batch [ cmd, SocketIO.connect "http://localhost:8081/admin" ] )
+        ( initModel flags page, Cmd.batch [ cmd, SocketIO.connect <| flags.host ++ "/admin" ] )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )

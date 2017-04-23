@@ -8,6 +8,7 @@ import Nav.Model exposing (Page(..))
 
 type alias Flags =
     { loggedIn : Bool
+    , host : String
     }
 
 

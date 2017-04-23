@@ -1,7 +1,12 @@
+function getHost() {
+    return window.location.protocol + '//' + window.location.host;
+}
+
 (function() {
     var token = localStorage.getItem('login_token');
     var app = Elm.Main.fullscreen({
-        loggedIn: (token ? true : false)
+        loggedIn: (token ? true : false),
+        host: getHost()
     });
 
     var lock = new Auth0Lock('CF27t8eOHL1aPxAMgI10LsairXK4B2Ap', 'switcharoo.eu.auth0.com');

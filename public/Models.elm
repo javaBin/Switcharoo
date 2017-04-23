@@ -1,9 +1,14 @@
-module Models exposing (Model, Slides, SlideWrapper(..))
+module Models exposing (Model, Slides, SlideWrapper(..), Flags)
 
 import Models.Info as Info
 import Models.Tweets as Tweets
 import Models.Program as Program
 import List.Zipper exposing (Zipper)
+
+
+type alias Flags =
+    { host : String
+    }
 
 
 type alias Model =

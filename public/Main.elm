@@ -1,12 +1,12 @@
 module Main exposing (..)
 
 import Html exposing (..)
-import Html exposing (program, map)
+import Html exposing (programWithFlags, map)
 import Html.Attributes exposing (class)
 import Http
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
-import Models exposing (Model, Slides, SlideWrapper)
+import Models exposing (Model, Slides, SlideWrapper, Flags)
 import SocketIO
 
 
@@ -15,9 +15,9 @@ initModel =
     Model (Slides.init [])
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( initModel, Cmd.batch [ getSlides Slides, SocketIO.connect "http://localhost:8081/users" ] )
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( initModel, Cmd.batch [ getSlides Slides, SocketIO.connect <| flags.host ++ "/users" ] )
 
 
 type Msg
@@ -83,6 +83,6 @@ subscription model =
         ]
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    program { init = init, update = update, view = view, subscriptions = subscription }
+    programWithFlags { init = init, update = update, view = view, subscriptions = subscription }
