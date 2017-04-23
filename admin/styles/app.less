@@ -25,12 +25,22 @@
 .app__topbar {
     background: @background;
     color: #eee;
+    display: flex;
     font-size: 1.5rem;
     font-weight: 100;
     height: @size;
     line-height: @size;
-    padding-left: 20px;
+    padding: 0 20px;
     width: 100%;
+}
+
+.app__topbar-title {
+    width: 50%;
+}
+
+.app__topbar-clients {
+    text-align: right;
+    width: 50%;
 }
 
 .app__main {

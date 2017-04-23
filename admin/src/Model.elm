@@ -20,6 +20,7 @@ type alias Model =
     , page : Nav.Model.Page
     , styles : List CssModel
     , savedSuccessfully : Maybe Bool
+    , connectedClients : Maybe String
     }
 
 
@@ -50,4 +51,5 @@ initModel flags page =
         flags
         page
         []
+        Nothing
         Nothing

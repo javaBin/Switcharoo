@@ -23,6 +23,7 @@ type Msg
     | SaveSettings
     | SettingsSaved (Result Http.Error (List Setting))
     | DisableSavedSuccessfully
+    | WSMessage String
 
 
 type CssMsg

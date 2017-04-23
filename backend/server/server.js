@@ -9,13 +9,14 @@ var config = require('./config');
 var bodyParser = require('body-parser');
 var jwt = require('express-jwt');
 var path = require('path');
+const express = require('express');
 
 var security = jwt({
     secret: config.security.secret,
     audience: config.security.audience
 });
 
-function configure(app, express, basePath, models) {
+function configure(app, basePath, models) {
     app.set('port', config.app.port);
     app.use(bodyParser.json());
     app.use(express.static(path.join(basePath, '..', 'dist', 'public')));

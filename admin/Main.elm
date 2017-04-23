@@ -21,6 +21,7 @@ import Settings exposing (viewSettings)
 import Task
 import Process exposing (sleep)
 import Time exposing (millisecond)
+import SocketIO
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -35,7 +36,7 @@ init flags location =
             else
                 Cmd.none
     in
-        ( initModel flags page, cmd )
+        ( initModel flags page, Cmd.batch [ cmd, SocketIO.connect "http://localhost:8081/admin" ] )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -126,6 +127,9 @@ update msg model =
             ( { model | savedSuccessfully = Nothing }
             , Cmd.none
             )
+
+        WSMessage s ->
+            ( { model | connectedClients = Just s }, Cmd.none )
 
 
 disableSavedSuccessfully : Cmd Msg
@@ -273,7 +277,11 @@ pageTitle page =
 
 viewTopBar : Model -> Html Msg
 viewTopBar model =
-    div [ class "app__topbar" ] [ text <| pageTitle model.page ]
+    div [ class "app__topbar" ]
+        [ div [ class "app__topbar-title" ] [ text <| pageTitle model.page ]
+        , div [ class "app__topbar-clients" ]
+            [ text <| Maybe.withDefault "" <| Maybe.map ((++) "Clients: ") model.connectedClients ]
+        ]
 
 
 viewMessageArea : Model -> Html Msg
@@ -347,6 +355,7 @@ subscriptions model =
     Sub.batch
         [ Auth.loginResult LoginResult
         , Sub.map SlidesMsg <| Slides.Slides.subscriptions model.slides
+        , SocketIO.onMessage WSMessage
         ]
 
 

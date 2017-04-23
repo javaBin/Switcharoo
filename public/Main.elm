@@ -7,6 +7,7 @@ import Http
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
 import Models exposing (Model, Slides, SlideWrapper)
+import SocketIO
 
 
 initModel : Model
@@ -16,7 +17,7 @@ initModel =
 
 init : ( Model, Cmd Msg )
 init =
-    ( initModel, getSlides Slides )
+    ( initModel, Cmd.batch [ getSlides Slides, SocketIO.connect "http://localhost:8081/users" ] )
 
 
 type Msg
