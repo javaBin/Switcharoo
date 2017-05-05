@@ -8,7 +8,7 @@
       "copy": "cp -a static/. ../dist/admin/",
       "watch:static": "onchange 'static/**' -- npm run copy",
       "build:elm": "elm-make Main.elm --output=../dist/admin/app.js",
-      "watch:elm": "elm-live Main.elm --output=../dist/admin/app.js -- --debug",
+      "watch:elm": "elm-live Main.elm --output=../dist/admin/app.js",
       "build:less": "lessc styles/main.less > ../dist/admin/admin.css",
       "watch:less": "onchange 'styles/**/*.less' -- npm run build:less",
       "build": "npm-run-all clean copy build:elm build:less",
