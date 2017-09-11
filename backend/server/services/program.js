@@ -41,14 +41,14 @@ function removeWorkshops(d) {
 
 function parseSession(d) {
     return {
-        room: d.rom.replace('Room ', ''),
-        title: d.tittel,
+        room: d.room.replace('Room ', ''),
+        title: d.title,
         format: d.format,
-        speakers: _.pluck(d.foredragsholdere, 'navn').join(', '),
-        start: d.starter,
-        stop: d.stopper,
-        timestamp: new Date(d.starter).getTime(),
-        names: _.pluck(d.foredragsholdere, 'navn').join(', ')
+        speakers: _.pluck(d.speakers, 'name').join(', '),
+        start: d.startTimeZulu,
+        stop: d.endTimeZulu,
+        timestamp: new Date(d.startTimeZulu).getTime(),
+        names: _.pluck(d.speakers, 'name').join(', ')
     };
 };
 
@@ -87,12 +87,12 @@ function getProgram(complete) {
 			return;
 		}
 
-		if (!Array.isArray(body))
-			return log.error("Response from \"" + config.url + "\" was not an array: " + body);
+		if (!Array.isArray(body.sessions))
+		  return log.error("Response from \"" + config.url + "\" was not an array: " + JSON.stringify(body));
 
 		log.info('Got new program from javazone server');
 
-		current_program = groupSessions(body);
+		current_program = groupSessions(body.sessions);
 		if (complete)
 			complete();
 	});
@@ -132,8 +132,9 @@ function getSlotForTimestamp(time) {
 }
 
 function program(all, res) {
-    Service.findOne({key: 'program-enabled'}).then(function(service) {
-        if (service && !service.value) {
+  Service.findOne({where: {key: 'program-enabled'}}).then(function(service) {
+        const jsonService = service.toJSON();
+        if (!jsonService.value) {
             res.json({heading: 'off'});
             return;
         }
@@ -185,7 +186,8 @@ function status() {
 function asJson() {
     return Service.findOne({where: {key: 'program-enabled'}})
         .then((service) => {
-            if (service && !service.value) {
+            const jsonService = service.toJSON();
+            if (!jsonService.value) {
                 return [];
             }
             if (Object.keys(current_program).length === 0) {
