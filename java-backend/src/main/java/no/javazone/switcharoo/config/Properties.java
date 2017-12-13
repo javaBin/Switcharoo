@@ -37,7 +37,7 @@ public interface Properties extends Config {
     @Key("auth0.secret")
     String auth0Secret();
 
-    @Key("auth0.audience")
-    String auth0Audience();
+    @Key("auth0.issuer")
+    String auth0issuer();
 
 }

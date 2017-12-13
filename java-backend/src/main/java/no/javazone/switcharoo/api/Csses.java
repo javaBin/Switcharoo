@@ -3,6 +3,7 @@ package no.javazone.switcharoo.api;
 import com.google.gson.Gson;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
+import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.CssMapper;
 import no.javazone.switcharoo.api.model.Css;
 import no.javazone.switcharoo.dao.CssDao;
@@ -10,8 +11,6 @@ import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
 
 import static no.javazone.switcharoo.Util.parseLong;
 import static no.javazone.switcharoo.api.verifier.CssVerifier.verify;
@@ -21,9 +20,11 @@ public class Csses implements HttpService {
 
     static Logger LOG = LoggerFactory.getLogger(Csses.class);
     private final CssDao css;
+    private final Authentication auth;
 
-    public Csses(CssDao css) {
+    public Csses(CssDao css, Authentication auth) {
         this.css = css;
+        this.auth = auth;
     }
 
     @Override
@@ -92,6 +93,8 @@ public class Csses implements HttpService {
                 gson::toJson
             );
 
+            before("/css", (req, res) -> { if(!auth.verify(req)) halt(401);});
+            before("/css/*", (req, res) -> { if(!auth.verify(req)) halt(401);});
             after("/css", (req, res) -> res.type("application/json"));
             after("/css/*", (req, res) -> res.type("application/json"));
         });

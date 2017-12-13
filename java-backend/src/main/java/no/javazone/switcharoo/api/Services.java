@@ -1,6 +1,7 @@
 package no.javazone.switcharoo.api;
 
 import com.google.gson.Gson;
+import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.ServiceMapper;
 import no.javazone.switcharoo.api.model.Service;
 import no.javazone.switcharoo.dao.ServiceDao;
@@ -14,9 +15,11 @@ import static spark.Spark.*;
 public class Services implements HttpService {
 
     private final ServiceDao services;
+    private final Authentication auth;
 
-    public Services(ServiceDao services) {
+    public Services(ServiceDao services, Authentication auth) {
         this.services = services;
+        this.auth = auth;
     }
 
     @Override
@@ -78,6 +81,8 @@ public class Services implements HttpService {
                 gson::toJson
             );
 
+            before("/services", (req, res) -> { if(!auth.verify(req)) halt(401);});
+            before("/services/*", (req, res) -> { if(!auth.verify(req)) halt(401);});
             after("/services", (req, res) -> res.type("application/json"));
             after("/services/*", (req, res) -> res.type("application/json"));
         });

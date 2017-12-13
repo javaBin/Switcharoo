@@ -1,6 +1,7 @@
 package no.javazone.switcharoo.api;
 
 import com.google.gson.Gson;
+import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.SlideMapper;
 import no.javazone.switcharoo.api.model.Slide;
 import no.javazone.switcharoo.dao.SlidesDao;
@@ -14,9 +15,11 @@ import static spark.Spark.*;
 public class Slides implements HttpService {
 
     private final SlidesDao slides;
+    private final Authentication auth;
 
-    public Slides(SlidesDao slides) {
+    public Slides(SlidesDao slides, Authentication auth) {
         this.slides = slides;
+        this.auth = auth;
     }
 
     @Override
@@ -67,6 +70,8 @@ public class Slides implements HttpService {
                 gson::toJson
             );
 
+            before("/slides", (req, res) -> { if (!auth.verify(req)) halt(401);});
+            before("/slides/*", (req, res) -> { if (!auth.verify(req)) halt(401);});
             after("/slides", (req, res) -> res.type("application/json"));
             after("/slides/*", (req, res) -> res.type("application/json"));
         });

@@ -26,10 +26,12 @@ public class Application {
 
     static Logger LOG = LoggerFactory.getLogger(Application.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Properties properties = ConfigFactory.create(Properties.class);
         Database db = new Database(properties.dbConnectionString(), properties.dbUsername(), properties.dbPassword());
         db.migrate();
+
+        Authentication auth = new Authentication(properties.auth0Secret(), properties.auth0issuer());
 
         DataSource dataSource = db.dataSource();
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -44,10 +46,10 @@ public class Application {
         SocketIOSessions sessions = new SocketIOSessions();
 
         List<HttpService> httpServices = Arrays.asList(
-            new Settings(settings),
-            new Slides(slides),
-            new Csses(css),
-            new Services(services),
+            new Settings(settings, auth),
+            new Slides(slides, auth),
+            new Csses(css, auth),
+            new Services(services, auth),
             new Tweets(twitter),
             new Program(executor),
             new Data(slides, twitter),

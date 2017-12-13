@@ -3,7 +3,7 @@ package no.javazone.switcharoo.api;
 import com.google.gson.Gson;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import no.javazone.switcharoo.api.mapper.CssMapper;
+import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.SettingMapper;
 import no.javazone.switcharoo.api.model.Setting;
 import no.javazone.switcharoo.dao.SettingsDao;
@@ -20,10 +20,12 @@ public class Settings implements HttpService {
 
     Logger LOG = LoggerFactory.getLogger(Settings.class);
 
-    final SettingsDao settings;
+    private final SettingsDao settings;
+    private final Authentication auth;
 
-    public Settings(SettingsDao settings) {
+    public Settings(SettingsDao settings, Authentication auth) {
         this.settings = settings;
+        this.auth = auth;
     }
 
     @Override
@@ -92,6 +94,8 @@ public class Settings implements HttpService {
                 gson::toJson
             );
 
+            before("/settings", (req, res) -> { if (!auth.verify(req)) halt(401);});
+            before("/settings/*", (req, res) -> { if (!auth.verify(req)) halt(401);});
             after("/settings", (req, res) -> res.type("application/json"));
             after("/settings/*", (req, res) -> res.type("application/json"));
         });
