@@ -31,6 +31,9 @@ public interface Properties extends Config {
     @Key("files.uploadDir")
     String filesUploadDir();
 
+    @Key("files.frontendDir")
+    String filesFrontendDir();
+
     @Key("program.url")
     String programUrl();
 

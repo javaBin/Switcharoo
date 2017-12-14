@@ -56,9 +56,9 @@ public class Application {
             new Status(status),
             new SocketIO(sessions),
             new FileUpload(properties.filesUploadDir()),
-            new Static("/admin/*", Paths.get("..", "dist", "admin")),
-            new Static("/uploads/*", Paths.get("uploads")),
-            new Static("/*", Paths.get("..", "dist", "public"))
+            new Static("/admin/*", Paths.get(properties.filesFrontendDir(), "admin")),
+            new Static("/uploads/*", Paths.get(properties.filesUploadDir())),
+            new Static("/*", Paths.get(properties.filesFrontendDir(), "public"))
         );
 
         Ws ws = new Ws(sessions);
