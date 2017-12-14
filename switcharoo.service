@@ -1,0 +1,13 @@
+[Unit]
+Description=Switcharoo backend
+
+[Service]
+User=switcharoo
+WorkingDirectory=/home/switcharoo/switcharoo
+ExecStart=/home/switcharoo/switcharoo/run
+TimeoutStopSec=5
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
