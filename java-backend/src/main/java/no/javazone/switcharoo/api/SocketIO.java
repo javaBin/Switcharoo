@@ -6,15 +6,16 @@ import no.javazone.switcharoo.api.socketio.SocketIOSession;
 import no.javazone.switcharoo.api.socketio.SocketIOSessions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.utils.IOUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 
-import static spark.Spark.*;
+import static spark.Spark.get;
+import static spark.Spark.post;
 
 public class SocketIO implements HttpService {
 
@@ -24,10 +25,10 @@ public class SocketIO implements HttpService {
 
     public SocketIO(SocketIOSessions sessions) {
         String content;
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("socket.io.js").getFile());
+        InputStream resource = getClass().getResourceAsStream("/socket.io.js");
         try {
-            content = new String(Files.readAllBytes(file.toPath()));
+            byte[] bytes = IOUtils.toByteArray(resource);
+            content = new String(bytes);
         } catch (IOException e) {
             content = null;
             LOG.error("Could not load socket.io.js content", e);
