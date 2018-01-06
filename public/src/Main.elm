@@ -7,12 +7,13 @@ import Http
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
 import Models exposing (Model, Slides, SlideWrapper, Flags)
+import Decoder.Data
 import SocketIO
 
 
 initModel : Model
 initModel =
-    Model (Slides.init [])
+    Model (Slides.init []) Nothing
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -35,7 +36,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Slides (Ok slideList) ->
-            ( Model (Slides.init slideList), Cmd.none )
+            ( Model (Slides.init slideList) Nothing, Cmd.none )
 
         Slides (Err _) ->
             ( model, Cmd.none )
@@ -66,13 +67,13 @@ update msg model =
 
 getSlides : SlidesResult -> Cmd Msg
 getSlides message =
-    Http.send message <| Http.get "/data" Slides.slides
+    Http.send message <| Http.get "/data" Decoder.Data.decoder
 
 
 view : Model -> Html Msg
 view model =
     div [ class "switcharoo" ]
-        [ map (\_ -> Refetch) (Slides.view model.slides) ]
+        [ map SlidesMsg (Slides.view model.slides) ]
 
 
 subscription : Model -> Sub Msg

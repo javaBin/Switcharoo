@@ -4,7 +4,6 @@ import Html exposing (Html)
 import List exposing (length)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList)
-import Json.Decode exposing (Decoder, andThen, succeed, list, string, map, fail, field)
 import Models.Info as Info
 import Models.Tweets as Tweets
 import Models.Program as Program
@@ -69,38 +68,6 @@ hideSlide =
 showSlide : Cmd Msg
 showSlide =
     Task.perform (\_ -> ShowSlide) <| sleep (500 * millisecond)
-
-
-slides : Decoder (List SlideWrapper)
-slides =
-    field "slides" slideWrapperList
-
-
-slideWrapperList : Decoder (List SlideWrapper)
-slideWrapperList =
-    list <| andThen slideWrapper <| field "type" string
-
-
-slideWrapper : String -> Decoder SlideWrapper
-slideWrapper t =
-    case t of
-        "text" ->
-            Info.info |> andThen (succeed << InfoWrapper)
-
-        "image" ->
-            Info.info |> andThen (succeed << InfoWrapper)
-
-        "video" ->
-            Info.info |> andThen (succeed << InfoWrapper)
-
-        "tweets" ->
-            Tweets.tweets |> andThen (succeed << TweetsWrapper)
-
-        "program" ->
-            Program.decoder |> andThen (succeed << ProgramWrapper)
-
-        unknown ->
-            fail <| "Unknown slideType " ++ unknown
 
 
 view : Slides -> Html Msg

@@ -6,8 +6,8 @@
   "scripts": {
     "clean": "rm -rf ../dist/public && mkdir -p ../dist/public",
     "copy": "cp -a static/. ../dist/public/",
-    "build:elm": "elm-make Main.elm --output=../dist/public/app.js",
-    "watch:elm": "elm-live Main.elm --output=../dist/public/app.js -- --debug",
+    "build:elm": "elm-make src/Main.elm --output=../dist/public/app.js",
+    "watch:elm": "elm-live src/Main.elm --output=../dist/public/app.js -- --debug",
     "watch": "npm-run-all clean copy --parallel watch:elm",
     "build": "npm-run-all clean copy build:elm",
     "start": "npm run watch"

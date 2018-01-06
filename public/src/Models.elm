@@ -13,6 +13,13 @@ type alias Flags =
 
 type alias Model =
     { slides : Slides
+    , overlay : Maybe Overlay
+    }
+
+
+type alias Overlay =
+    { image : String
+    , style : String
     }
 
 
