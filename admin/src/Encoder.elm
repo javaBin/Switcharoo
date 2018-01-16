@@ -1,7 +1,7 @@
 module Encoder exposing (..)
 
 import Json.Encode exposing (Value, list, object, int, string)
-import Model exposing (Setting, CssModel)
+import Models.Model exposing (Setting, CssModel)
 
 
 settingsEncoder : List Setting -> Value

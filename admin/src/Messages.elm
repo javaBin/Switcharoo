@@ -5,7 +5,7 @@ import Slides.Messages
 import Settings.Messages
 import Nav.Model exposing (Page)
 import Http
-import Model exposing (CssModel, Setting)
+import Models.Model exposing (CssModel, Setting)
 
 
 type Msg

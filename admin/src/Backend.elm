@@ -11,7 +11,7 @@ import Http
 import Json.Decode as Decode exposing (Decoder, nullable)
 import Json.Encode as Encode
 import Json.Decode.Pipeline exposing (decode, required, optional)
-import Model exposing (CssModel, Setting)
+import Models.Model exposing (CssModel, Setting)
 import Messages exposing (Msg(..), CssMsg(..))
 import Decoder exposing (settingsDecoder, stylesDecoder)
 import Encoder exposing (settingsEncoder, stylesEncoder)

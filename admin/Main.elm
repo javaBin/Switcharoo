@@ -12,7 +12,7 @@ import Settings.Update
 import Settings.View
 import Services.Services
 import Backend
-import Model exposing (Model, Flags, initModel, CssModel, Setting)
+import Models.Model exposing (Model, Flags, initModel, CssModel, Setting)
 import Auth
 import Messages exposing (Msg(..), CssMsg(..))
 import Styles exposing (viewStyles)
@@ -208,7 +208,7 @@ loginView model =
 loggedInView : Model -> Html Msg
 loggedInView model =
     div [ class "app" ]
-        [ viewSidebar model
+        [ viewTopBar model
         , viewMain model
         ]
 
@@ -246,8 +246,7 @@ viewLink model page =
 viewSidebar : Model -> Html Msg
 viewSidebar model =
     div [ class "app__sidebar sidebar" ]
-        [ div [ class "app__logo" ] [ text "S" ]
-        , ul [ class "sidebar__menu" ]
+        [ ul [ class "sidebar__menu" ]
             [ viewLink model SlidesPage
             , viewLink model ServicesPage
             , viewLink model SettingsPage
@@ -277,8 +276,9 @@ pageTitle page =
 
 viewTopBar : Model -> Html Msg
 viewTopBar model =
-    div [ class "app__topbar" ]
-        [ div [ class "app__topbar-title" ] [ text <| pageTitle model.page ]
+    div [ class "app__topbar topbar" ]
+        [ div [ class "topbar__logo" ] [ text "S" ]
+        , div [ class "app__topbar-title" ] [ text <| pageTitle model.page ]
         , div [ class "app__topbar-clients" ]
             [ text <| Maybe.withDefault "" <| Maybe.map ((++) "Clients: ") model.connectedClients ]
         ]
@@ -328,9 +328,9 @@ viewMain model =
                     div [] []
     in
         div [ class "app__main" ]
-            [ div [ class "app__content" ]
-                [ viewTopBar model
-                , div [ class "app__page-content" ] [ content ]
+            [ viewSidebar model
+            , div [ class "app__content" ]
+                [ div [ class "app__page-content" ] [ content ]
                 , viewMessageArea model
                 ]
             ]

@@ -1,4 +1,4 @@
-module Model exposing (..)
+module Models.Model exposing (..)
 
 import Slides.Model
 import Settings.Model

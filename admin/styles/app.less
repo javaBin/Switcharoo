@@ -1,18 +1,12 @@
 @background: #474e6f;
 @size: 65px;
 
+@black: #222222;
+
 .app {
     display: flex;
+    flex-direction: column;
     height: 100%;
-}
-
-.app__logo {
-    background: #0078c9;
-    color: white;
-    font-size: 1.7rem;
-    font-weight: 100;
-    height: @size;
-    line-height: @size;
 }
 
 .app__sidebar {
@@ -23,27 +17,38 @@
 }
 
 .app__topbar {
-    background: @background;
+    background: @black;
     color: #eee;
     display: flex;
     font-size: 1.5rem;
     font-weight: 100;
     height: @size;
     line-height: @size;
-    padding: 0 20px;
-    width: 100%;
+    padding-right: 20px;
+}
+
+.topbar {
+    &__logo {
+        background: @black;
+        color: white;
+        font-size: 1.7rem;
+        font-weight: 100;
+        text-align: center;
+        width: @size;
+    }
 }
 
 .app__topbar-title {
-    width: 50%;
 }
 
 .app__topbar-clients {
+    flex-grow: 1;
     text-align: right;
-    width: 50%;
 }
 
 .app__main {
+    flex-grow: 1;
+    display: flex;
     height: 100%;
     position: relative;
     width: 100%;
@@ -56,11 +61,11 @@
 }
 
 .app__content {
+    flex-grow: 1;
     height: 100%;
+    overflow-y: scroll;
 }
 
 .app__page-content {
-    height: calc(~"100% - "@size);
-    overflow-y: scroll;
     padding: 20px;
 }

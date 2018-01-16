@@ -1,6 +1,6 @@
 module Decoder exposing (..)
 
-import Model exposing (..)
+import Models.Model exposing (..)
 import Json.Decode exposing (Decoder, succeed, string, int, list, at)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 

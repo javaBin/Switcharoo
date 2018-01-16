@@ -3,7 +3,7 @@ module Settings exposing (..)
 import Html exposing (Html, div, text, ul, li, h2, input, button)
 import Html.Attributes exposing (class, type_, value)
 import Html.Events exposing (onClick, onInput)
-import Model exposing (Model, Setting)
+import Models.Model exposing (Model, Setting)
 import Messages exposing (Msg(..))
 
 
