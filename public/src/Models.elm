@@ -1,4 +1,4 @@
-module Models exposing (Model, Slides, SlideWrapper(..), Flags)
+module Models exposing (Model, Data, Overlay, Slides, SlideWrapper(..), Flags)
 
 import Models.Info as Info
 import Models.Tweets as Tweets
@@ -17,9 +17,15 @@ type alias Model =
     }
 
 
+type alias Data =
+    { slides : List SlideWrapper
+    , overlay : Maybe Overlay
+    }
+
+
 type alias Overlay =
     { image : String
-    , style : String
+    , style : List ( String, String )
     }
 
 

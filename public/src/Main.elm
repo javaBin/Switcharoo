@@ -6,9 +6,11 @@ import Html.Attributes exposing (class)
 import Http
 import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
-import Models exposing (Model, Slides, SlideWrapper, Flags)
+import Models exposing (Model, Data, SlideWrapper, Flags)
 import Decoder.Data
 import SocketIO
+import Messages exposing (Msg(..))
+import View.Overlay
 
 
 initModel : Model
@@ -21,22 +23,15 @@ init flags =
     ( initModel, Cmd.batch [ getSlides Slides, SocketIO.connect <| flags.host ++ "/users" ] )
 
 
-type Msg
-    = Slides (Result Http.Error (List SlideWrapper))
-    | Refetch
-    | RefetchSlides (Result Http.Error (List SlideWrapper))
-    | SlidesMsg Slides.Msg
-
-
 type alias SlidesResult =
-    Result.Result Http.Error (List SlideWrapper) -> Msg
+    Result.Result Http.Error Data -> Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Slides (Ok slideList) ->
-            ( Model (Slides.init slideList) Nothing, Cmd.none )
+        Slides (Ok data) ->
+            ( Model (Slides.init data.slides) data.overlay, Cmd.none )
 
         Slides (Err _) ->
             ( model, Cmd.none )
@@ -44,12 +39,12 @@ update msg model =
         Refetch ->
             ( model, getSlides RefetchSlides )
 
-        RefetchSlides (Ok slideList) ->
+        RefetchSlides (Ok data) ->
             let
                 s =
                     model.slides
             in
-                ( { model | slides = { s | nextSlides = Just (Slides.fromList slideList) } }, Cmd.none )
+                ( { model | slides = { s | nextSlides = Just (Slides.fromList data.slides) } }, Cmd.none )
 
         RefetchSlides (Err _) ->
             ( model, Cmd.none )
@@ -73,7 +68,9 @@ getSlides message =
 view : Model -> Html Msg
 view model =
     div [ class "switcharoo" ]
-        [ map SlidesMsg (Slides.view model.slides) ]
+        [ (View.Overlay.view model.overlay)
+        , map SlidesMsg (Slides.view model.slides)
+        ]
 
 
 subscription : Model -> Sub Msg

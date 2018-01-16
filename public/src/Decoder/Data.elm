@@ -1,10 +1,14 @@
 module Decoder.Data exposing (decoder)
 
-import Json.Decode exposing (Decoder, field)
+import Json.Decode exposing (Decoder, succeed, field, maybe)
+import Json.Decode.Extra exposing ((|:))
 import Decoder.Slides
-import Models exposing (SlideWrapper)
+import Decoder.Overlay
+import Models exposing (Data)
 
 
-decoder : Decoder (List SlideWrapper)
+decoder : Decoder Data
 decoder =
-    field "slides" Decoder.Slides.decoder
+    succeed Data
+        |: (field "slides" Decoder.Slides.decoder)
+        |: maybe (field "overlay" Decoder.Overlay.decoder)

@@ -23,6 +23,7 @@ body {
 .switcharoo {
     height: 100%;
     transition: opacity .4s ease-in-out;
+    position: relative;
 }
 
 .switcharoo--hidden {
