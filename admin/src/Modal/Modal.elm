@@ -2,7 +2,7 @@ module Modal.Modal exposing (..)
 
 import Modal.Model exposing (..)
 import Modal.Messages exposing (..)
-import Html exposing (Html, div, button, text, i, input, map)
+import Html exposing (Html, div, li, button, text, i, input, map)
 import Html.Attributes exposing (class, classList, attribute, type_, id, disabled)
 import Html.Events exposing (onClick, on, onInput)
 import Events exposing (onClickStopPropagation)
@@ -70,7 +70,7 @@ isEmpty m =
 
 view : Model -> Html Msg
 view model =
-    div [ class "slide slide--new-slide", onClick Show ]
+    li [ class "slide slide--new-slide", onClick Show ]
         [ div [ class "slide__content slide__content--new-slide" ] []
         , div [ classList [ ( "modal", True ), ( "modal--visible", model.show ) ] ]
             [ showModalBackdrop model ]

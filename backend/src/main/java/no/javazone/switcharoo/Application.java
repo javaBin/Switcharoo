@@ -29,7 +29,7 @@ public class Application {
     public static void main(String[] args) throws Exception {
         Properties properties = ConfigFactory.create(Properties.class);
         Database db = new Database(properties.dbConnectionString(), properties.dbUsername(), properties.dbPassword());
-        db.migrate();
+        //db.migrate();
 
         Authentication auth = new Authentication(properties.auth0Secret(), properties.auth0issuer());
 

@@ -1,4 +1,4 @@
-module Styles exposing (..)
+module View.Styles exposing (..)
 
 import Html exposing (Html, div, text, h2, ul, li, span, input, button)
 import Html.Attributes exposing (class, type_, value)

@@ -1,9 +1,29 @@
 .slides {
+    position: relative;
+    height: 100%;
+}
+
+.slides__slides {
     display: flex;
     flex-wrap: wrap;
     list-style: none;
-    margin: -20px;
+    margin: 0;
     padding: 0;
+}
+
+.slides__settings {
+    background: #030303;
+    color: #eee;
+    cursor: pointer;
+    border-radius: 100%;
+    bottom: 0;
+    font-size: 1.5rem;
+    height: 50px;
+    outline: 0;
+    padding-top: 2px;
+    position: absolute;
+    right: 0;
+    width: 50px;
 }
 
 .slide {

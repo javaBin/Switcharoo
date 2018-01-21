@@ -1,4 +1,4 @@
-module Settings exposing (..)
+module View.Settings exposing (..)
 
 import Html exposing (Html, div, text, ul, li, h2, input, button)
 import Html.Attributes exposing (class, type_, value)

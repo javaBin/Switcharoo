@@ -22,6 +22,13 @@ type alias Model =
     , styles : List CssModel
     , savedSuccessfully : Maybe Bool
     , connectedClients : Maybe String
+    , uiState : UIState
+    }
+
+
+type alias UIState =
+    { slidesSettingsVisible : Bool
+    , slideEditVisible : Bool
     }
 
 
@@ -43,6 +50,11 @@ type alias Setting =
     }
 
 
+initUIState : UIState
+initUIState =
+    UIState False False
+
+
 initModel : Flags -> Page -> Model
 initModel flags page =
     Model Slides.Model.init
@@ -54,3 +66,4 @@ initModel flags page =
         []
         Nothing
         Nothing
+        initUIState
