@@ -1,6 +1,6 @@
 module Models.Model exposing (..)
 
-import Settings.Model
+import Services.Model
 import Models.Slides
 import Auth
 import Nav.Model exposing (Page(..))
@@ -14,7 +14,7 @@ type alias Flags =
 
 type alias Model =
     { slides : Models.Slides.Slides
-    , services : Settings.Model.Model
+    , services : Services.Model.Model
     , settings : List Setting
     , auth : Auth.AuthStatus
     , flags : Flags
@@ -47,7 +47,7 @@ initModel : Flags -> Page -> Model
 initModel flags page =
     Model
         Models.Slides.initSlides
-        Settings.Model.initModel
+        Services.Model.init
         []
         Auth.LoggedOut
         flags

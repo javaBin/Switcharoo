@@ -6,9 +6,6 @@ import Nav.Nav exposing (hashParser, toHash)
 import Nav.Model exposing (Page(..))
 import Slides.Slides
 import Slide.Slide
-import Settings.Messages
-import Settings.Update
-import Settings.View
 import Services.Services
 import Backend
 import Models.Model exposing (Model, Flags, initModel, CssModel, Setting)
@@ -66,12 +63,12 @@ update msg model =
             in
                 ( { model | slides = { slidesModel | newSlide = newEditSlide } }, Cmd.map (SlideMsg newSlide) newMsg )
 
-        SettingsMsg msg ->
+        ServicesMsg msg ->
             let
                 ( newServices, servicesCmd ) =
-                    Settings.Update.update msg model.services
+                    Services.Services.update msg model.services
             in
-                ( { model | services = newServices }, Cmd.map SettingsMsg servicesCmd )
+                ( { model | services = newServices }, Cmd.map ServicesMsg servicesCmd )
 
         Login ->
             ( model, Auth.login () )
@@ -208,11 +205,10 @@ updatePage page model =
 
         ServicesPage ->
             ( model
-            , Cmd.batch
-                [ Cmd.map SettingsMsg <|
-                    Cmd.map Settings.Messages.ServicesMsg <|
-                        Backend.getServices Services.Services.decoder
-                ]
+            , Cmd.map
+                ServicesMsg
+              <|
+                Backend.getServices Services.Services.decoder
             )
 
         SettingsPage ->
