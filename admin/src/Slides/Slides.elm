@@ -1,32 +1,35 @@
 module Slides.Slides exposing (..)
 
 import Slides.Messages exposing (..)
-import Slides.Model exposing (..)
-import Html exposing (Html, text, ul, map)
+import Models.Slides
+import Html exposing (Html, text, ul, map, div, li)
+import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
 import Json.Decode exposing (Decoder, list)
 import Slide.Slide
 import Slide.Model
 import Slide.Messages
-import Modal.Modal
-import Modal.Messages
 import Backend
+import Decoders.Slide
+import Models.Slides
+import Popup
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Models.Slides.Slides -> ( Models.Slides.Slides, Cmd Msg )
 update msg model =
     case msg of
         GetSlides ->
-            ( model, Backend.getSlides decoder )
+            ( model, Backend.getSlides Decoders.Slide.decoder )
 
         SlidesResponse (Ok newSlides) ->
             let
                 slides =
-                    List.map (\slide -> Slide.Model.Model slide False) newSlides
+                    List.map (\slide -> Models.Slides.SlideModel slide False) newSlides
             in
                 ( { model | slides = slides }, Cmd.none )
 
-        SlidesResponse (Err _) ->
-            ( model, Cmd.none )
+        SlidesResponse (Err err) ->
+            Debug.log (toString err) ( model, Cmd.none )
 
         Slide slide msg ->
             let
@@ -37,34 +40,21 @@ update msg model =
                     Slide.Messages.DeleteResponse (Ok _) ->
                         ( { model | slides = newModels }
                         , Cmd.batch <|
-                            [ Backend.getSlides decoder ]
+                            [ Backend.getSlides Decoders.Slide.decoder ]
                                 ++ newCmds
                         )
 
                     Slide.Messages.EditResponse (Ok _) ->
-                        editSlide model newModels slide
+                        ( { model | newSlide = Just (Popup.state slide "Edit slide") }, Cmd.none )
 
                     _ ->
                         ( { model | slides = newModels }, Cmd.batch newCmds )
 
-        NewSlideModal msg ->
-            let
-                ( newModal, newModalCmd ) =
-                    Modal.Modal.update msg model.modal
-            in
-                case msg of
-                    Modal.Messages.CreateResponse (Ok _) ->
-                        ( { model | modal = newModal }
-                        , Cmd.batch [ Cmd.map NewSlideModal newModalCmd, Backend.getSlides decoder ]
-                        )
-
-                    _ ->
-                        ( { model | modal = newModal }
-                        , Cmd.map NewSlideModal newModalCmd
-                        )
+        NewSlide ->
+            ( { model | newSlide = Just (Popup.state Models.Slides.initSlideModel "New slide") }, Cmd.none )
 
 
-updateSlide : Slide.Model.Model -> Slide.Messages.Msg -> Slide.Model.Model -> ( Slide.Model.Model, Cmd Msg )
+updateSlide : Models.Slides.SlideModel -> Slide.Messages.Msg -> Slide.Model.Model -> ( Models.Slides.SlideModel, Cmd Msg )
 updateSlide newModel msg currentModel =
     if newModel.slide.id == currentModel.slide.id then
         let
@@ -76,29 +66,13 @@ updateSlide newModel msg currentModel =
         ( currentModel, Cmd.none )
 
 
-editSlide : Model -> List Slide.Model.Model -> Slide.Model.Model -> ( Model, Cmd Msg )
-editSlide model newSlides slide =
-    let
-        ( newModal, newModalCmd ) =
-            Modal.Modal.update (Modal.Messages.Edit slide) model.modal
-    in
-        ( { model | slides = newSlides, modal = newModal }, Cmd.map NewSlideModal newModalCmd )
-
-
-decoder : Decoder (List Slide.Model.Slide)
-decoder =
-    list Backend.slideDecoder
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.map NewSlideModal <| Modal.Modal.subscriptions model.modal
-
-
-view : Model -> List (Html Msg)
+view : Models.Slides.Slides -> List (Html Msg)
 view model =
-    let
-        newSlide =
-            Html.map NewSlideModal <| Modal.Modal.view model.modal
-    in
-        newSlide :: List.map (\slide -> map (Slide slide) (Slide.Slide.view slide)) model.slides
+    viewNewSlide :: List.map (\slide -> map (Slide slide) (Slide.Slide.view slide)) model.slides
+
+
+viewNewSlide : Html Msg
+viewNewSlide =
+    li [ class "slide slide--new-slide", onClick NewSlide ]
+        [ div [ class "slide__content slide__content--new-slide" ] []
+        ]

@@ -5,6 +5,7 @@ import Navigation
 import Nav.Nav exposing (hashParser, toHash)
 import Nav.Model exposing (Page(..))
 import Slides.Slides
+import Slide.Slide
 import Settings.Messages
 import Settings.Update
 import Settings.View
@@ -21,6 +22,7 @@ import SocketIO
 import Popup
 import View.Login
 import View.LoggedIn
+import Decoders.Slide
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -50,6 +52,19 @@ update msg model =
                     Cmd.map SlidesMsg cmd
             in
                 ( { model | slides = newSlides }, mappedCmd )
+
+        SlideMsg slide msg ->
+            let
+                ( newSlide, newMsg ) =
+                    Slide.Slide.update msg slide
+
+                slidesModel =
+                    model.slides
+
+                newEditSlide =
+                    Maybe.map (\popupState -> { popupState | data = newSlide }) slidesModel.newSlide
+            in
+                ( { model | slides = { slidesModel | newSlide = newEditSlide } }, Cmd.map (SlideMsg newSlide) newMsg )
 
         SettingsMsg msg ->
             let
@@ -130,6 +145,29 @@ update msg model =
         WSMessage s ->
             ( { model | connectedClients = Just s }, Cmd.none )
 
+        SlidePopupCancel ->
+            let
+                slides =
+                    model.slides
+            in
+                ( { model | slides = { slides | newSlide = Nothing } }, Cmd.none )
+
+        SlidePopupSave slide ->
+            ( model, Slide.Slide.createOrEditSlide slide.slide SlideSave )
+
+        SlideSave (Ok slide) ->
+            let
+                slides =
+                    model.slides
+            in
+                ( { model | slides = { slides | newSlide = Nothing } }, Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder )
+
+        SlideSave (Err _) ->
+            ( model, Cmd.none )
+
+        Ignore ->
+            ( model, Cmd.none )
+
 
 disableSavedSuccessfully : Cmd Msg
 disableSavedSuccessfully =
@@ -166,7 +204,7 @@ updatePage : Page -> Model -> ( Model, Cmd Msg )
 updatePage page model =
     case page of
         SlidesPage ->
-            ( model, Cmd.map SlidesMsg <| Backend.getSlides Slides.Slides.decoder )
+            ( model, Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder )
 
         ServicesPage ->
             ( model
@@ -201,7 +239,10 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Auth.loginResult LoginResult
-        , Sub.map SlidesMsg <| Slides.Slides.subscriptions model.slides
+        , Maybe.withDefault Sub.none <|
+            Maybe.map
+                (\popupState -> Sub.map (SlideMsg popupState.data) <| Slide.Slide.subscriptions popupState.data)
+                model.slides.newSlide
         , SocketIO.onMessage WSMessage
         ]
 

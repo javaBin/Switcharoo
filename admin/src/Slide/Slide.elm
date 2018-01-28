@@ -1,6 +1,6 @@
 module Slide.Slide exposing (..)
 
-import Slide.Model exposing (..)
+import Models.Slides exposing (..)
 import Slide.Messages exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
@@ -12,12 +12,12 @@ import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFa
 import Backend exposing (editSlide, createSlide, deleteSlide)
 
 
-init : ( Model, Cmd Msg )
+init : ( Models.Slides.SlideModel, Cmd Msg )
 init =
-    ( initModel, Cmd.none )
+    ( Models.Slides.initSlideModel, Cmd.none )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Models.Slides.SlideModel -> ( Models.Slides.SlideModel, Cmd Msg )
 update msg model =
     case msg of
         ToggleVisibility ->
@@ -94,10 +94,10 @@ update msg model =
                 _ =
                     Debug.log (toString error) "no"
             in
-                ( initModel, Cmd.none )
+                ( Models.Slides.initSlideModel, Cmd.none )
 
 
-updateSlide : Model -> (Slide -> Slide) -> Model
+updateSlide : Models.Slides.SlideModel -> (Slide -> Slide) -> Models.Slides.SlideModel
 updateSlide model fn =
     { model | slide = (fn model.slide) }
 
@@ -110,7 +110,7 @@ createOrEditSlide model msg =
         editSlide model msg
 
 
-subscriptions : Model -> Sub Msg
+subscriptions : Models.Slides.SlideModel -> Sub Msg
 subscriptions model =
     Sub.batch [ fileUploadSucceeded FileUploaded, fileUploadFailed FileUploadFailed ]
 
@@ -120,7 +120,7 @@ icon c =
     i [ class <| "icon-" ++ c ] []
 
 
-view : Model -> Html Msg
+view : Models.Slides.SlideModel -> Html Msg
 view model =
     case model.slide.type_ of
         "text" ->
@@ -148,7 +148,7 @@ slideIndex model =
     div [ class "slide__index" ] [ text <| toString model.index ]
 
 
-viewText : Model -> Html Msg
+viewText : Models.Slides.SlideModel -> Html Msg
 viewText model =
     let
         borderStyle =
@@ -175,7 +175,7 @@ viewText model =
             ]
 
 
-viewImage : Model -> Html Msg
+viewImage : Models.Slides.SlideModel -> Html Msg
 viewImage model =
     let
         borderStyle =
@@ -202,7 +202,7 @@ viewImage model =
             ]
 
 
-viewVideo : Model -> Html Msg
+viewVideo : Models.Slides.SlideModel -> Html Msg
 viewVideo model =
     let
         borderStyle =
@@ -229,7 +229,7 @@ viewVideo model =
             ]
 
 
-editView : Model -> Html Msg
+editView : Models.Slides.SlideModel -> Html Msg
 editView model =
     if model.slide.type_ == "text" then
         editTextView model
@@ -237,7 +237,7 @@ editView model =
         editMediaView model
 
 
-editMediaView : Model -> Html Msg
+editMediaView : Models.Slides.SlideModel -> Html Msg
 editMediaView model =
     div []
         [ div [ class "tabs" ]
@@ -280,7 +280,7 @@ editMediaView model =
         ]
 
 
-editTextView : Model -> Html Msg
+editTextView : Models.Slides.SlideModel -> Html Msg
 editTextView model =
     div []
         [ div [ class "tabs" ]
@@ -332,7 +332,7 @@ editTextView model =
         ]
 
 
-selectColorView : Model -> Html Msg
+selectColorView : Models.Slides.SlideModel -> Html Msg
 selectColorView model =
     div []
         [ ul [ class "modal__color" ] <|
@@ -340,7 +340,7 @@ selectColorView model =
         ]
 
 
-singleColorView : Model -> Maybe String -> Html Msg
+singleColorView : Models.Slides.SlideModel -> Maybe String -> Html Msg
 singleColorView model color =
     let
         currentColor =
@@ -359,7 +359,7 @@ singleColorView model color =
             ]
 
 
-confirmDeleteView : Model -> Html Msg
+confirmDeleteView : Models.Slides.SlideModel -> Html Msg
 confirmDeleteView model =
     div [ classList [ ( "slide__confirm-delete", True ), ( "slide__confirm-delete--visible", model.deleteMode ) ] ]
         [ button [ class "button button--cancel", onClickStopPropagation ToggleDelete ] [ text "Cancel" ]

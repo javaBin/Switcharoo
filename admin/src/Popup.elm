@@ -1,21 +1,34 @@
-module Popup exposing (config)
+module Popup exposing (State, state, config, view)
 
 import Html exposing (Html, div, button, text, i)
 import Html.Attributes exposing (class, classList, attribute)
 import Events exposing (onClickStopPropagation)
 
 
+type alias State data =
+    { data : data
+    , title : String
+    }
+
+
 type alias Config msg =
     { saveMsg : msg
+    , ignoreMsg : msg
     , cancelMsg : msg
     , header : String
     , body : Html msg
     }
 
 
-config : msg -> msg -> String -> Html msg -> Config msg
-config saveMsg cancelMsg header body =
+state : data -> String -> State data
+state data title =
+    { data = data, title = title }
+
+
+config : msg -> msg -> msg -> String -> Html msg -> Config msg
+config saveMsg ignoreMsg cancelMsg header body =
     { saveMsg = saveMsg
+    , ignoreMsg = ignoreMsg
     , cancelMsg = cancelMsg
     , header = header
     , body = body
@@ -36,7 +49,7 @@ backdropView config =
 
 modalView : Config msg -> Html msg
 modalView config =
-    div [ class "modal__wrapper", onClickStopPropagation config.cancelMsg ]
+    div [ class "modal__wrapper", onClickStopPropagation config.ignoreMsg ]
         [ div [ class "modal__header" ]
             [ text config.header ]
         , modalContentView config.body

@@ -7,6 +7,7 @@ import Messages exposing (Msg(..))
 import Settings.View
 import View.Settings exposing (viewSettings)
 import View.Styles exposing (viewStyles)
+import View.Slides exposing (viewSlides)
 import Slides.Slides
 import Nav.Nav exposing (toHash)
 import Nav.Model exposing (Page(..))
@@ -146,20 +147,6 @@ viewMessageArea model =
                     else
                         "Could not save"
                 ]
-
-
-viewSlides : Model -> Html Msg
-viewSlides model =
-    let
-        slides =
-            List.map (\slide -> map SlidesMsg slide) <| Slides.Slides.view model.slides
-    in
-        div [ class "slides" ]
-            [ ul [ class "slides__slides" ] slides
-            , button
-                [ class "slides__settings" ]
-                [ i [ class "icon-settings" ] [] ]
-            ]
 
 
 viewServices : Model -> Html Msg

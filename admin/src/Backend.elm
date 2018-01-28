@@ -15,6 +15,8 @@ import Models.Model exposing (CssModel, Setting)
 import Messages exposing (Msg(..), CssMsg(..))
 import Decoder exposing (settingsDecoder, stylesDecoder)
 import Encoder exposing (settingsEncoder, stylesEncoder)
+import Decoders.Slide
+import Models.Slides
 
 
 getServices : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
@@ -59,7 +61,7 @@ getStyles decoder =
             }
 
 
-getSlides : Decoder (List Slide.Model.Slide) -> Cmd Slides.Messages.Msg
+getSlides : Decoder (List Models.Slides.Slide) -> Cmd Slides.Messages.Msg
 getSlides decoder =
     Http.send Slides.Messages.SlidesResponse <|
         Http.request
@@ -92,7 +94,7 @@ encodeSlide model =
             ]
 
 
-editSlide : Slide.Model.Slide -> (Result.Result Http.Error Slide.Model.Slide -> msg) -> Cmd msg
+editSlide : Models.Slides.Slide -> (Result.Result Http.Error Models.Slides.Slide -> msg) -> Cmd msg
 editSlide model msg =
     Http.send msg <|
         Http.request
@@ -100,13 +102,13 @@ editSlide model msg =
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/slides/" ++ toString model.id
             , body = Http.jsonBody <| encodeSlide model
-            , expect = Http.expectJson slideDecoder
+            , expect = Http.expectJson Decoders.Slide.slideDecoder
             , timeout = Nothing
             , withCredentials = False
             }
 
 
-createSlide : Slide.Model.Slide -> (Result.Result Http.Error Slide.Model.Slide -> msg) -> Cmd msg
+createSlide : Models.Slides.Slide -> (Result.Result Http.Error Models.Slides.Slide -> msg) -> Cmd msg
 createSlide model msg =
     Http.send msg <|
         Http.request
@@ -114,7 +116,7 @@ createSlide model msg =
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
             , url = "/slides"
             , body = Http.jsonBody <| encodeSlide model
-            , expect = Http.expectJson slideDecoder
+            , expect = Http.expectJson Decoders.Slide.slideDecoder
             , timeout = Nothing
             , withCredentials = False
             }
@@ -132,19 +134,6 @@ deleteSlide model =
             , timeout = Nothing
             , withCredentials = False
             }
-
-
-slideDecoder : Decoder Slide.Model.Slide
-slideDecoder =
-    decode Slide.Model.Slide
-        |> required "id" Decode.int
-        |> required "name" Decode.string
-        |> required "title" Decode.string
-        |> required "body" Decode.string
-        |> required "visible" Decode.bool
-        |> required "index" Decode.int
-        |> required "type" Decode.string
-        |> optional "color" (Decode.nullable Decode.string) Nothing
 
 
 editStyles : List CssModel -> Cmd Msg

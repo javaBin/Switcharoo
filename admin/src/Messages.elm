@@ -2,16 +2,19 @@ module Messages exposing (Msg(..), CssMsg(..))
 
 import Auth
 import Slides.Messages
+import Slide.Messages
 import Settings.Messages
 import Nav.Model exposing (Page)
 import Http
 import Models.Model exposing (CssModel, Setting)
+import Models.Slides
 
 
 type Msg
     = Login
     | LoginResult Auth.UserData
     | SlidesMsg Slides.Messages.Msg
+    | SlideMsg Models.Slides.SlideModel Slide.Messages.Msg
     | SettingsMsg Settings.Messages.Msg
     | PageChanged Page
     | GotStyles (Result Http.Error (List CssModel))
@@ -24,6 +27,10 @@ type Msg
     | SettingsSaved (Result Http.Error (List Setting))
     | DisableSavedSuccessfully
     | WSMessage String
+    | SlidePopupCancel
+    | SlidePopupSave Models.Slides.SlideModel
+    | SlideSave (Result Http.Error Models.Slides.Slide)
+    | Ignore
 
 
 type CssMsg
