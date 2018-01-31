@@ -47,7 +47,7 @@ public class FileUpload implements HttpService {
 
             LOG.info("File uploaded: {}", tempFile.toString());
             res.type("application/json");
-            return String.format("{\"location\":\"/%s\", \"filetype\":\"%s\"}", tempFile.toString(), getFiletype(part.getContentType()));
+            return String.format("{\"location\":\"%s\", \"filetype\":\"%s\"}", "/uploads/" + tempFile.getFileName().toString(), getFiletype(part.getContentType()));
         });
     }
 
