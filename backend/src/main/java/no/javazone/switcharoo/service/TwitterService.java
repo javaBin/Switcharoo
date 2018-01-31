@@ -26,7 +26,7 @@ public class TwitterService {
     private List<Tweet> tweets = List.empty();
 
     public TwitterService(ScheduledExecutorService executor, SettingsDao settings, ServiceDao services, Properties properties) {
-        //executor.scheduleAtFixedRate(getTweets(), 1, 10 * 60, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(getTweets(), 1, 10 * 60, TimeUnit.SECONDS);
         this.settings = settings;
         this.services = services;
         this.twitter = getTwitterClient(
