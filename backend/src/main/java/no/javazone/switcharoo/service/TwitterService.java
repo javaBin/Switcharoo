@@ -79,7 +79,7 @@ public class TwitterService {
         return new Tweet(
             status.getText(),
             status.getUser().getName(),
-            status.getUser().getMiniProfileImageURL(),
+            status.getUser().getOriginalProfileImageURL(),
             status.getUser().getScreenName()
         );
     }
