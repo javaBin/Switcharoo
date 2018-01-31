@@ -9,6 +9,7 @@ public class PublicData {
 
     public PublicData(List<Object> slides) {
         this.slides = slides;
-        overlay = new Overlay();
+        this.overlay = null;
+        //overlay = new Overlay();
     }
 }
