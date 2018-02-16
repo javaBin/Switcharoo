@@ -76,16 +76,11 @@ icon c =
 
 view : Model -> Html Msg
 view model =
-    li [ class "service-list__service" ]
+    li [ class "slide" ]
         [ button
-            [ classList [ ( "service-list__toggle", True ), ( "service-list__toggle--enabled", model.value ) ]
+            [ classList [ ( "slide__content", True ), ( "slide__content--visible", model.value ) ]
             , onClick Toggle
             ]
-            [ icon <|
-                if model.value then
-                    "check"
-                else
-                    "close"
-            , text <| label model
+            [ div [ class "slide__title" ] [ text <| label model ]
             ]
         ]

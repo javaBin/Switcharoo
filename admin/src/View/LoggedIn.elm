@@ -16,18 +16,7 @@ import Nav.Model exposing (Page(..))
 view : Model -> Html Msg
 view model =
     div [ class "app" ]
-        [ viewTopBar model
-        , viewMain model
-        ]
-
-
-viewTopBar : Model -> Html Msg
-viewTopBar model =
-    div [ class "app__topbar topbar" ]
-        [ div [ class "topbar__logo" ] [ text "S" ]
-        , div [ class "app__topbar-title" ] [ text <| pageTitle model.page ]
-        , div [ class "app__topbar-clients" ]
-            [ text <| Maybe.withDefault "" <| Maybe.map ((++) "Clients: ") model.connectedClients ]
+        [ viewMain model
         ]
 
 
@@ -39,9 +28,6 @@ pageTitle page =
 
         SlidesPage ->
             "Slides"
-
-        ServicesPage ->
-            "Services"
 
         SettingsPage ->
             "Settings"
@@ -57,9 +43,6 @@ viewMain model =
             case model.page of
                 SlidesPage ->
                     viewSlides model
-
-                ServicesPage ->
-                    viewServices model
 
                 SettingsPage ->
                     viewSettings model
@@ -79,9 +62,9 @@ viewMain model =
 viewSidebar : Model -> Html Msg
 viewSidebar model =
     div [ class "app__sidebar sidebar" ]
-        [ ul [ class "sidebar__menu" ]
+        [ text "Switcharoo"
+        , ul [ class "sidebar__menu" ]
             [ viewLink model SlidesPage
-            , viewLink model ServicesPage
             , viewLink model SettingsPage
             , viewLink model StylesPage
             ]
@@ -103,27 +86,27 @@ viewLink model page =
             [ href <| toHash page
             , classList [ ( "sidebar__link", True ), ( "sidebar__link--active", model.page == page ) ]
             ]
-            [ i [ class <| linkText page ] [ text "" ] ]
+            [ i [ class <| linkText page ] [ text "" ]
+            , text <| pageTitle page
+            ]
         ]
 
 
 linkText : Page -> String
 linkText page =
-    case page of
-        SlidesPage ->
-            "icon-screen-desktop"
+    "sidebar__icon "
+        ++ case page of
+            SlidesPage ->
+                "icon-screen-desktop"
 
-        ServicesPage ->
-            "icon-wrench"
+            SettingsPage ->
+                "icon-settings"
 
-        SettingsPage ->
-            "icon-settings"
+            StylesPage ->
+                "icon-magic-wand"
 
-        StylesPage ->
-            "icon-magic-wand"
-
-        _ ->
-            ""
+            _ ->
+                ""
 
 
 viewMessageArea : Model -> Html Msg
@@ -152,7 +135,3 @@ viewMessageArea model =
 viewServices : Model -> Html Msg
 viewServices model =
     map ServicesMsg <| Services.Services.view model.services
-
-
-
--- map SettingsMsg <| Settings.View.view model.services

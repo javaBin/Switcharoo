@@ -1,26 +1,31 @@
 @size: 65px;
 
+.sidebar {
+    background: @background;
+    color: #ccc;
+    height: 100%;
+    padding: 20px 10px 10px;
+    text-align: left;
+    width: 170px;
+}
+
 .sidebar__menu {
     list-style: none;
     margin: 0;
-    padding: 0;
-    width: @size;
+    padding: 10px 0 0;
 }
 
 .sidebar__menu-link {
     background: transparent;
-    height: @size;
-    line-height: @size;
+    padding: 10px 0;
     transition: background .4s ease-in-out;
 }
 
 .sidebar__menu-link--active {
-    background: #272D47;
 }
 
 .sidebar__link {
     color: #ccc;
-    font-size: 1.5rem;
     opacity: .5;
     text-decoration: none;
     transition: opacity .4s ease-in-out;
@@ -28,4 +33,8 @@
 
 .sidebar__link--active {
     opacity: 1;
+}
+
+.sidebar__icon {
+    margin-right: 10px;
 }

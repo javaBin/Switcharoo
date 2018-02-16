@@ -46,13 +46,13 @@ updateSetting newModel msg currentModel =
 
 view : Model -> Html Msg
 view model =
-    div [ class "services" ]
+    div [ class "slides" ]
         [ viewSettings model ]
 
 
 viewSettings : Model -> Html Msg
 viewSettings model =
-    ul [ class "service-list" ] <|
+    ul [ class "slides__slides" ] <|
         List.map
             (\setting -> map (SettingMsg setting) (Service.Service.view setting))
             model.settings

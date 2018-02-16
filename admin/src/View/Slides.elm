@@ -1,6 +1,6 @@
 module View.Slides exposing (viewSlides)
 
-import Html exposing (Html, map, div, ul, button, i)
+import Html exposing (Html, map, div, ul, button, i, text)
 import Html.Attributes exposing (class)
 import Messages exposing (Msg(..))
 import Slides.Slides
@@ -8,6 +8,8 @@ import Models.Model
 import Models.Slides
 import Popup
 import View.Slide
+import Services.Services
+import View.Box
 
 
 viewSlides : Models.Model.Model -> Html Msg
@@ -16,12 +18,15 @@ viewSlides model =
         slides =
             List.map (\slide -> map SlidesMsg slide) <| Slides.Slides.view model.slides
     in
-        div [ class "slides" ]
-            [ Maybe.withDefault (div [] []) <| Maybe.map viewEdit model.slides.newSlide
-            , ul [ class "slides__slides" ] slides
-            , button
-                [ class "slides__settings" ]
-                [ i [ class "icon-settings" ] [] ]
+        View.Box.container
+            [ View.Box.box "Regular slides" <|
+                div [ class "slides" ]
+                    [ Maybe.withDefault (div [] []) <| Maybe.map viewEdit model.slides.newSlide
+                    , ul [ class "slides__slides" ] slides
+                    ]
+            , View.Box.box "Special slides" <|
+                Html.map ServicesMsg <|
+                    Services.Services.view model.services
             ]
 
 

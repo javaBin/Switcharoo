@@ -157,7 +157,9 @@ update msg model =
                 slides =
                     model.slides
             in
-                ( { model | slides = { slides | newSlide = Nothing } }, Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder )
+                ( { model | slides = { slides | newSlide = Nothing } }
+                , Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder
+                )
 
         SlideSave (Err _) ->
             ( model, Cmd.none )
@@ -201,14 +203,11 @@ updatePage : Page -> Model -> ( Model, Cmd Msg )
 updatePage page model =
     case page of
         SlidesPage ->
-            ( model, Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder )
-
-        ServicesPage ->
             ( model
-            , Cmd.map
-                ServicesMsg
-              <|
-                Backend.getServices Services.Services.decoder
+            , Cmd.batch
+                [ Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder
+                , Cmd.map ServicesMsg <| Backend.getServices Services.Services.decoder
+                ]
             )
 
         SettingsPage ->

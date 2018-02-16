@@ -1,0 +1,150 @@
+@slide-height: 150px;
+@slide-width: 200px;
+
+.slides {
+    position: relative;
+    height: 100%;
+}
+
+.slides__slides {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slides__settings {
+    background: #030303;
+    color: #eee;
+    cursor: pointer;
+    border-radius: 100%;
+    bottom: 0;
+    font-size: 1.5rem;
+    height: 50px;
+    outline: 0;
+    padding-top: 2px;
+    position: absolute;
+    right: 0;
+    width: 50px;
+}
+
+.slide {
+    background: transparent;
+    border: 5px solid transparent;
+    border-radius: 4px;
+    height: @slide-height;
+    margin: 10px;
+    position: relative;
+    width: @slide-width;
+}
+
+.slide__title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.slide__content {
+    align-items: center;
+    background: #111;
+    border: 0;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .5);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    height: 100%;
+    justify-content: center;
+    opacity: .2;
+    outline: 0;
+    transition: opacity .2s ease-in-out;
+    width: 100%;
+}
+
+.slide__content:not(.slide__content--visible):hover {
+    opacity: .5;
+}
+
+.slide__content--visible,
+.slide__content--new-slide {
+    opacity: 1;
+}
+
+.slide__content--new-slide:before {
+    content: '+';
+    font-size: 3rem;
+}
+
+.slide__content--image {
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.slide__content--text {
+    padding: 10px;
+}
+
+.slide__body {
+    text-align: center;
+    font-size: .8rem;
+}
+
+.slide__video {
+    height: 100%;
+    width: 100%;
+}
+
+.slide__delete {
+    background: white;
+    border: 0;
+    border-top-left-radius: 2px;
+    font-size: 1rem;
+    left: 0;
+    opacity: 1;
+    outline: none;
+    position: absolute;
+    top: 0;
+}
+
+.slide__edit {
+    background: white;
+    border: 0;
+    bottom: 0;
+    border-bottom-left-radius: 2px;
+    font-size: 1rem;
+    left: 0;
+    opacity: 1;
+    outline: none;
+    position: absolute;
+}
+
+.slide__index {
+    color: white;
+    bottom: 0;
+    position: absolute;
+    right: 5px;
+    text-shadow: 0px 0px 2px rgba(0, 0, 0, .5);
+}
+
+.slide__confirm-delete {
+    background: black;
+    bottom: 0;
+    display: none;
+    left: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+}
+
+.slide__confirm-delete--visible {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.slide__delete-button {
+    margin-left: 10px;
+}
