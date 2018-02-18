@@ -95,26 +95,6 @@
     border-color: black;
 }
 
-.button {
-    background: #0078c9;
-    border: 0;
-    border-radius: 3px;
-    color: white;
-    font-family: Roboto, sans-serif;
-    font-size: 1rem;
-    font-weight: 100;
-    outline: 0;
-    padding: 8px 18px;
-}
-
-.button:not([disabled]) {
-    cursor: pointer;
-}
-
-.button--cancel {
-    background: #ddd;
-}
-
 .input {
     background: #fff;
     border: 0;
@@ -122,6 +102,19 @@
     min-height: 32px;
     padding: 10px;
     width: 100%;
+}
+
+.input--box {
+    border: 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 1rem;
+    outline: 0;
+    padding: 5px;
+    transition: border-bottom-color .4s;
+}
+
+.input--box:focus {
+    border-bottom-color: #53bad1;
 }
 
 .tabs {
@@ -195,24 +188,6 @@
     list-style: none;
     margin: 0;
     padding: 0;
-}
-
-.styles-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.style {
-    margin-bottom: 10px;
-}
-
-.style__input {
-    margin-left: 20px;
-}
-
-.style__save {
-    margin-left: 20px;
 }
 
 .login {

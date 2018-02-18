@@ -5,15 +5,17 @@ import Html.Attributes exposing (class, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Models.Model exposing (Model, CssModel)
 import Messages exposing (Msg(..), CssMsg(..))
+import View.Box
 
 
 viewStyles : Model -> Html Msg
 viewStyles model =
-    div [ class "styles" ]
-        [ ul [ class "styles-list" ] <|
-            List.map viewStyle model.styles
-        , button [ class "button style__save", onClick SaveStyles ] [ text "Save" ]
-        ]
+    View.Box.box "Styles" <|
+        div [ class "styles" ]
+            [ ul [ class "styles-list" ] <|
+                List.map viewStyle model.styles
+            , button [ class "button style__save", onClick SaveStyles ] [ text "Save" ]
+            ]
 
 
 viewStyle : CssModel -> Html Msg

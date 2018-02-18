@@ -4,7 +4,6 @@ import Html exposing (Html, map, div, text, li, i, ul, button, a)
 import Html.Attributes exposing (class, classList, href)
 import Models.Model exposing (Model)
 import Messages exposing (Msg(..))
-import Services.Services
 import View.Settings exposing (viewSettings)
 import View.Styles exposing (viewStyles)
 import View.Slides exposing (viewSlides)
@@ -130,8 +129,3 @@ viewMessageArea model =
                     else
                         "Could not save"
                 ]
-
-
-viewServices : Model -> Html Msg
-viewServices model =
-    map ServicesMsg <| Services.Services.view model.services
