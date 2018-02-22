@@ -37,6 +37,7 @@ public class Application {
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         Gson gson = new Gson();
 
+        ConferenceDao conferences = new ConferenceDao(dataSource);
         CssDao css = new CssDao(dataSource);
         ServiceDao services = new ServiceDao(dataSource);
         SettingsDao settings = new SettingsDao(dataSource, gson);
@@ -46,6 +47,7 @@ public class Application {
         SocketIOSessions sessions = new SocketIOSessions();
 
         List<HttpService> httpServices = Arrays.asList(
+            new Conferences(conferences, auth),
             new Settings(settings, auth),
             new Slides(slides, auth),
             new Csses(css, auth),
