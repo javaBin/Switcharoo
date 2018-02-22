@@ -17,7 +17,7 @@ public class Authentication {
     private final JWTVerifier verifier;
 
     public Authentication(String secret, String issuer) throws UnsupportedEncodingException {
-        this.verifier = creaetVerifier(secret, issuer);
+        this.verifier = createVerifier(secret, issuer);
     }
 
     public boolean verify(Request req) {
@@ -28,7 +28,9 @@ public class Authentication {
         authorization = authorization.replace("Bearer ", "");
 
         try {
-            verifier.verify(authorization);
+            DecodedJWT verify = verifier.verify(authorization);
+            String userId = verify.getSubject();
+            req.attribute("user", userId);
             return true;
         } catch (RuntimeException e) {
             LOG.warn("Error verifying auth header", e);
@@ -36,7 +38,7 @@ public class Authentication {
         }
     }
 
-    private JWTVerifier creaetVerifier(String secret, String issuer) throws UnsupportedEncodingException {
+    private JWTVerifier createVerifier(String secret, String issuer) throws UnsupportedEncodingException {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.require(algorithm)
                 .withIssuer(issuer)
