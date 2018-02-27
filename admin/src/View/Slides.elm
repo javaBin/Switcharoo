@@ -2,9 +2,9 @@ module View.Slides exposing (viewSlides)
 
 import Html exposing (Html, map, div, ul, button, i, text)
 import Html.Attributes exposing (class)
-import Messages exposing (Msg(..))
+import Messages exposing (ConferenceMsg(..))
 import Slides.Slides
-import Models.Model
+import Models.ConferenceModel exposing (ConferenceModel)
 import Models.Slides
 import Popup
 import View.Slide
@@ -12,7 +12,7 @@ import Services.Services
 import View.Box
 
 
-viewSlides : Models.Model.Model -> Html Msg
+viewSlides : ConferenceModel -> Html ConferenceMsg
 viewSlides model =
     let
         slides =
@@ -30,7 +30,7 @@ viewSlides model =
             ]
 
 
-viewEdit : Popup.State Models.Slides.SlideModel -> Html Msg
+viewEdit : Popup.State Models.Slides.SlideModel -> Html ConferenceMsg
 viewEdit state =
     Popup.view
         (Popup.config

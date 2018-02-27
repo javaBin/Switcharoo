@@ -1,21 +1,30 @@
-module Messages exposing (Msg(..), CssMsg(..))
+module Messages exposing (Msg(..), ConferenceMsg(..), CssMsg(..))
 
 import Auth
 import Slides.Messages
 import Slide.Messages
 import Services.Messages
-import Nav.Model exposing (Page)
+import Nav.Model exposing (Page, ConferencePage)
 import Http
-import Models.Model exposing (CssModel, Setting)
+import Models.ConferenceModel exposing (CssModel, Setting)
+import Models.Conference exposing (Conference)
 import Models.Slides
 
 
 type Msg
-    = Login
+    = ConferenceMsg ConferenceMsg
     | LoginResult Auth.UserData
-    | SlidesMsg Slides.Messages.Msg
-    | SlideMsg Models.Slides.SlideModel Slide.Messages.Msg
+    | Login
     | PageChanged Page
+    | Conferences (Result Http.Error (List Conference))
+    | CreateConference
+    | GetConferences
+    | ConferenceName String
+
+
+type ConferenceMsg
+    = SlidesMsg Slides.Messages.Msg
+    | SlideMsg Models.Slides.SlideModel Slide.Messages.Msg
     | GotStyles (Result Http.Error (List CssModel))
     | SaveStyles
     | SavedStyles (Result Http.Error (List CssModel))

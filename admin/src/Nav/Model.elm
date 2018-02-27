@@ -1,8 +1,13 @@
-module Nav.Model exposing (Page(..))
+module Nav.Model exposing (Page(..), ConferencePage(..))
+
+
+type ConferencePage
+    = SlidesPage
+    | SettingsPage
+    | StylesPage
 
 
 type Page
-    = LoggedOut
-    | SlidesPage
-    | SettingsPage
-    | StylesPage
+    = LoggedOutPage
+    | ConferencesPage
+    | ConferencePage Int ConferencePage

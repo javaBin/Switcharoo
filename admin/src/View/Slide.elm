@@ -6,11 +6,11 @@ import Html.Events exposing (onClick, onInput, on)
 import Json.Decode exposing (succeed)
 import Models.Slides
 import Events exposing (onClickStopPropagation)
-import Messages exposing (Msg(..))
+import Messages exposing (ConferenceMsg(..))
 import Slide.Messages
 
 
-edit : Models.Slides.SlideModel -> Html Msg
+edit : Models.Slides.SlideModel -> Html ConferenceMsg
 edit slide =
     if slide.slide.type_ == "text" then
         editText slide
@@ -18,7 +18,7 @@ edit slide =
         editMedia slide
 
 
-editMedia : Models.Slides.SlideModel -> Html Msg
+editMedia : Models.Slides.SlideModel -> Html ConferenceMsg
 editMedia model =
     div []
         [ div [ class "tabs" ]
@@ -61,7 +61,7 @@ editMedia model =
         ]
 
 
-editText : Models.Slides.SlideModel -> Html Msg
+editText : Models.Slides.SlideModel -> Html ConferenceMsg
 editText model =
     div []
         [ div [ class "tabs" ]
@@ -113,7 +113,7 @@ editText model =
         ]
 
 
-selectColorView : Models.Slides.SlideModel -> Html Msg
+selectColorView : Models.Slides.SlideModel -> Html ConferenceMsg
 selectColorView model =
     div []
         [ ul [ class "modal__color" ] <|
@@ -121,7 +121,7 @@ selectColorView model =
         ]
 
 
-singleColorView : Models.Slides.SlideModel -> Maybe String -> Html Msg
+singleColorView : Models.Slides.SlideModel -> Maybe String -> Html ConferenceMsg
 singleColorView model color =
     let
         currentColor =

@@ -11,12 +11,47 @@ import Http
 import Json.Decode as Decode exposing (Decoder, nullable)
 import Json.Encode as Encode
 import Json.Decode.Pipeline exposing (decode, required, optional)
-import Models.Model exposing (CssModel, Setting)
-import Messages exposing (Msg(..), CssMsg(..))
-import Decoder exposing (settingsDecoder, stylesDecoder)
+import Models.ConferenceModel exposing (CssModel, Setting)
+import Models.Conference exposing (Conference)
+import Messages exposing (Msg(..), ConferenceMsg(..), CssMsg(..))
+import Decoder exposing (settingsDecoder, stylesDecoder, conferenceDecoder)
 import Encoder exposing (settingsEncoder, stylesEncoder)
 import Decoders.Slide
 import Models.Slides
+import Task
+
+
+getConferences : String -> Cmd Msg
+getConferences hack =
+    Task.attempt Conferences <| getConferencesTask hack
+
+
+getConferencesTask : String -> Task.Task Http.Error (List Conference)
+getConferencesTask hack =
+    Http.toTask <|
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/conferences"
+            , body = Http.emptyBody
+            , expect = Http.expectJson Decoder.conferencesDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
+createConference : Conference -> Task.Task Http.Error Conference
+createConference conference =
+    Http.toTask <|
+        Http.request
+            { method = "POST"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/conferences"
+            , body = Http.jsonBody <| Encoder.conferenceEncoder conference
+            , expect = Http.expectJson Decoder.conferenceDecoder
+            , timeout = Maybe.Nothing
+            , withCredentials = False
+            }
 
 
 getServices : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
@@ -47,7 +82,7 @@ toggleService model =
             }
 
 
-getStyles : Decoder (List CssModel) -> Cmd Msg
+getStyles : Decoder (List CssModel) -> Cmd ConferenceMsg
 getStyles decoder =
     Http.send GotStyles <|
         Http.request
@@ -136,7 +171,7 @@ deleteSlide model =
             }
 
 
-editStyles : List CssModel -> Cmd Msg
+editStyles : List CssModel -> Cmd ConferenceMsg
 editStyles styles =
     Http.send SavedStyles <|
         Http.request
@@ -150,7 +185,7 @@ editStyles styles =
             }
 
 
-getSettings : String -> Cmd Msg
+getSettings : String -> Cmd ConferenceMsg
 getSettings _ =
     Http.send GetSettings <|
         Http.request
@@ -164,7 +199,7 @@ getSettings _ =
             }
 
 
-saveSettings : List Setting -> Cmd Msg
+saveSettings : List Setting -> Cmd ConferenceMsg
 saveSettings settings =
     Http.send SettingsSaved <|
         Http.request

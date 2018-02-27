@@ -1,8 +1,9 @@
 module Decoder exposing (..)
 
-import Models.Model exposing (..)
+import Models.ConferenceModel exposing (..)
 import Json.Decode exposing (Decoder, succeed, string, int, list, at)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
+import Models.Conference exposing (Conference)
 
 
 stylesDecoder : Decoder (List CssModel)
@@ -33,3 +34,15 @@ settingDecoder =
         |> required "key" string
         |> required "hint" string
         |> requiredAt [ "value", "value" ] string
+
+
+conferencesDecoder : Decoder (List Conference)
+conferencesDecoder =
+    list conferenceDecoder
+
+
+conferenceDecoder : Decoder Conference
+conferenceDecoder =
+    decode Conference
+        |> required "id" int
+        |> required "name" string

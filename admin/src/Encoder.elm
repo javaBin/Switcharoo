@@ -1,7 +1,8 @@
 module Encoder exposing (..)
 
 import Json.Encode exposing (Value, list, object, int, string)
-import Models.Model exposing (Setting, CssModel)
+import Models.ConferenceModel exposing (Setting, CssModel)
+import Models.Conference exposing (Conference)
 
 
 settingsEncoder : List Setting -> Value
@@ -34,3 +35,9 @@ styleEncoder model =
         , ( "type", string model.type_ )
         , ( "title", string model.title )
         ]
+
+
+conferenceEncoder : Conference -> Value
+conferenceEncoder model =
+    object <|
+        [ ( "name", string model.name ) ]

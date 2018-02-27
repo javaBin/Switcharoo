@@ -1,0 +1,48 @@
+.conferences {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__list {
+        list-style: none;
+        margin: 50px 0 0 0;
+        padding: 0;
+    }
+
+    &__conference {
+        background: #fafafa;
+        box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
+        font-size: 1.5rem;
+        padding: 10px;
+        width: 500px;
+    }
+
+    &__conference-link {
+        align-items: center;
+        color: rgba(0, 0, 0, .5);
+        display: flex;
+        justify-content: space-between;
+        text-decoration: none;
+        transition: color .2s ease-in-out;
+
+        &:hover {
+            color: rgba(0, 0, 0, .9);
+        }
+    }
+
+    &__new {
+        display: flex;
+        margin: 20px 15px;
+        width: 500px;
+    }
+
+    &__input {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+
+    &__create {
+        white-space: nowrap;
+    }
+}

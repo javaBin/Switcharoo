@@ -3,28 +3,26 @@ module View.LoggedIn exposing (view)
 import Html exposing (Html, map, div, text, li, i, ul, button, a)
 import Html.Attributes exposing (class, classList, href)
 import Models.Model exposing (Model)
-import Messages exposing (Msg(..))
+import Models.ConferenceModel exposing (ConferenceModel)
+import Messages exposing (ConferenceMsg(..))
 import View.Settings exposing (viewSettings)
 import View.Styles exposing (viewStyles)
 import View.Slides exposing (viewSlides)
 import Slides.Slides
-import Nav.Nav exposing (toHash)
-import Nav.Model exposing (Page(..))
+import Nav.Nav exposing (routeToString)
+import Nav.Model exposing (Page(..), ConferencePage(..))
 
 
-view : Model -> Html Msg
+view : ConferenceModel -> Html ConferenceMsg
 view model =
     div [ class "app" ]
         [ viewMain model
         ]
 
 
-pageTitle : Page -> String
+pageTitle : ConferencePage -> String
 pageTitle page =
     case page of
-        LoggedOut ->
-            "Logged out"
-
         SlidesPage ->
             "Slides"
 
@@ -35,7 +33,7 @@ pageTitle page =
             "Styles"
 
 
-viewMain : Model -> Html Msg
+viewMain : ConferenceModel -> Html ConferenceMsg
 viewMain model =
     let
         page =
@@ -48,9 +46,6 @@ viewMain model =
 
                 StylesPage ->
                     viewStyles model
-
-                _ ->
-                    div [] []
     in
         div [ class "app__main" ]
             [ viewSidebar model
@@ -58,19 +53,20 @@ viewMain model =
             ]
 
 
-viewSidebar : Model -> Html Msg
+viewSidebar : ConferenceModel -> Html ConferenceMsg
 viewSidebar model =
     div [ class "app__sidebar sidebar" ]
         [ text "Switcharoo"
         , ul [ class "sidebar__menu" ]
-            [ viewLink model SlidesPage
-            , viewLink model SettingsPage
-            , viewLink model StylesPage
+            [ viewLink model <| SlidesPage
+            , viewLink model <| SettingsPage
+            , viewLink model <| StylesPage
             ]
+        , viewBackToConferences
         ]
 
 
-viewContent : Model -> Html Msg -> Html Msg
+viewContent : ConferenceModel -> Html ConferenceMsg -> Html ConferenceMsg
 viewContent model page =
     div [ class "app__content" ]
         [ div [ class "app__page-content" ] [ page ]
@@ -78,11 +74,11 @@ viewContent model page =
         ]
 
 
-viewLink : Model -> Page -> Html Msg
+viewLink : ConferenceModel -> ConferencePage -> Html ConferenceMsg
 viewLink model page =
     li [ classList [ ( "sidebar__menu-link", True ), ( "sidebar__menu-link--active", model.page == page ) ] ]
         [ a
-            [ href <| toHash page
+            [ href <| routeToString <| Nav.Model.ConferencePage model.conference.id page
             , classList [ ( "sidebar__link", True ), ( "sidebar__link--active", model.page == page ) ]
             ]
             [ i [ class <| linkText page ] [ text "" ]
@@ -91,7 +87,18 @@ viewLink model page =
         ]
 
 
-linkText : Page -> String
+viewBackToConferences : Html ConferenceMsg
+viewBackToConferences =
+    a
+        [ href <| routeToString Nav.Model.ConferencesPage
+        , class "sidebar__conferences sidebar__link"
+        ]
+        [ i [ class "sidebar__icon icon-arrow-left" ] [ text "" ]
+        , text "Conferences"
+        ]
+
+
+linkText : ConferencePage -> String
 linkText page =
     "sidebar__icon "
         ++ case page of
@@ -104,11 +111,8 @@ linkText page =
             StylesPage ->
                 "icon-magic-wand"
 
-            _ ->
-                ""
 
-
-viewMessageArea : Model -> Html Msg
+viewMessageArea : ConferenceModel -> Html ConferenceMsg
 viewMessageArea model =
     case model.savedSuccessfully of
         Nothing ->
