@@ -44,21 +44,6 @@ public class ConferenceDao {
         }, "Could not find conference");
     }
 
-    public Either<String, Conference> getByName(final String name) {
-        String sql = "SELECT * FROM conferences WHERE name = ?";
-        return query(dataSource, c -> {
-            PreparedStatement p = c.prepareStatement(sql);
-            p.setString(1, name);
-            return p;
-        }, rs -> {
-            if (rs.next()) {
-                return fromResultSet(rs);
-            } else {
-                return null;
-            }
-        }, "Could not find conference");
-    }
-
     public Either<String, Conference> create(final Conference conference) {
         String sql = "INSERT INTO conferences (name) VALUES (?)";
         return updateQuery(dataSource, c -> {
