@@ -19,7 +19,7 @@ public class Tweets implements HttpService {
 
     @Override
     public void register(Gson gson) {
-        get("/twitter", (req, res) -> twitter.tweets().toJavaList(), gson::toJson);
+        get("/twitter", (req, res) -> twitter.tweets(), gson::toJson);
         after("/twitter", (req, res) -> res.type("application/json"));
     }
 }

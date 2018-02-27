@@ -28,11 +28,11 @@ public class Data implements HttpService {
             data = data.appendAll(slides.listVisible().map(SlideMapper::fromDb));
             List<Tweet> t = twitter.tweets();
             if (t.size() > 0) {
-                data = data.append(new TwitterSlide(t.toJavaList()));
+                data = data.append(new TwitterSlide(t));
             }
 
             res.type("application/json");
-            return new PublicData(data.toJavaList());
+            return new PublicData(data);
         }, gson::toJson);
     }
 }

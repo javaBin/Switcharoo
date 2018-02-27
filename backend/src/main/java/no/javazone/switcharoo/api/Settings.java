@@ -32,7 +32,7 @@ public class Settings implements HttpService {
     public void register(Gson gson) {
         path("/", () -> {
             get("/settings",
-                (req, res) -> settings.list().map(SettingMapper::fromDb).toJavaList(),
+                (req, res) -> settings.list().map(SettingMapper::fromDb),
                 gson::toJson
             );
 

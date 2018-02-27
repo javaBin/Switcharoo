@@ -1,6 +1,6 @@
 package no.javazone.switcharoo.api.model;
 
-import java.util.List;
+import io.vavr.collection.List;
 
 public class TwitterSlide {
     public final String type = "tweets";

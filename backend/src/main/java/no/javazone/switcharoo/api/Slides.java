@@ -26,7 +26,7 @@ public class Slides implements HttpService {
     public void register(Gson gson) {
         path("/", () -> {
             get("/slides",
-                (req, res) -> slides.list().map(SlideMapper::fromDb).toJavaList(), gson::toJson);
+                (req, res) -> slides.list().map(SlideMapper::fromDb), gson::toJson);
 
             get("/slides/:id",
                 (req, res) -> parseLong(req.params(":id"))

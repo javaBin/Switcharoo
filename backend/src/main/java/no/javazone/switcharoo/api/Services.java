@@ -26,7 +26,7 @@ public class Services implements HttpService {
     public void register(Gson gson) {
         path("/", () -> {
             get("/services", (req, res) ->
-                    services.list().map(ServiceMapper::fromDb).toJavaList(),
+                    services.list().map(ServiceMapper::fromDb),
                 gson::toJson
             );
 

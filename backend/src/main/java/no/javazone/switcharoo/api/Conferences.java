@@ -27,7 +27,7 @@ public class Conferences implements HttpService {
     @Override
     public void register(Gson gson) {
         path("/", () -> {
-            get("/conferences", (req, res) -> gson.toJson(conferences.list().map(ConferenceMapper::fromDb).toJavaList()));
+            get("/conferences", (req, res) -> gson.toJson(conferences.list().map(ConferenceMapper::fromDb)));
 
             get("/conferences/:id", (req, res) ->
                 gson.toJson(parseLong(req.params(":id"))

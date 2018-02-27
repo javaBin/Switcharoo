@@ -1,6 +1,8 @@
 package no.javazone.switcharoo;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import io.vavr.gson.VavrGson;
 import no.javazone.switcharoo.api.*;
 import no.javazone.switcharoo.api.socketio.SocketIOSessions;
 import no.javazone.switcharoo.config.Properties;
@@ -35,7 +37,9 @@ public class Application {
 
         DataSource dataSource = db.dataSource();
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        Gson gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        VavrGson.registerAll(gsonBuilder);
+        Gson gson = gsonBuilder.create();
 
         ConferenceDao conferences = new ConferenceDao(dataSource);
         CssDao css = new CssDao(dataSource);

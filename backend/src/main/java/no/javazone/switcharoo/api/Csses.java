@@ -31,7 +31,7 @@ public class Csses implements HttpService {
     public void register(Gson gson) {
         path("/", () -> {
             get("/css",
-                (req, res) -> css.list().map(CssMapper::fromDb).toJavaList(),
+                (req, res) -> css.list().map(CssMapper::fromDb),
                 gson::toJson
             );
 
