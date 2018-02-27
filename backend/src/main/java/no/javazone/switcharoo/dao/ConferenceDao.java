@@ -20,7 +20,7 @@ public class ConferenceDao {
     }
 
     public List<Conference> list() {
-        return query(dataSource, "SELECT * FROM conferences", rs -> {
+        return query(dataSource, "SELECT * FROM conferences ORDER BY id DESC", rs -> {
             List<Conference> conferences = List.empty();
             while(rs.next()) {
                 conferences = conferences.append(fromResultSet(rs));
