@@ -32,7 +32,7 @@ public class Data implements HttpService {
             }
 
             res.type("application/json");
-            return new PublicData(data);
-        }, gson::toJson);
+            return gson.toJson(new PublicData(data));
+        });
     }
 }

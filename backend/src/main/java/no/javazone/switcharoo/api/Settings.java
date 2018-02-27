@@ -31,29 +31,24 @@ public class Settings implements HttpService {
     @Override
     public void register(Gson gson) {
         path("/", () -> {
-            get("/settings",
-                (req, res) -> settings.list().map(SettingMapper::fromDb),
-                gson::toJson
-            );
+            get("/settings", (req, res) -> gson.toJson(settings.list().map(SettingMapper::fromDb)));
 
             get("/settings/:id",
-                (req, res) -> parseInt(req.params(":id"))
+                (req, res) -> gson.toJson(parseInt(req.params(":id"))
                     .flatMap(id -> settings.get(id))
                     .map(SettingMapper::fromDb)
-                    .getOrElseThrow(NotFoundException::new),
-                gson::toJson
+                    .getOrElseThrow(NotFoundException::new))
             );
 
             post("/settings",
-                (req, res) -> verify(gson.fromJson(req.body(), Setting.class))
+                (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Setting.class))
                     .map(SettingMapper::toDb)
                     .flatMap(s2 -> settings.create(s2))
                     .map(SettingMapper::fromDb)
-                    .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                    .getOrElseThrow(BadRequestException::new))
             );
 
-            put("/settings", (req, res) -> List.of(gson.fromJson(req.body(), Setting[].class))
+            put("/settings", (req, res) -> gson.toJson(List.of(gson.fromJson(req.body(), Setting[].class))
                 .map(SettingMapper::toDb)
                 .map(s -> {
                     Either<String, no.javazone.switcharoo.dao.model.Setting> updated = settings.update(s);
@@ -62,10 +57,7 @@ public class Settings implements HttpService {
                     } else {
                         return updated.get();
                     }
-                })
-                .map(SettingMapper::fromDb)
-                .toJavaList(),
-                gson::toJson
+                }).map(SettingMapper::fromDb))
             );
 
             // TODO: Need to rewrite frontend and use this update function instead
@@ -80,7 +72,7 @@ public class Settings implements HttpService {
             );*/
 
             delete("/settings/:id",
-                (req, res) -> parseInt(req.params(":id"))
+                (req, res) -> gson.toJson(parseInt(req.params(":id"))
                     .flatMap(id -> settings.delete(id))
                     .map(deleted -> {
                         if (deleted) {
@@ -90,8 +82,7 @@ public class Settings implements HttpService {
                         }
                         return "";
                     })
-                    .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                    .getOrElseThrow(BadRequestException::new))
             );
 
             before("/settings", (req, res) -> { if (!auth.verify(req)) halt(401);});

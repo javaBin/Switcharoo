@@ -30,40 +30,34 @@ public class Csses implements HttpService {
     @Override
     public void register(Gson gson) {
         path("/", () -> {
-            get("/css",
-                (req, res) -> css.list().map(CssMapper::fromDb),
-                gson::toJson
-            );
+            get("/css", (req, res) -> gson.toJson(css.list().map(CssMapper::fromDb)));
 
             get("/css/:id",
-                (req, res) -> parseLong(req.params(":id"))
+                (req, res) -> gson.toJson(parseLong(req.params(":id"))
                     .flatMap(css::get)
                     .map(CssMapper::fromDb)
-                    .getOrElseThrow(NotFoundException::new),
-                gson::toJson
+                    .getOrElseThrow(NotFoundException::new))
             );
 
             post("/css",
-                (req, res) -> verify(gson.fromJson(req.body(), Css.class))
+                (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Css.class))
                     .map(CssMapper::toDb)
                     .flatMap(css::create)
                     .map(CssMapper::fromDb)
-                    .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                    .getOrElseThrow(BadRequestException::new))
             );
 
             put("/css/:id",
-                (req, res) -> verify(gson.fromJson(req.body(), Css.class))
+                (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Css.class))
                     .map(CssMapper::toDb)
                     .flatMap(c -> parseLong(req.params(":id")).map(id -> c.withId(id)))
                     .flatMap(css::update)
                     .map(CssMapper::fromDb)
-                    .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                    .getOrElseThrow(BadRequestException::new))
             );
 
             put("/css",
-                (req, res) -> List.of(gson.fromJson(req.body(), Css[].class))
+                (req, res) -> gson.toJson(List.of(gson.fromJson(req.body(), Css[].class))
                     .map(CssMapper::toDb)
                     .map(c -> {
                         Either<String, no.javazone.switcharoo.dao.model.Css> updated = css.update(c);
@@ -73,13 +67,11 @@ public class Csses implements HttpService {
                             return updated.get();
                         }
                     })
-                    .map(CssMapper::fromDb)
-                    .toJavaList(),
-                gson::toJson
+                    .map(CssMapper::fromDb))
             );
 
             delete("/css/:id",
-                (req, res) -> parseLong(req.params(":id"))
+                (req, res) -> gson.toJson(parseLong(req.params(":id"))
                     .flatMap(css::delete)
                     .map(deleted -> {
                         if (deleted) {
@@ -89,8 +81,7 @@ public class Csses implements HttpService {
                         }
                         return "";
                     })
-                    .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                    .getOrElseThrow(BadRequestException::new))
             );
 
             before("/css", (req, res) -> { if(!auth.verify(req)) halt(401);});

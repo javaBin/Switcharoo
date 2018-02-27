@@ -25,34 +25,28 @@ public class Services implements HttpService {
     @Override
     public void register(Gson gson) {
         path("/", () -> {
-            get("/services", (req, res) ->
-                    services.list().map(ServiceMapper::fromDb),
-                gson::toJson
-            );
+            get("/services", (req, res) -> gson.toJson(services.list().map(ServiceMapper::fromDb)));
 
             get("/services/:id", (req, res) ->
-                    parseLong(req.params(":id"))
+                    gson.toJson(parseLong(req.params(":id"))
                         .flatMap(services::get)
                         .map(ServiceMapper::fromDb)
-                        .getOrElseThrow(NotFoundException:: new),
-                gson::toJson
+                        .getOrElseThrow(NotFoundException:: new))
             );
 
             post("/services", (req, res) ->
-                    verify(gson.fromJson(req.body(), Service.class))
+                    gson.toJson(verify(gson.fromJson(req.body(), Service.class))
                         .map(ServiceMapper::toDb)
                         .flatMap(services::create)
                         .map(ServiceMapper::fromDb)
-                        .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                        .getOrElseThrow(BadRequestException::new))
             );
 
             put("/services/:id", (req, res) ->
-                parseLong(req.params(":id"))
+                gson.toJson(parseLong(req.params(":id"))
                 .flatMap(services::update)
                 .map(ServiceMapper::fromDb)
-                .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                .getOrElseThrow(BadRequestException::new))
             );
 
             // TODO: Need to rewrite frontend and use this update function instead
@@ -67,7 +61,7 @@ public class Services implements HttpService {
             );*/
 
             delete("/services/:id", (req, res) ->
-                    parseLong(req.params(":id"))
+                    gson.toJson(parseLong(req.params(":id"))
                         .flatMap(services::delete)
                         .map(deleted -> {
                             if (deleted) {
@@ -77,8 +71,7 @@ public class Services implements HttpService {
                             }
                             return "";
                         })
-                        .getOrElseThrow(BadRequestException::new),
-                gson::toJson
+                        .getOrElseThrow(BadRequestException::new))
             );
 
             before("/services", (req, res) -> { if(!auth.verify(req)) halt(401);});
