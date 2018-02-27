@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import static no.javazone.switcharoo.dao.utils.DBUtils.query;
 import static no.javazone.switcharoo.dao.utils.DBUtils.updateQuery;
@@ -47,7 +48,7 @@ public class ConferenceDao {
     public Either<String, Conference> create(final Conference conference) {
         String sql = "INSERT INTO conferences (name) VALUES (?)";
         return updateQuery(dataSource, c -> {
-            PreparedStatement p = c.prepareStatement(sql);
+            PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             p.setString(1, conference.name);
             return p;
         }, (st, i) -> {
