@@ -3,9 +3,11 @@ package no.javazone.switcharoo.api;
 import com.google.gson.Gson;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
+import no.javazone.switcharoo.Application;
 import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.CssMapper;
 import no.javazone.switcharoo.api.model.Css;
+import no.javazone.switcharoo.dao.ConferenceDao;
 import no.javazone.switcharoo.dao.CssDao;
 import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
@@ -20,10 +22,12 @@ public class Csses implements HttpService {
 
     static Logger LOG = LoggerFactory.getLogger(Csses.class);
     private final CssDao css;
+    private final ConferenceDao conferences;
     private final Authentication auth;
 
-    public Csses(CssDao css, Authentication auth) {
+    public Csses(CssDao css, ConferenceDao conferences, Authentication auth) {
         this.css = css;
+        this.conferences = conferences;
         this.auth = auth;
     }
 
@@ -90,7 +94,8 @@ public class Csses implements HttpService {
             after("/css/*", (req, res) -> res.type("application/json"));
         });
 
-        get("/custom.css", (req, res) -> {
+        get("/custom.css/:conference", (req, res) -> {
+            Application.setConference(req, conferences);
             res.type("text/css");
             return css.list(req.attribute("conference")).map(r -> String.format("%s { %s: %s; }", r.selector, r.property, r.value))
                     .foldLeft("", (prev, cur) -> String.format("%s\n%s", prev, cur));

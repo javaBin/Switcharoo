@@ -13,14 +13,14 @@ import Messages exposing (Msg(..))
 import View.Overlay
 
 
-initModel : Model
-initModel =
-    Model (Slides.init []) Nothing
+initModel : String -> Model
+initModel conference =
+    Model (Slides.init []) Nothing conference
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( initModel, Cmd.batch [ getSlides Slides, SocketIO.connect <| flags.host ++ "/users" ] )
+    ( initModel flags.conference, Cmd.batch [ getSlides flags.conference Slides, SocketIO.connect <| flags.host ++ "/users" ] )
 
 
 type alias SlidesResult =
@@ -31,13 +31,13 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Slides (Ok data) ->
-            ( Model (Slides.init data.slides) data.overlay, Cmd.none )
+            ( Model (Slides.init data.slides) data.overlay model.conference, Cmd.none )
 
         Slides (Err _) ->
             ( model, Cmd.none )
 
         Refetch ->
-            ( model, getSlides RefetchSlides )
+            ( model, getSlides model.conference RefetchSlides )
 
         RefetchSlides (Ok data) ->
             let
@@ -60,9 +60,9 @@ update msg model =
                 ( { model | slides = newSlides }, mappedCmd )
 
 
-getSlides : SlidesResult -> Cmd Msg
-getSlides message =
-    Http.send message <| Http.get "/data" Decoder.Data.decoder
+getSlides : String -> SlidesResult -> Cmd Msg
+getSlides conference message =
+    Http.send message <| Http.get ("/data/" ++ conference) Decoder.Data.decoder
 
 
 view : Model -> Html Msg

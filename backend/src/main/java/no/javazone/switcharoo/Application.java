@@ -59,11 +59,11 @@ public class Application {
             new Conferences(conferences, auth),
             new Settings(settings, auth),
             new Slides(slides, auth),
-            new Csses(css, auth),
+            new Csses(css, conferences, auth),
             new Services(services, auth),
             new Tweets(twitter),
             new Program(executor),
-            new Data(slides, twitter),
+            new Data(slides, conferences, twitter),
             new Status(status),
             new SocketIO(sessions),
             new FileUpload(properties.filesUploadDir()),
@@ -76,6 +76,7 @@ public class Application {
         webSocket("/socket.io/*", ws);
 
         exception(BadRequestException.class, (e, req, res) -> {
+            LOG.warn("BadRequest: {}", e.reason);
             res.status(400);
             res.body(e.reason);
         });
@@ -89,10 +90,9 @@ public class Application {
         httpServices.forEach(s -> s.register(gson));
 
         before("/conferences/:conference/*", (req, res) -> setConference(req, conferences));
-        before("/data", (req, res) -> setConference(req, conferences));
     }
 
-    private static void setConference(Request req, ConferenceDao conferences) {
+    public static void setConference(Request req, ConferenceDao conferences) {
         Long conferenceId = parseLong(req.params(":conference")).getOrElseThrow(BadRequestException::new);
         Conference conference = conferences.get(conferenceId).getOrElseThrow(NotFoundException::new);
         req.attribute("conference", conference.id);

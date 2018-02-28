@@ -8,12 +8,14 @@ import List.Zipper exposing (Zipper)
 
 type alias Flags =
     { host : String
+    , conference : String
     }
 
 
 type alias Model =
     { slides : Slides
     , overlay : Maybe Overlay
+    , conference : String
     }
 
 
