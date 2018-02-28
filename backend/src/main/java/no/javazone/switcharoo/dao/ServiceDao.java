@@ -2,7 +2,7 @@ package no.javazone.switcharoo.dao;
 
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import no.javazone.switcharoo.dao.model.Service;
+import no.javazone.switcharoo.dao.model.DBService;
 
 import javax.sql.DataSource;
 
@@ -21,14 +21,14 @@ public class ServiceDao {
         this.dataSource = dataSource;
     }
 
-    public List<Service> list(final long conferenceId) {
+    public List<DBService> list(final long conferenceId) {
         String sql = "SELECT * FROM services WHERE conference_id = ? ORDER BY id";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, conferenceId);
             return p;
         }, rs -> {
-            List<Service> services = List.empty();
+            List<DBService> services = List.empty();
             while (rs.next()) {
                 services = services.append(fromResultSet(rs));
             }
@@ -36,7 +36,7 @@ public class ServiceDao {
         }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Service> get(final long id, final long conferenceId) {
+    public Either<String, DBService> get(final long id, final long conferenceId) {
         String sql = "SELECT * FROM services WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -52,7 +52,7 @@ public class ServiceDao {
         }, "Could not find service");
     }
 
-    public Either<String, Service> getByKey(final String key, final long conferenceId) {
+    public Either<String, DBService> getByKey(final String key, final long conferenceId) {
         String sql = "SELECT * FROM services WHERE key = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -68,7 +68,7 @@ public class ServiceDao {
         }, String.format("Could not find service named %s", key));
     }
 
-    public Either<String, Service> create(final Service service, final long conferenceId) {
+    public Either<String, DBService> create(final DBService service, final long conferenceId) {
         String sql = "INSERT INTO services(key, value, conference_id) VALUES(?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -86,7 +86,7 @@ public class ServiceDao {
         }, "Could not create service");
     }
 
-    public Either<String, Service> update(final long id, final long conferenceId) {
+    public Either<String, DBService> update(final long id, final long conferenceId) {
         String sql = "UPDATE services SET value = ?, updated_at = ? WHERE id = ?";
         return get(id, conferenceId).flatMap(service -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -98,7 +98,7 @@ public class ServiceDao {
     }
 
     // TODO: Need to rewrite frontend and use this update function instead
-    /*public Either<String, Service> update(final Service service) {
+    /*public Either<String, DBService> update(final DBService service) {
         String sql = "UPDATE services SET key = ?, value = ? WHERE id = ?";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -118,8 +118,8 @@ public class ServiceDao {
         }, (st, i) -> i > 0, "Could not delete service");
     }
 
-    private Service fromResultSet(ResultSet rs) throws SQLException {
-        return new Service(
+    private DBService fromResultSet(ResultSet rs) throws SQLException {
+        return new DBService(
             rs.getLong("id"),
             rs.getString("key"),
             rs.getBoolean("value")

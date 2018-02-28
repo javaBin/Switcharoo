@@ -1,10 +1,11 @@
 package no.javazone.switcharoo.api.mapper;
 
 import no.javazone.switcharoo.api.model.Css;
+import no.javazone.switcharoo.dao.model.DBCss;
 
 public class CssMapper {
 
-    public static Css fromDb(no.javazone.switcharoo.dao.model.Css css) {
+    public static Css fromDb(DBCss css) {
         return new Css(
             css.id,
             css.selector,
@@ -15,8 +16,8 @@ public class CssMapper {
         );
     }
 
-    public static no.javazone.switcharoo.dao.model.Css toDb(Css css) {
-        return new no.javazone.switcharoo.dao.model.Css(
+    public static DBCss toDb(Css css) {
+        return new DBCss(
             css.id,
             css.selector,
             css.property,

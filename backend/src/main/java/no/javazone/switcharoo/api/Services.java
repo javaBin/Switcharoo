@@ -51,7 +51,7 @@ public class Services implements HttpService {
 
             // TODO: Need to rewrite frontend and use this update function instead
             /*put("/services/:id", (req, res) ->
-                    verify(gson.fromJson(req.body(), Service.class))
+                    verify(gson.fromJson(req.body(), DBService.class))
                         .map(ServiceMapper::toDb)
                         .flatMap(service -> parseLong(req.params(":id")).map(id -> service.withId(id)))
                         .flatMap(services::update)

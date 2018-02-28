@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import no.javazone.switcharoo.dao.model.Setting;
+import no.javazone.switcharoo.dao.model.DBSetting;
 import org.postgresql.util.PGobject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,14 +27,14 @@ public class SettingsDao {
         this.gson = gson;
     }
 
-    public List<Setting> list(final long conferenceId) {
+    public List<DBSetting> list(final long conferenceId) {
         String sql = "SELECT * FROM settings WHERE conference_id = ? ORDER BY id";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, conferenceId);
             return p;
         }, rs -> {
-            List<Setting> settings = List.empty();
+            List<DBSetting> settings = List.empty();
             while (rs.next()) {
                 settings = settings.append(fromResultSet(rs, gson));
             }
@@ -42,7 +42,7 @@ public class SettingsDao {
         }, "Could not find slides for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Setting> get(final long id, final long conferenceId) {
+    public Either<String, DBSetting> get(final long id, final long conferenceId) {
         String sql = "SELECT * FROM settings WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement statement = c.prepareStatement(sql);
@@ -58,7 +58,7 @@ public class SettingsDao {
         }, "Could not find setting");
     }
 
-    public Either<String, Setting> getByKey(final String key, final long conferenceId) {
+    public Either<String, DBSetting> getByKey(final String key, final long conferenceId) {
         String sql = "SELECT * FROM settings WHERE key = ? AND conference_id = ?";
         return query(dataSource,
             c -> {
@@ -72,7 +72,7 @@ public class SettingsDao {
         );
     }
 
-    public Either<String, Setting> create(final Setting setting, final long conferenceId) {
+    public Either<String, DBSetting> create(final DBSetting setting, final long conferenceId) {
         String sql = "INSERT INTO settings(key, hint, value, conference_id) VALUES(?, ?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement s = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -91,7 +91,7 @@ public class SettingsDao {
         }, "Could not create setting");
     }
 
-    public Either<String, Setting> update(final Setting setting, final long conferenceId) {
+    public Either<String, DBSetting> update(final DBSetting setting, final long conferenceId) {
         String sql = "UPDATE settings SET key = ?, hint = ?, value = ?, updated_at = ? WHERE id = ?";
         return get(setting.id, conferenceId).flatMap(dbSetting -> updateQuery(dataSource, c -> {
             PreparedStatement s = c.prepareStatement(sql);
@@ -122,8 +122,8 @@ public class SettingsDao {
         return json;
     }
 
-    private static Setting fromResultSet(ResultSet rs, Gson gson) throws SQLException {
-        return new Setting(rs.getLong("id"),
+    private static DBSetting fromResultSet(ResultSet rs, Gson gson) throws SQLException {
+        return new DBSetting(rs.getLong("id"),
                 rs.getString("key"),
                 rs.getString("hint"),
                 gson.fromJson(rs.getString("value"), JsonObject.class)

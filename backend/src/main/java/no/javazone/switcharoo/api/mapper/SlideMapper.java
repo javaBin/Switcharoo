@@ -1,10 +1,11 @@
 package no.javazone.switcharoo.api.mapper;
 
 import no.javazone.switcharoo.api.model.Slide;
+import no.javazone.switcharoo.dao.model.DBSlide;
 
 public class SlideMapper {
 
-    public static Slide fromDb(no.javazone.switcharoo.dao.model.Slide slide) {
+    public static Slide fromDb(DBSlide slide) {
         return new Slide(
             slide.id,
             slide.title,
@@ -17,8 +18,8 @@ public class SlideMapper {
         );
     }
 
-    public static no.javazone.switcharoo.dao.model.Slide toDb(Slide slide) {
-        return new no.javazone.switcharoo.dao.model.Slide(
+    public static DBSlide toDb(Slide slide) {
+        return new DBSlide(
             slide.id,
             slide.title,
             slide.body,

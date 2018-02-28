@@ -1,6 +1,6 @@
 package no.javazone.switcharoo.dao.model;
 
-public class Slide {
+public class DBSlide {
 
     public final Long id;
     public final String title;
@@ -11,7 +11,7 @@ public class Slide {
     public final String name;
     public final String color;
 
-    public Slide(Long id, String title, String body, boolean visible, String type, int index, String name, String color) {
+    public DBSlide(Long id, String title, String body, boolean visible, String type, int index, String name, String color) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -22,7 +22,7 @@ public class Slide {
         this.color = color;
     }
 
-    public Slide withId(Long id) {
-        return new Slide(id, title, body, visible, type, index, name, color);
+    public DBSlide withId(Long id) {
+        return new DBSlide(id, title, body, visible, type, index, name, color);
     }
 }

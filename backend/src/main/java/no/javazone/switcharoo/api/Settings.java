@@ -7,6 +7,7 @@ import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.SettingMapper;
 import no.javazone.switcharoo.api.model.Setting;
 import no.javazone.switcharoo.dao.SettingsDao;
+import no.javazone.switcharoo.dao.model.DBSetting;
 import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class Settings implements HttpService {
             put("/settings", (req, res) -> gson.toJson(List.of(gson.fromJson(req.body(), Setting[].class))
                 .map(SettingMapper::toDb)
                 .map(s -> {
-                    Either<String, no.javazone.switcharoo.dao.model.Setting> updated = settings.update(s, req.attribute("conference"));
+                    Either<String, DBSetting> updated = settings.update(s, req.attribute("conference"));
                     if (updated.isLeft()) {
                         return s;
                     } else {
@@ -62,7 +63,7 @@ public class Settings implements HttpService {
 
             // TODO: Need to rewrite frontend and use this update function instead
             /*put("/settings/:id",
-                (req, res) -> verify(gson.fromJson(req.body(), Setting.class))
+                (req, res) -> verify(gson.fromJson(req.body(), DBSetting.class))
                     .map(SettingMapper::toDb)
                     .flatMap(s -> parseLong(req.params(":id")).map(id -> s.withId(id)))
                     .flatMap(s -> settings.update(s))

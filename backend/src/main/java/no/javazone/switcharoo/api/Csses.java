@@ -9,6 +9,7 @@ import no.javazone.switcharoo.api.mapper.CssMapper;
 import no.javazone.switcharoo.api.model.Css;
 import no.javazone.switcharoo.dao.ConferenceDao;
 import no.javazone.switcharoo.dao.CssDao;
+import no.javazone.switcharoo.dao.model.DBCss;
 import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -64,7 +65,7 @@ public class Csses implements HttpService {
                 (req, res) -> gson.toJson(List.of(gson.fromJson(req.body(), Css[].class))
                     .map(CssMapper::toDb)
                     .map(c -> {
-                        Either<String, no.javazone.switcharoo.dao.model.Css> updated = css.update(c, req.attribute("conference"));
+                        Either<String, DBCss> updated = css.update(c, req.attribute("conference"));
                         if (updated.isLeft()) {
                             return c;
                         } else {

@@ -1,15 +1,16 @@
 package no.javazone.switcharoo.api.mapper;
 
 import no.javazone.switcharoo.api.model.Service;
+import no.javazone.switcharoo.dao.model.DBService;
 
 public class ServiceMapper {
 
-    public static Service fromDb(no.javazone.switcharoo.dao.model.Service service) {
+    public static Service fromDb(DBService service) {
         return new Service(service.id, service.key, service.value);
     }
 
-    public static no.javazone.switcharoo.dao.model.Service toDb(Service service) {
-        return new no.javazone.switcharoo.dao.model.Service(
+    public static DBService toDb(Service service) {
+        return new DBService(
             service.id,
             service.key,
             service.value

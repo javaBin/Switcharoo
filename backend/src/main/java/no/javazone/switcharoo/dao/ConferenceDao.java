@@ -2,7 +2,7 @@ package no.javazone.switcharoo.dao;
 
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import no.javazone.switcharoo.dao.model.Conference;
+import no.javazone.switcharoo.dao.model.DBConference;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -20,9 +20,9 @@ public class ConferenceDao {
         this.dataSource = dataSource;
     }
 
-    public List<Conference> list() {
+    public List<DBConference> list() {
         return query(dataSource, "SELECT * FROM conferences ORDER BY id DESC", rs -> {
-            List<Conference> conferences = List.empty();
+            List<DBConference> conferences = List.empty();
             while(rs.next()) {
                 conferences = conferences.append(fromResultSet(rs));
             }
@@ -30,7 +30,7 @@ public class ConferenceDao {
         }).getOrElse(List::empty);
     }
 
-    public Either<String, Conference> get(final long id) {
+    public Either<String, DBConference> get(final long id) {
         String sql = "SELECT * FROM conferences WHERE id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -45,7 +45,7 @@ public class ConferenceDao {
         }, "Could not find conference");
     }
 
-    public Either<String, Conference> create(final Conference conference) {
+    public Either<String, DBConference> create(final DBConference conference) {
         String sql = "INSERT INTO conferences (name) VALUES (?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -61,7 +61,7 @@ public class ConferenceDao {
         }, "Could not create conference");
     }
 
-    public Either<String, Conference> update(final Conference conference) {
+    public Either<String, DBConference> update(final DBConference conference) {
         String sql = "UPDATE conferences SET name = ? WHERE id = ?";
         return get(conference.id).flatMap(dbConference -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -80,7 +80,7 @@ public class ConferenceDao {
         }, (st, i) -> i > 0, "Could not delete slide");
     }
 
-    private Conference fromResultSet(ResultSet rs) throws SQLException {
-        return new Conference(rs.getLong("id"), rs.getString("name"));
+    private DBConference fromResultSet(ResultSet rs) throws SQLException {
+        return new DBConference(rs.getLong("id"), rs.getString("name"));
     }
 }

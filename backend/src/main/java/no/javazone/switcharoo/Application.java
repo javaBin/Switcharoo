@@ -2,13 +2,12 @@ package no.javazone.switcharoo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.vavr.control.Either;
 import io.vavr.gson.VavrGson;
 import no.javazone.switcharoo.api.*;
 import no.javazone.switcharoo.api.socketio.SocketIOSessions;
 import no.javazone.switcharoo.config.Properties;
 import no.javazone.switcharoo.dao.*;
-import no.javazone.switcharoo.dao.model.Conference;
+import no.javazone.switcharoo.dao.model.DBConference;
 import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
 import no.javazone.switcharoo.service.TwitterService;
@@ -16,7 +15,6 @@ import org.aeonbits.owner.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
-import spark.Response;
 
 import javax.sql.DataSource;
 
@@ -94,7 +92,7 @@ public class Application {
 
     public static void setConference(Request req, ConferenceDao conferences) {
         Long conferenceId = parseLong(req.params(":conference")).getOrElseThrow(BadRequestException::new);
-        Conference conference = conferences.get(conferenceId).getOrElseThrow(NotFoundException::new);
+        DBConference conference = conferences.get(conferenceId).getOrElseThrow(NotFoundException::new);
         req.attribute("conference", conference.id);
         LOG.info("Conference: {}", conference.id);
     }

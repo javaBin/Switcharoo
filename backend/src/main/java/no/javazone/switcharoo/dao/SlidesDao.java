@@ -2,7 +2,7 @@ package no.javazone.switcharoo.dao;
 
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import no.javazone.switcharoo.dao.model.Slide;
+import no.javazone.switcharoo.dao.model.DBSlide;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,21 +23,21 @@ public class SlidesDao {
         this.dataSource = dataSource;
     }
 
-    public List<Slide> list(final long conferenceId) {
+    public List<DBSlide> list(final long conferenceId) {
         return listWithSql("SELECT * FROM slides WHERE conference_id = ? ORDER BY index", conferenceId);
     }
 
-    public List<Slide> listVisible(final long conferenceId) {
+    public List<DBSlide> listVisible(final long conferenceId) {
         return listWithSql("SELECT * FROM slides WHERE visible = true AND conference_id = ? ORDER BY index", conferenceId);
     }
 
-    private List<Slide> listWithSql(String sql, final long conferenceId) {
+    private List<DBSlide> listWithSql(String sql, final long conferenceId) {
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, conferenceId);
             return p;
         }, rs -> {
-            List<Slide> slides = List.empty();
+            List<DBSlide> slides = List.empty();
             while (rs.next()) {
                 slides = slides.append(fromResultSet(rs));
             }
@@ -45,7 +45,7 @@ public class SlidesDao {
         }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Slide> get(final long id, final long conferenceId) {
+    public Either<String, DBSlide> get(final long id, final long conferenceId) {
         String sql = "SELECT * FROM slides WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -61,7 +61,7 @@ public class SlidesDao {
         }, "Could not find slide");
     }
 
-    public Either<String, Slide> create(final Slide slide, final long conferenceId) {
+    public Either<String, DBSlide> create(final DBSlide slide, final long conferenceId) {
         String sql = "INSERT INTO slides(title, body, visible, type, index, name, color, conference_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -84,7 +84,7 @@ public class SlidesDao {
         }, "Could not create slide");
     }
 
-    public Either<String, Slide> update(final Slide slide, final long conferenceId) {
+    public Either<String, DBSlide> update(final DBSlide slide, final long conferenceId) {
         String sql = "UPDATE slides SET title = ?, body = ?, visible = ?, type = ?, index = ?, name = ?, color = ?, updated_at = ? WHERE id = ?";
         return get(slide.id, conferenceId).flatMap(dbSlide -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -111,8 +111,8 @@ public class SlidesDao {
         }, (st, i) -> i > 0, "Could not delete setting");
     }
 
-    private static Slide fromResultSet(ResultSet rs) throws SQLException {
-        return new Slide(rs.getLong("id"),
+    private static DBSlide fromResultSet(ResultSet rs) throws SQLException {
+        return new DBSlide(rs.getLong("id"),
             rs.getString("title"),
             rs.getString("body"),
             rs.getBoolean("visible"),

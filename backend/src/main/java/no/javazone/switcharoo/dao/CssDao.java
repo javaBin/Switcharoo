@@ -2,7 +2,7 @@ package no.javazone.switcharoo.dao;
 
 import io.vavr.collection.List;
 import io.vavr.control.Either;
-import no.javazone.switcharoo.dao.model.Css;
+import no.javazone.switcharoo.dao.model.DBCss;
 
 import javax.sql.DataSource;
 
@@ -20,14 +20,14 @@ public class CssDao {
         this.dataSource = dataSource;
     }
 
-    public List<Css> list(final long conferenceId) {
+    public List<DBCss> list(final long conferenceId) {
         String sql = "SELECT * FROM csses WHERE conference_id = ? ORDER BY id";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, conferenceId);
             return p;
         }, rs -> {
-            List<Css> csses = List.empty();
+            List<DBCss> csses = List.empty();
             while (rs.next()) {
                 csses = csses.append(fromResultSet(rs));
             }
@@ -35,7 +35,7 @@ public class CssDao {
         }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Css> get(final long id, final long conferenceId) {
+    public Either<String, DBCss> get(final long id, final long conferenceId) {
         String sql = "SELECT * FROM csses WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -51,7 +51,7 @@ public class CssDao {
         }, "Could not find css");
     }
 
-    public Either<String, Css> create(final Css css, final long conferenceId) {
+    public Either<String, DBCss> create(final DBCss css, final long conferenceId) {
         String sql = "INSERT INTO csses(selector, property, value, type, title, confereice_id) VALUES(?, ?, ?, ?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -72,7 +72,7 @@ public class CssDao {
         }, "Could not create css");
     }
 
-    public Either<String, Css> update(final Css css, final long conferenceId) {
+    public Either<String, DBCss> update(final DBCss css, final long conferenceId) {
         String sql = "UPDATE csses SET selector = ?, property = ?, value = ?, type = ?, title = ?, updated_at = ? WHERE id = ?";
         return get(css.id, conferenceId).flatMap(dbCss -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
@@ -96,8 +96,8 @@ public class CssDao {
         }, (st, i) -> i > 0, "Could not delete Css");
     }
 
-    private static Css fromResultSet(ResultSet rs) throws SQLException {
-        return new Css(
+    private static DBCss fromResultSet(ResultSet rs) throws SQLException {
+        return new DBCss(
             rs.getLong("id"),
             rs.getString("selector"),
             rs.getString("property"),
