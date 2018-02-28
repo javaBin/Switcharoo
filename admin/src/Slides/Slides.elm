@@ -12,14 +12,15 @@ import Slide.Messages
 import Backend
 import Decoders.Slide
 import Models.Slides
+import Models.Conference exposing (Conference)
 import Popup
 
 
-update : Msg -> Models.Slides.Slides -> ( Models.Slides.Slides, Cmd Msg )
-update msg model =
+update : Conference -> Msg -> Models.Slides.Slides -> ( Models.Slides.Slides, Cmd Msg )
+update conference msg model =
     case msg of
         GetSlides ->
-            ( model, Backend.getSlides Decoders.Slide.decoder )
+            ( model, Backend.getSlides conference )
 
         SlidesResponse (Ok newSlides) ->
             let
@@ -34,13 +35,13 @@ update msg model =
         Slide slide msg ->
             let
                 ( newModels, newCmds ) =
-                    List.unzip (List.map (updateSlide slide msg) model.slides)
+                    List.unzip (List.map (updateSlide conference slide msg) model.slides)
             in
                 case msg of
                     Slide.Messages.DeleteResponse (Ok _) ->
                         ( { model | slides = newModels }
                         , Cmd.batch <|
-                            [ Backend.getSlides Decoders.Slide.decoder ]
+                            [ Backend.getSlides conference ]
                                 ++ newCmds
                         )
 
@@ -54,12 +55,12 @@ update msg model =
             ( { model | newSlide = Just (Popup.state Models.Slides.initSlideModel "New slide") }, Cmd.none )
 
 
-updateSlide : Models.Slides.SlideModel -> Slide.Messages.Msg -> Slide.Model.Model -> ( Models.Slides.SlideModel, Cmd Msg )
-updateSlide newModel msg currentModel =
+updateSlide : Conference -> Models.Slides.SlideModel -> Slide.Messages.Msg -> Slide.Model.Model -> ( Models.Slides.SlideModel, Cmd Msg )
+updateSlide conference newModel msg currentModel =
     if newModel.slide.id == currentModel.slide.id then
         let
             ( newSlide, newCmd ) =
-                Slide.Slide.update msg newModel
+                Slide.Slide.update conference msg newModel
         in
             ( newSlide, Cmd.map (Slide newSlide) newCmd )
     else

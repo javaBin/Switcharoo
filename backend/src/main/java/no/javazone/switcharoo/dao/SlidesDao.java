@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 
 import java.sql.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 import static no.javazone.switcharoo.dao.utils.DBUtils.query;
 import static no.javazone.switcharoo.dao.utils.DBUtils.updateQuery;
@@ -24,29 +23,34 @@ public class SlidesDao {
         this.dataSource = dataSource;
     }
 
-    public List<Slide> list() {
-        return listWithSql("SELECT * FROM slides ORDER BY index");
+    public List<Slide> list(final long conferenceId) {
+        return listWithSql("SELECT * FROM slides WHERE conference_id = ? ORDER BY index", conferenceId);
     }
 
-    public List<Slide> listVisible() {
-        return listWithSql("SELECT * FROM slides WHERE visible = true ORDER BY index");
+    public List<Slide> listVisible(final long conferenceId) {
+        return listWithSql("SELECT * FROM slides WHERE visible = true AND conference_id = ? ORDER BY index", conferenceId);
     }
 
-    private List<Slide> listWithSql(String sql) {
-        return query(dataSource, sql, rs -> {
+    private List<Slide> listWithSql(String sql, final long conferenceId) {
+        return query(dataSource, c -> {
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setLong(1, conferenceId);
+            return p;
+        }, rs -> {
             List<Slide> slides = List.empty();
             while (rs.next()) {
                 slides = slides.append(fromResultSet(rs));
             }
             return slides;
-        }).getOrElse(List::empty);
+        }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Slide> get(final long id) {
-        String sql = "SELECT * FROM slides WHERE id = ?";
+    public Either<String, Slide> get(final long id, final long conferenceId) {
+        String sql = "SELECT * FROM slides WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, id);
+            p.setLong(2, conferenceId);
             return p;
         }, rs -> {
             if (rs.next()) {
@@ -57,8 +61,8 @@ public class SlidesDao {
         }, "Could not find slide");
     }
 
-    public Either<String, Slide> create(final Slide slide) {
-        String sql = "INSERT INTO slides(title, body, visible, type, index, name, color) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    public Either<String, Slide> create(final Slide slide, final long conferenceId) {
+        String sql = "INSERT INTO slides(title, body, visible, type, index, name, color, conference_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             p.setString(1, slide.title);
@@ -68,6 +72,7 @@ public class SlidesDao {
             p.setInt(5, slide.index);
             p.setString(6, slide.name);
             p.setString(7, slide.color);
+            p.setLong(8, conferenceId);
             return p;
         }, (st, i) -> {
             ResultSet keySet = st.getGeneratedKeys();
@@ -79,9 +84,9 @@ public class SlidesDao {
         }, "Could not create slide");
     }
 
-    public Either<String, Slide> update(final Slide slide) {
+    public Either<String, Slide> update(final Slide slide, final long conferenceId) {
         String sql = "UPDATE slides SET title = ?, body = ?, visible = ?, type = ?, index = ?, name = ?, color = ?, updated_at = ? WHERE id = ?";
-        return get(slide.id).flatMap(dbSlide -> updateQuery(dataSource, c -> {
+        return get(slide.id, conferenceId).flatMap(dbSlide -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setString(1, slide.title);
             p.setString(2, slide.body);

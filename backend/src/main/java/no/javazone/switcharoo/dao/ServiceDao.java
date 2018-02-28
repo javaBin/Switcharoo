@@ -21,22 +21,27 @@ public class ServiceDao {
         this.dataSource = dataSource;
     }
 
-    public List<Service> list() {
-        String sql = "SELECT * FROM services ORDER BY id";
-        return query(dataSource, sql, rs -> {
+    public List<Service> list(final long conferenceId) {
+        String sql = "SELECT * FROM services WHERE conference_id = ? ORDER BY id";
+        return query(dataSource, c -> {
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setLong(1, conferenceId);
+            return p;
+        }, rs -> {
             List<Service> services = List.empty();
             while (rs.next()) {
                 services = services.append(fromResultSet(rs));
             }
             return services;
-        }).getOrElse(List::empty);
+        }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Service> get(final long id) {
-        String sql = "SELECT * FROM services WHERE id = ?";
+    public Either<String, Service> get(final long id, final long conferenceId) {
+        String sql = "SELECT * FROM services WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, id);
+            p.setLong(2, conferenceId);
             return p;
         }, rs -> {
             if (rs.next()) {
@@ -47,11 +52,12 @@ public class ServiceDao {
         }, "Could not find service");
     }
 
-    public Either<String, Service> getByKey(final String key) {
-        String sql = "SELECT * FROM services WHERE key = ?";
+    public Either<String, Service> getByKey(final String key, final long conferenceId) {
+        String sql = "SELECT * FROM services WHERE key = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setString(1, key);
+            p.setLong(2, conferenceId);
             return p;
         }, rs -> {
             if (rs.next()) {
@@ -62,12 +68,13 @@ public class ServiceDao {
         }, String.format("Could not find service named %s", key));
     }
 
-    public Either<String, Service> create(final Service service) {
-        String sql = "INSERT INTO services(key, value) VALUES(?, ?)";
+    public Either<String, Service> create(final Service service, final long conferenceId) {
+        String sql = "INSERT INTO services(key, value, conference_id) VALUES(?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             p.setString(1, service.key);
             p.setBoolean(2, service.value);
+            p.setLong(3, conferenceId);
             return p;
         }, (st, i) -> {
             ResultSet keySet = st.getGeneratedKeys();
@@ -79,9 +86,9 @@ public class ServiceDao {
         }, "Could not create service");
     }
 
-    public Either<String, Service> update(final long id) {
+    public Either<String, Service> update(final long id, final long conferenceId) {
         String sql = "UPDATE services SET value = ?, updated_at = ? WHERE id = ?";
-        return get(id).flatMap(service -> updateQuery(dataSource, c -> {
+        return get(id, conferenceId).flatMap(service -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setBoolean(1, !service.value);
             p.setTimestamp(2, Timestamp.from(Instant.now()));

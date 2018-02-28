@@ -54,27 +54,27 @@ createConference conference =
             }
 
 
-getServices : Decoder (List Service.Model.Model) -> Cmd Services.Messages.Msg
-getServices decoder =
+getServices : Conference -> Cmd Services.Messages.Msg
+getServices conference =
     Http.send Services.Messages.Settings <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/services"
+            , url = "/conferences/" ++ toString conference.id ++ "/services"
             , body = Http.emptyBody
-            , expect = Http.expectJson decoder
+            , expect = Http.expectJson Decoder.servicesDecoder
             , timeout = Nothing
             , withCredentials = False
             }
 
 
-toggleService : Service.Model.Model -> Cmd Service.Messages.Msg
-toggleService model =
+toggleService : Conference -> Service.Model.Model -> Cmd Service.Messages.Msg
+toggleService conference model =
     Http.send Service.Messages.Toggled <|
         Http.request
             { method = "PUT"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/services/" ++ toString model.id
+            , url = "/conferences/" ++ toString conference.id ++ "/services/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing
@@ -82,29 +82,29 @@ toggleService model =
             }
 
 
-getStyles : Decoder (List CssModel) -> Cmd ConferenceMsg
-getStyles decoder =
+getStyles : Conference -> Cmd ConferenceMsg
+getStyles conference =
     Http.send GotStyles <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/css"
+            , url = "/conferences/" ++ toString conference.id ++ "/css"
             , body = Http.emptyBody
-            , expect = Http.expectJson decoder
+            , expect = Http.expectJson Decoder.stylesDecoder
             , timeout = Nothing
             , withCredentials = False
             }
 
 
-getSlides : Decoder (List Models.Slides.Slide) -> Cmd Slides.Messages.Msg
-getSlides decoder =
+getSlides : Conference -> Cmd Slides.Messages.Msg
+getSlides conference =
     Http.send Slides.Messages.SlidesResponse <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/slides"
+            , url = "/conferences/" ++ toString conference.id ++ "/slides"
             , body = Http.emptyBody
-            , expect = Http.expectJson decoder
+            , expect = Http.expectJson Decoders.Slide.decoder
             , timeout = Nothing
             , withCredentials = False
             }
@@ -129,13 +129,13 @@ encodeSlide model =
             ]
 
 
-editSlide : Models.Slides.Slide -> (Result.Result Http.Error Models.Slides.Slide -> msg) -> Cmd msg
-editSlide model msg =
+editSlide : Conference -> Models.Slides.Slide -> (Result.Result Http.Error Models.Slides.Slide -> msg) -> Cmd msg
+editSlide conference model msg =
     Http.send msg <|
         Http.request
             { method = "PUT"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/slides/" ++ toString model.id
+            , url = "/conferences/" ++ toString conference.id ++ "/slides/" ++ toString model.id
             , body = Http.jsonBody <| encodeSlide model
             , expect = Http.expectJson Decoders.Slide.slideDecoder
             , timeout = Nothing
@@ -143,13 +143,13 @@ editSlide model msg =
             }
 
 
-createSlide : Models.Slides.Slide -> (Result.Result Http.Error Models.Slides.Slide -> msg) -> Cmd msg
-createSlide model msg =
+createSlide : Conference -> Models.Slides.Slide -> (Result.Result Http.Error Models.Slides.Slide -> msg) -> Cmd msg
+createSlide conference model msg =
     Http.send msg <|
         Http.request
             { method = "POST"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/slides"
+            , url = "/conferences/" ++ toString conference.id ++ "/slides"
             , body = Http.jsonBody <| encodeSlide model
             , expect = Http.expectJson Decoders.Slide.slideDecoder
             , timeout = Nothing
@@ -157,13 +157,13 @@ createSlide model msg =
             }
 
 
-deleteSlide : Slide.Model.Slide -> Cmd Slide.Messages.Msg
-deleteSlide model =
+deleteSlide : Conference -> Slide.Model.Slide -> Cmd Slide.Messages.Msg
+deleteSlide conference model =
     Http.send Slide.Messages.DeleteResponse <|
         Http.request
             { method = "DELETE"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/slides/" ++ toString model.id
+            , url = "/conferences/" ++ toString conference.id ++ "slides/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing
@@ -171,13 +171,13 @@ deleteSlide model =
             }
 
 
-editStyles : List CssModel -> Cmd ConferenceMsg
-editStyles styles =
+editStyles : Conference -> List CssModel -> Cmd ConferenceMsg
+editStyles conference styles =
     Http.send SavedStyles <|
         Http.request
             { method = "PUT"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/css"
+            , url = "/conferences/" ++ toString conference.id ++ "/css"
             , body = Http.jsonBody <| stylesEncoder styles
             , expect = Http.expectJson stylesDecoder
             , timeout = Nothing
@@ -185,13 +185,13 @@ editStyles styles =
             }
 
 
-getSettings : String -> Cmd ConferenceMsg
-getSettings _ =
+getSettings : Conference -> Cmd ConferenceMsg
+getSettings conference =
     Http.send GetSettings <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/settings"
+            , url = "/conferences/" ++ toString conference.id ++ "/settings"
             , body = Http.emptyBody
             , expect = Http.expectJson settingsDecoder
             , timeout = Nothing
@@ -199,13 +199,13 @@ getSettings _ =
             }
 
 
-saveSettings : List Setting -> Cmd ConferenceMsg
-saveSettings settings =
+saveSettings : Conference -> List Setting -> Cmd ConferenceMsg
+saveSettings conference settings =
     Http.send SettingsSaved <|
         Http.request
             { method = "PUT"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/settings"
+            , url = "/conferences/" ++ toString conference.id ++ "/settings"
             , body = Http.jsonBody <| settingsEncoder settings
             , expect = Http.expectJson settingsDecoder
             , timeout = Nothing

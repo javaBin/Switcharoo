@@ -8,20 +8,16 @@ import Json.Decode exposing (Decoder, list)
 import Service.Service
 import Service.Model
 import Service.Messages
+import Models.Conference exposing (Conference)
 
 
-decoder : Decoder (List Service.Model.Model)
-decoder =
-    list Service.Service.decoder
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Conference -> Msg -> Model -> ( Model, Cmd Msg )
+update conference msg model =
     case msg of
         SettingMsg setting settingMsg ->
             let
                 ( newSettings, newCmds ) =
-                    List.unzip (List.map (updateSetting setting settingMsg) model.settings)
+                    List.unzip (List.map (updateSetting conference setting settingMsg) model.settings)
             in
                 ( { model | settings = newSettings }, Cmd.batch newCmds )
 
@@ -32,12 +28,12 @@ update msg model =
             ( Model settings, Cmd.none )
 
 
-updateSetting : Service.Model.Model -> Service.Messages.Msg -> Service.Model.Model -> ( Service.Model.Model, Cmd Msg )
-updateSetting newModel msg currentModel =
+updateSetting : Conference -> Service.Model.Model -> Service.Messages.Msg -> Service.Model.Model -> ( Service.Model.Model, Cmd Msg )
+updateSetting conference newModel msg currentModel =
     if newModel.id == currentModel.id then
         let
             ( newSetting, newCmd ) =
-                Service.Service.update msg newModel
+                Service.Service.update conference msg newModel
         in
             ( newSetting, Cmd.map (SettingMsg newSetting) newCmd )
     else

@@ -1,9 +1,10 @@
 module Decoder exposing (..)
 
 import Models.ConferenceModel exposing (..)
-import Json.Decode exposing (Decoder, succeed, string, int, list, at)
+import Json.Decode exposing (Decoder, succeed, string, int, list, at, bool)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Models.Conference exposing (Conference)
+import Service.Model
 
 
 stylesDecoder : Decoder (List CssModel)
@@ -46,3 +47,16 @@ conferenceDecoder =
     decode Conference
         |> required "id" int
         |> required "name" string
+
+
+servicesDecoder : Decoder (List Service.Model.Model)
+servicesDecoder =
+    list serviceDecoder
+
+
+serviceDecoder : Decoder Service.Model.Model
+serviceDecoder =
+    decode Service.Model.Model
+        |> required "id" int
+        |> required "key" string
+        |> required "value" bool

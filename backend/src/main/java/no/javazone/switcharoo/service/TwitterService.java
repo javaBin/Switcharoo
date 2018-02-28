@@ -54,7 +54,7 @@ public class TwitterService {
     private Runnable getTweets() {
         return () -> {
             if (isTwitterEnabled()) {
-                tweets = settings.getByKey("twitter-search")
+                tweets = settings.getByKey("twitter-search", 0)
                     .map(value -> value.value.get("value").getAsString())
                     .flatMap(searchTerm -> {
                         LOG.info(String.format("Fetching new tweets: %s", searchTerm));
@@ -85,7 +85,7 @@ public class TwitterService {
     }
 
     private boolean isTwitterEnabled() {
-        return services.getByKey("twitter-enabled")
+        return services.getByKey("twitter-enabled", 0)
             .map(value -> value.value)
             .getOrElseGet(error -> {
                 LOG.error(error);

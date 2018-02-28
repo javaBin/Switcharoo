@@ -10,6 +10,7 @@ import Http
 import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
 import Backend exposing (editSlide, createSlide, deleteSlide)
+import Models.Conference exposing (Conference)
 
 
 init : ( Models.Slides.SlideModel, Cmd Msg )
@@ -17,8 +18,8 @@ init =
     ( Models.Slides.initSlideModel, Cmd.none )
 
 
-update : Msg -> Models.Slides.SlideModel -> ( Models.Slides.SlideModel, Cmd Msg )
-update msg model =
+update : Conference -> Msg -> Models.Slides.SlideModel -> ( Models.Slides.SlideModel, Cmd Msg )
+update conference msg model =
     case msg of
         ToggleVisibility ->
             let
@@ -28,13 +29,13 @@ update msg model =
                 newSlide =
                     { slideModel | visible = not slideModel.visible }
             in
-                ( { model | slide = newSlide }, editSlide newSlide ToggleResponse )
+                ( { model | slide = newSlide }, editSlide conference newSlide ToggleResponse )
 
         ToggleResponse _ ->
             ( model, Cmd.none )
 
         Edit ->
-            ( model, editSlide model.slide EditResponse )
+            ( model, editSlide conference model.slide EditResponse )
 
         EditResponse _ ->
             ( model, Cmd.none )
@@ -46,7 +47,7 @@ update msg model =
             ( { model | deleteMode = not model.deleteMode }, Cmd.none )
 
         Delete ->
-            ( model, deleteSlide model.slide )
+            ( model, deleteSlide conference model.slide )
 
         DeleteResponse _ ->
             ( model, Cmd.none )
@@ -102,12 +103,12 @@ updateSlide model fn =
     { model | slide = (fn model.slide) }
 
 
-createOrEditSlide : Slide -> (Result.Result Http.Error Slide -> msg) -> Cmd msg
-createOrEditSlide model msg =
+createOrEditSlide : Conference -> Slide -> (Result.Result Http.Error Slide -> msg) -> Cmd msg
+createOrEditSlide conference model msg =
     if model.id == -1 then
-        createSlide model msg
+        createSlide conference model msg
     else
-        editSlide model msg
+        editSlide conference model msg
 
 
 subscriptions : Models.Slides.SlideModel -> Sub Msg

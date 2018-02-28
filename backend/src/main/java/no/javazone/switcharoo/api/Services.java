@@ -24,12 +24,12 @@ public class Services implements HttpService {
 
     @Override
     public void register(Gson gson) {
-        path("/", () -> {
-            get("/services", (req, res) -> gson.toJson(services.list().map(ServiceMapper::fromDb)));
+        path("/conferences/:conference", () -> {
+            get("/services", (req, res) -> gson.toJson(services.list(req.attribute("conference")).map(ServiceMapper::fromDb)));
 
             get("/services/:id", (req, res) ->
                     gson.toJson(parseLong(req.params(":id"))
-                        .flatMap(services::get)
+                        .flatMap(id -> services.get(id, req.attribute("conference")))
                         .map(ServiceMapper::fromDb)
                         .getOrElseThrow(NotFoundException:: new))
             );
@@ -37,14 +37,14 @@ public class Services implements HttpService {
             post("/services", (req, res) ->
                     gson.toJson(verify(gson.fromJson(req.body(), Service.class))
                         .map(ServiceMapper::toDb)
-                        .flatMap(services::create)
+                        .flatMap(s -> services.create(s, req.attribute("conference")))
                         .map(ServiceMapper::fromDb)
                         .getOrElseThrow(BadRequestException::new))
             );
 
             put("/services/:id", (req, res) ->
                 gson.toJson(parseLong(req.params(":id"))
-                .flatMap(services::update)
+                .flatMap(id -> services.update(id, req.attribute("conference")))
                 .map(ServiceMapper::fromDb)
                 .getOrElseThrow(BadRequestException::new))
             );

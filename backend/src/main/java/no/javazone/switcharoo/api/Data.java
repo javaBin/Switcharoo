@@ -25,7 +25,7 @@ public class Data implements HttpService {
     public void register(Gson gson) {
         get("/data", (req, res) -> {
             List<Object> data = List.empty();
-            data = data.appendAll(slides.listVisible().map(SlideMapper::fromDb));
+            data = data.appendAll(slides.listVisible(req.attribute("conference")).map(SlideMapper::fromDb));
             List<Tweet> t = twitter.tweets();
             if (t.size() > 0) {
                 data = data.append(new TwitterSlide(t));

@@ -88,7 +88,7 @@ conferenceUpdate msg model =
         SlidesMsg msg ->
             let
                 ( newSlides, cmd ) =
-                    Slides.Slides.update msg model.slides
+                    Slides.Slides.update model.conference msg model.slides
 
                 mappedCmd =
                     Cmd.map SlidesMsg cmd
@@ -98,7 +98,7 @@ conferenceUpdate msg model =
         SlideMsg slide msg ->
             let
                 ( newSlide, newMsg ) =
-                    Slide.Slide.update msg slide
+                    Slide.Slide.update model.conference msg slide
 
                 slidesModel =
                     model.slides
@@ -111,7 +111,7 @@ conferenceUpdate msg model =
         ServicesMsg msg ->
             let
                 ( newServices, servicesCmd ) =
-                    Services.Services.update msg model.services
+                    Services.Services.update model.conference msg model.services
             in
                 ( { model | services = newServices }, Cmd.map ServicesMsg servicesCmd )
 
@@ -122,7 +122,7 @@ conferenceUpdate msg model =
             ( model, Cmd.none )
 
         SaveStyles ->
-            ( model, Backend.editStyles model.styles )
+            ( model, Backend.editStyles model.conference model.styles )
 
         SavedStyles (Ok _) ->
             ( { model | savedSuccessfully = Just True }, disableSavedSuccessfully )
@@ -151,7 +151,7 @@ conferenceUpdate msg model =
             )
 
         SaveSettings ->
-            ( model, Backend.saveSettings model.settings )
+            ( model, Backend.saveSettings model.conference model.settings )
 
         SettingsSaved (Ok settings) ->
             ( { model | settings = settings, savedSuccessfully = Just True }
@@ -179,7 +179,7 @@ conferenceUpdate msg model =
                 ( { model | slides = { slides | newSlide = Nothing } }, Cmd.none )
 
         SlidePopupSave slide ->
-            ( model, Slide.Slide.createOrEditSlide slide.slide SlideSave )
+            ( model, Slide.Slide.createOrEditSlide model.conference slide.slide SlideSave )
 
         SlideSave (Ok slide) ->
             let
@@ -187,7 +187,7 @@ conferenceUpdate msg model =
                     model.slides
             in
                 ( { model | slides = { slides | newSlide = Nothing } }
-                , Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder
+                , Cmd.map SlidesMsg <| Backend.getSlides model.conference
                 )
 
         SlideSave (Err _) ->
@@ -244,25 +244,25 @@ updatePage page model =
                         Models.Conference.Conference id ""
 
                 cmd =
-                    updateConferencePage conferencePage
+                    updateConferencePage conference.conference conferencePage
             in
                 ( { model | selection = Just conference }, Cmd.map ConferenceMsg cmd )
 
 
-updateConferencePage : ConferencePage -> Cmd ConferenceMsg
-updateConferencePage page =
+updateConferencePage : Conference -> ConferencePage -> Cmd ConferenceMsg
+updateConferencePage conference page =
     case page of
         SlidesPage ->
             Cmd.batch
-                [ Cmd.map SlidesMsg <| Backend.getSlides Decoders.Slide.decoder
-                , Cmd.map ServicesMsg <| Backend.getServices Services.Services.decoder
+                [ Cmd.map SlidesMsg <| Backend.getSlides conference
+                , Cmd.map ServicesMsg <| Backend.getServices conference
                 ]
 
         SettingsPage ->
-            Backend.getSettings "hack"
+            Backend.getSettings conference
 
         StylesPage ->
-            Backend.getStyles stylesDecoder
+            Backend.getStyles conference
 
 
 view : Model -> Html Msg

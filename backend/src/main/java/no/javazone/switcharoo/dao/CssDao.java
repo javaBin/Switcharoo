@@ -20,22 +20,27 @@ public class CssDao {
         this.dataSource = dataSource;
     }
 
-    public List<Css> list() {
-        String sql = "SELECT * FROM csses ORDER BY id";
-        return query(dataSource, sql, rs -> {
+    public List<Css> list(final long conferenceId) {
+        String sql = "SELECT * FROM csses WHERE conference_id = ? ORDER BY id";
+        return query(dataSource, c -> {
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setLong(1, conferenceId);
+            return p;
+        }, rs -> {
             List<Css> csses = List.empty();
             while (rs.next()) {
                 csses = csses.append(fromResultSet(rs));
             }
             return csses;
-        }).getOrElse(List::empty);
+        }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Css> get(final long id) {
-        String sql = "SELECT * FROM csses WHERE id = ?";
+    public Either<String, Css> get(final long id, final long conferenceId) {
+        String sql = "SELECT * FROM csses WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setLong(1, id);
+            p.setLong(2, conferenceId);
             return p;
         }, rs -> {
             if (rs.next()) {
@@ -46,8 +51,8 @@ public class CssDao {
         }, "Could not find css");
     }
 
-    public Either<String, Css> create(final Css css) {
-        String sql = "INSERT INTO csses(selector, property, value, type, title) VALUES(?, ?, ?, ?, ?)";
+    public Either<String, Css> create(final Css css, final long conferenceId) {
+        String sql = "INSERT INTO csses(selector, property, value, type, title, confereice_id) VALUES(?, ?, ?, ?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             p.setString(1, css.selector);
@@ -55,6 +60,7 @@ public class CssDao {
             p.setString(3, css.value);
             p.setString(4, css.type);
             p.setString(5, css.title);
+            p.setLong(6, conferenceId);
             return p;
         }, (st, i) -> {
             ResultSet rs = st.getGeneratedKeys();
@@ -66,9 +72,9 @@ public class CssDao {
         }, "Could not create css");
     }
 
-    public Either<String, Css> update(final Css css) {
+    public Either<String, Css> update(final Css css, final long conferenceId) {
         String sql = "UPDATE csses SET selector = ?, property = ?, value = ?, type = ?, title = ?, updated_at = ? WHERE id = ?";
-        return get(css.id).flatMap(dbCss -> updateQuery(dataSource, c -> {
+        return get(css.id, conferenceId).flatMap(dbCss -> updateQuery(dataSource, c -> {
             PreparedStatement p = c.prepareStatement(sql);
             p.setString(1, css.selector);
             p.setString(2, css.property);

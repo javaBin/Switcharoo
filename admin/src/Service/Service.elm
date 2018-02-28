@@ -9,19 +9,12 @@ import Json.Decode exposing (Decoder, Value, succeed, string, bool, field, int)
 import Json.Decode.Pipeline exposing (decode, required)
 import Json.Encode as Encode
 import Backend exposing (toggleService)
+import Models.Conference exposing (Conference)
 
 
 init : ( Model, Cmd Msg )
 init =
     ( Model -1 "" False, Cmd.none )
-
-
-decoder : Decoder Model
-decoder =
-    decode Model
-        |> required "id" int
-        |> required "key" string
-        |> required "value" bool
 
 
 encoder : Model -> Value
@@ -33,15 +26,15 @@ encoder model =
         ]
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update : Conference -> Msg -> Model -> ( Model, Cmd Msg )
+update conference msg model =
     case msg of
         Toggle ->
             let
                 newModel =
                     { model | value = not model.value }
             in
-                ( newModel, toggleService newModel )
+                ( newModel, toggleService conference newModel )
 
         Toggled (Err _) ->
             ( { model | value = not model.value }, Cmd.none )

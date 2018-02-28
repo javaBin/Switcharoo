@@ -27,22 +27,27 @@ public class SettingsDao {
         this.gson = gson;
     }
 
-    public List<Setting> list() {
-        String sql = "SELECT * FROM settings ORDER BY id";
-        return query(dataSource, sql, rs -> {
+    public List<Setting> list(final long conferenceId) {
+        String sql = "SELECT * FROM settings WHERE conference_id = ? ORDER BY id";
+        return query(dataSource, c -> {
+            PreparedStatement p = c.prepareStatement(sql);
+            p.setLong(1, conferenceId);
+            return p;
+        }, rs -> {
             List<Setting> settings = List.empty();
             while (rs.next()) {
                 settings = settings.append(fromResultSet(rs, gson));
             }
             return settings;
-        }).getOrElse(List::empty);
+        }, "Could not find slides for conference " + conferenceId).getOrElse(List::empty);
     }
 
-    public Either<String, Setting> get(long id) {
-        String sql = "SELECT * FROM settings WHERE id = ?";
+    public Either<String, Setting> get(final long id, final long conferenceId) {
+        String sql = "SELECT * FROM settings WHERE id = ? AND conference_id = ?";
         return query(dataSource, c -> {
             PreparedStatement statement = c.prepareStatement(sql);
             statement.setLong(1, id);
+            statement.setLong(2, conferenceId);
             return statement;
         }, rs -> {
             if (rs.next()) {
@@ -53,12 +58,13 @@ public class SettingsDao {
         }, "Could not find setting");
     }
 
-    public Either<String, Setting> getByKey(final String key) {
-        String sql = "SELECT * FROM settings WHERE key = ?";
+    public Either<String, Setting> getByKey(final String key, final long conferenceId) {
+        String sql = "SELECT * FROM settings WHERE key = ? AND conference_id = ?";
         return query(dataSource,
             c -> {
                 PreparedStatement p = c.prepareStatement(sql);
                 p.setString(1, key);
+                p.setLong(2, conferenceId);
                 return p;
             },
             rs -> rs.next() ? fromResultSet(rs, gson) : null,
@@ -66,13 +72,14 @@ public class SettingsDao {
         );
     }
 
-    public Either<String, Setting> create(final Setting setting) {
-        String sql = "INSERT INTO settings(key, hint, value) VALUES(?, ?, ?)";
+    public Either<String, Setting> create(final Setting setting, final long conferenceId) {
+        String sql = "INSERT INTO settings(key, hint, value, conference_id) VALUES(?, ?, ?, ?)";
         return updateQuery(dataSource, c -> {
             PreparedStatement s = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             s.setString(1, setting.key);
             s.setString(2, setting.hint);
             s.setObject(3, toJson(setting.value));
+            s.setLong(4, conferenceId);
             return s;
         }, (st, i) -> {
             ResultSet keySet = st.getGeneratedKeys();
@@ -84,9 +91,9 @@ public class SettingsDao {
         }, "Could not create setting");
     }
 
-    public Either<String, Setting> update(final Setting setting) {
+    public Either<String, Setting> update(final Setting setting, final long conferenceId) {
         String sql = "UPDATE settings SET key = ?, hint = ?, value = ?, updated_at = ? WHERE id = ?";
-        return get(setting.id).flatMap(dbSetting -> updateQuery(dataSource, c -> {
+        return get(setting.id, conferenceId).flatMap(dbSetting -> updateQuery(dataSource, c -> {
             PreparedStatement s = c.prepareStatement(sql);
             s.setString(1, setting.key);
             s.setString(2, setting.hint);

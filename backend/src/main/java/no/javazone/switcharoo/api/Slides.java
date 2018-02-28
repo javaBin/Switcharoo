@@ -24,13 +24,13 @@ public class Slides implements HttpService {
 
     @Override
     public void register(Gson gson) {
-        path("/", () -> {
+        path("/conferences/:conference", () -> {
             get("/slides",
-                (req, res) -> gson.toJson(slides.list().map(SlideMapper::fromDb)));
+                (req, res) -> gson.toJson(slides.list(req.attribute("conference")).map(SlideMapper::fromDb)));
 
             get("/slides/:id",
                 (req, res) -> gson.toJson(parseLong(req.params(":id"))
-                    .flatMap(id -> slides.get(id))
+                    .flatMap(id -> slides.get(id, req.attribute("conference")))
                     .map(SlideMapper::fromDb)
                     .getOrElseThrow(NotFoundException::new))
             );
@@ -38,7 +38,7 @@ public class Slides implements HttpService {
             post("/slides",
                 (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Slide.class))
                     .map(SlideMapper::toDb)
-                    .flatMap(slides::create)
+                    .flatMap(s -> slides.create(s, req.attribute("conference")))
                     .map(SlideMapper::fromDb)
                     .getOrElseThrow(BadRequestException::new))
             );
@@ -47,7 +47,7 @@ public class Slides implements HttpService {
                 (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Slide.class))
                     .map(SlideMapper::toDb)
                     .flatMap(s -> parseLong(req.params(":id")).map(id -> s.withId(id)))
-                    .flatMap(slides::update)
+                    .flatMap(s -> slides.update(s, req.attribute("conference")))
                     .map(SlideMapper::fromDb)
                     .getOrElseThrow(BadRequestException::new))
             );

@@ -30,12 +30,12 @@ public class Settings implements HttpService {
 
     @Override
     public void register(Gson gson) {
-        path("/", () -> {
-            get("/settings", (req, res) -> gson.toJson(settings.list().map(SettingMapper::fromDb)));
+        path("/conferences/:conference", () -> {
+            get("/settings", (req, res) -> gson.toJson(settings.list(req.attribute("conference")).map(SettingMapper::fromDb)));
 
             get("/settings/:id",
                 (req, res) -> gson.toJson(parseInt(req.params(":id"))
-                    .flatMap(id -> settings.get(id))
+                    .flatMap(id -> settings.get(id, req.attribute("conference")))
                     .map(SettingMapper::fromDb)
                     .getOrElseThrow(NotFoundException::new))
             );
@@ -43,7 +43,7 @@ public class Settings implements HttpService {
             post("/settings",
                 (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Setting.class))
                     .map(SettingMapper::toDb)
-                    .flatMap(s2 -> settings.create(s2))
+                    .flatMap(s -> settings.create(s, req.attribute("conference")))
                     .map(SettingMapper::fromDb)
                     .getOrElseThrow(BadRequestException::new))
             );
@@ -51,7 +51,7 @@ public class Settings implements HttpService {
             put("/settings", (req, res) -> gson.toJson(List.of(gson.fromJson(req.body(), Setting[].class))
                 .map(SettingMapper::toDb)
                 .map(s -> {
-                    Either<String, no.javazone.switcharoo.dao.model.Setting> updated = settings.update(s);
+                    Either<String, no.javazone.switcharoo.dao.model.Setting> updated = settings.update(s, req.attribute("conference"));
                     if (updated.isLeft()) {
                         return s;
                     } else {

@@ -29,12 +29,12 @@ public class Csses implements HttpService {
 
     @Override
     public void register(Gson gson) {
-        path("/", () -> {
-            get("/css", (req, res) -> gson.toJson(css.list().map(CssMapper::fromDb)));
+        path("/conferences/:conference", () -> {
+            get("/css", (req, res) -> gson.toJson(css.list(req.attribute("conference")).map(CssMapper::fromDb)));
 
             get("/css/:id",
                 (req, res) -> gson.toJson(parseLong(req.params(":id"))
-                    .flatMap(css::get)
+                    .flatMap(id -> css.get(id, req.attribute("conference")))
                     .map(CssMapper::fromDb)
                     .getOrElseThrow(NotFoundException::new))
             );
@@ -42,7 +42,7 @@ public class Csses implements HttpService {
             post("/css",
                 (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Css.class))
                     .map(CssMapper::toDb)
-                    .flatMap(css::create)
+                    .flatMap(c -> css.create(c, req.attribute("conference")))
                     .map(CssMapper::fromDb)
                     .getOrElseThrow(BadRequestException::new))
             );
@@ -51,7 +51,7 @@ public class Csses implements HttpService {
                 (req, res) -> gson.toJson(verify(gson.fromJson(req.body(), Css.class))
                     .map(CssMapper::toDb)
                     .flatMap(c -> parseLong(req.params(":id")).map(id -> c.withId(id)))
-                    .flatMap(css::update)
+                    .flatMap(c -> css.update(c, req.attribute("conference")))
                     .map(CssMapper::fromDb)
                     .getOrElseThrow(BadRequestException::new))
             );
@@ -60,7 +60,7 @@ public class Csses implements HttpService {
                 (req, res) -> gson.toJson(List.of(gson.fromJson(req.body(), Css[].class))
                     .map(CssMapper::toDb)
                     .map(c -> {
-                        Either<String, no.javazone.switcharoo.dao.model.Css> updated = css.update(c);
+                        Either<String, no.javazone.switcharoo.dao.model.Css> updated = css.update(c, req.attribute("conference"));
                         if (updated.isLeft()) {
                             return c;
                         } else {
@@ -92,7 +92,7 @@ public class Csses implements HttpService {
 
         get("/custom.css", (req, res) -> {
             res.type("text/css");
-            return css.list().map(r -> String.format("%s { %s: %s; }", r.selector, r.property, r.value))
+            return css.list(req.attribute("conference")).map(r -> String.format("%s { %s: %s; }", r.selector, r.property, r.value))
                     .foldLeft("", (prev, cur) -> String.format("%s\n%s", prev, cur));
         });
 
