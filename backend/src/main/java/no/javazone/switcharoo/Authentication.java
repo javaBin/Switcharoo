@@ -3,6 +3,7 @@ package no.javazone.switcharoo;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,9 @@ public class Authentication {
             String userId = verify.getSubject();
             req.attribute("user", userId);
             return true;
+        } catch (TokenExpiredException t) {
+            // Don’t do anything here, just catch it to hinder it from being logged
+            return false;
         } catch (RuntimeException e) {
             LOG.warn("Error verifying auth header", e);
             return false;
