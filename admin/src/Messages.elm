@@ -9,6 +9,8 @@ import Http
 import Models.ConferenceModel exposing (CssModel, Setting)
 import Models.Conference exposing (Conference)
 import Models.Slides
+import Models.Overlay exposing (Overlay, Placement)
+import Ports exposing (FileData)
 
 
 type Msg
@@ -40,6 +42,15 @@ type ConferenceMsg
     | SlidePopupSave Models.Slides.SlideModel
     | SlideSave (Result Http.Error Models.Slides.Slide)
     | Ignore
+    | OverlayEnable Bool
+    | OverlayPlacement Placement
+    | OverlayWidth String
+    | OverlayHeight String
+    | OverlayFileSelected
+    | OverlayFileUploaded FileData
+    | OverlayFileUploadFailed String
+    | OverlaySave
+    | OverlaySaved (Result Http.Error Overlay)
 
 
 type CssMsg

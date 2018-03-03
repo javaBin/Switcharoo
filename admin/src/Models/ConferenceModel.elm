@@ -3,6 +3,7 @@ module Models.ConferenceModel exposing (..)
 import Services.Model
 import Models.Slides
 import Models.Conference exposing (Conference)
+import Models.Overlay exposing (Overlay, initOverlay)
 import Nav.Model exposing (ConferencePage(..))
 
 
@@ -15,6 +16,7 @@ type alias ConferenceModel =
     , settings : List Setting
     , styles : List CssModel
     , connectedClients : Maybe String
+    , overlay : Overlay
     }
 
 
@@ -47,3 +49,4 @@ initConferenceModel page conference =
         []
         []
         Nothing
+        initOverlay

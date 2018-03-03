@@ -1,10 +1,11 @@
 module Decoder exposing (..)
 
 import Models.ConferenceModel exposing (..)
-import Json.Decode exposing (Decoder, succeed, string, int, list, at, bool)
+import Json.Decode exposing (Decoder, andThen, succeed, string, int, list, at, bool)
 import Json.Decode.Pipeline exposing (decode, required, requiredAt)
 import Models.Conference exposing (Conference)
 import Service.Model
+import Models.Overlay exposing (Overlay, Placement(..))
 
 
 stylesDecoder : Decoder (List CssModel)
@@ -60,3 +61,32 @@ serviceDecoder =
         |> required "id" int
         |> required "key" string
         |> required "value" bool
+
+
+overlayDecoder : Decoder Overlay
+overlayDecoder =
+    decode Overlay
+        |> required "enabled" bool
+        |> required "image" string
+        |> required "placement" (andThen placement string)
+        |> required "width" string
+        |> required "height" string
+
+
+placement : String -> Decoder Placement
+placement val =
+    case val of
+        "TopLeft" ->
+            succeed TopLeft
+
+        "TopRight" ->
+            succeed TopRight
+
+        "BottomLeft" ->
+            succeed BottomLeft
+
+        "BottomRight" ->
+            succeed BottomRight
+
+        _ ->
+            Json.Decode.fail <| "Invalid role " ++ val

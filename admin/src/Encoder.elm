@@ -1,8 +1,9 @@
 module Encoder exposing (..)
 
-import Json.Encode exposing (Value, list, object, int, string)
+import Json.Encode exposing (Value, list, object, int, string, bool)
 import Models.ConferenceModel exposing (Setting, CssModel)
 import Models.Conference exposing (Conference)
+import Models.Overlay exposing (Overlay)
 
 
 settingsEncoder : List Setting -> Value
@@ -41,3 +42,14 @@ conferenceEncoder : Conference -> Value
 conferenceEncoder model =
     object <|
         [ ( "name", string model.name ) ]
+
+
+overlayEncoder : Overlay -> Value
+overlayEncoder overlay =
+    object <|
+        [ ( "enabled", bool overlay.enabled )
+        , ( "image", string overlay.image )
+        , ( "placement", string <| toString overlay.placement )
+        , ( "width", string overlay.width )
+        , ( "height", string overlay.height )
+        ]

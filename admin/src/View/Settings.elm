@@ -7,6 +7,7 @@ import Models.Model exposing (Model)
 import Models.ConferenceModel exposing (ConferenceModel, Setting)
 import Messages exposing (ConferenceMsg(..))
 import View.Box
+import View.Overlay
 
 
 viewSettings : ConferenceModel -> Html ConferenceMsg
@@ -18,7 +19,7 @@ viewSettings model =
                     List.map viewSetting model.settings
                 , button [ class "button", onClick SaveSettings ] [ text "Save" ]
                 ]
-        , View.Box.box "Overlay" <| div [] []
+        , View.Overlay.view model.overlay
         ]
 
 

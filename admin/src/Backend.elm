@@ -18,7 +18,36 @@ import Decoder exposing (settingsDecoder, stylesDecoder, conferenceDecoder)
 import Encoder exposing (settingsEncoder, stylesEncoder)
 import Decoders.Slide
 import Models.Slides
+import Models.Overlay exposing (Overlay)
 import Task
+
+
+getOverlay : Conference -> Cmd ConferenceMsg
+getOverlay conference =
+    Http.send OverlaySaved <|
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/conferences/" ++ toString conference.id ++ "/overlay"
+            , body = Http.emptyBody
+            , expect = Http.expectJson Decoder.overlayDecoder
+            , timeout = Maybe.Nothing
+            , withCredentials = False
+            }
+
+
+saveOverlay : Conference -> Overlay -> Cmd ConferenceMsg
+saveOverlay conference overlay =
+    Http.send OverlaySaved <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/conferences/" ++ toString conference.id ++ "/overlay"
+            , body = Http.jsonBody <| Encoder.overlayEncoder overlay
+            , expect = Http.expectJson Decoder.overlayDecoder
+            , timeout = Maybe.Nothing
+            , withCredentials = False
+            }
 
 
 getConferences : String -> Cmd Msg

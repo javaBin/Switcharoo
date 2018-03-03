@@ -11,6 +11,7 @@ import Backend
 import Models.Model exposing (Model, Flags, initModel)
 import Models.ConferenceModel exposing (ConferenceModel, CssModel, Setting)
 import Models.Conference exposing (Conference)
+import Models.Overlay exposing (Overlay, Placement)
 import Auth
 import Messages exposing (Msg(..), ConferenceMsg(..), CssMsg(..))
 import Decoder exposing (stylesDecoder)
@@ -23,6 +24,7 @@ import View.Login
 import View.LoggedIn
 import View.Conferences
 import Decoders.Slide
+import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -196,6 +198,66 @@ conferenceUpdate msg model =
         Ignore ->
             ( model, Cmd.none )
 
+        OverlayEnable enabled ->
+            ( { model | overlay = updateEnable model.overlay enabled }, Cmd.none )
+
+        OverlayPlacement placement ->
+            ( { model | overlay = updatePlacement model.overlay placement }, Cmd.none )
+
+        OverlayWidth width ->
+            ( { model | overlay = updateWidth model.overlay width }, Cmd.none )
+
+        OverlayHeight height ->
+            ( { model | overlay = updateHeight model.overlay height }, Cmd.none )
+
+        OverlayFileSelected ->
+            ( model, fileSelected "overlay-file" )
+
+        OverlayFileUploaded file ->
+            ( { model | overlay = updateImage model.overlay file }, Cmd.none )
+
+        OverlayFileUploadFailed error ->
+            Debug.log (toString error) ( model, Cmd.none )
+
+        OverlaySave ->
+            ( model, Backend.getOverlay model.conference )
+
+        OverlaySaved (Ok overlay) ->
+            ( { model | overlay = overlay }, Cmd.none )
+
+        OverlaySaved (Err err) ->
+            Debug.log (toString err) ( model, Cmd.none )
+
+
+updateEnable : Overlay -> Bool -> Overlay
+updateEnable overlay enabled =
+    { overlay | enabled = enabled }
+
+
+updateImage : Overlay -> FileData -> Overlay
+updateImage overlay file =
+    { overlay | image = file.location }
+
+
+updatePlacement : Overlay -> Placement -> Overlay
+updatePlacement overlay placement =
+    { overlay | placement = placement }
+
+
+updateWidth : Overlay -> String -> Overlay
+updateWidth overlay width =
+    { overlay | width = width }
+
+
+updateHeight : Overlay -> String -> Overlay
+updateHeight overlay height =
+    { overlay | height = height }
+
+
+updateOverlay : Overlay -> (Overlay -> Overlay) -> Overlay
+updateOverlay overlay updateFn =
+    updateFn overlay
+
 
 disableSavedSuccessfully : Cmd ConferenceMsg
 disableSavedSuccessfully =
@@ -305,6 +367,8 @@ conferenceSubscriptions conference =
                 (\popupState -> Sub.map (SlideMsg popupState.data) <| Slide.Slide.subscriptions popupState.data)
                 conference.slides.newSlide
         , SocketIO.onMessage WSMessage
+        , fileUploadSucceeded OverlayFileUploaded
+        , fileUploadFailed OverlayFileUploadFailed
         ]
 
 
