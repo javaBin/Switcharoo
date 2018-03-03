@@ -220,7 +220,7 @@ conferenceUpdate msg model =
             Debug.log (toString error) ( model, Cmd.none )
 
         OverlaySave ->
-            ( model, Backend.getOverlay model.conference )
+            ( model, Backend.saveOverlay model.conference model.overlay )
 
         OverlaySaved (Ok overlay) ->
             ( { model | overlay = overlay }, Cmd.none )
@@ -321,7 +321,10 @@ updateConferencePage conference page =
                 ]
 
         SettingsPage ->
-            Backend.getSettings conference
+            Cmd.batch
+                [ Backend.getSettings conference
+                , Backend.getOverlay conference
+                ]
 
         StylesPage ->
             Backend.getStyles conference

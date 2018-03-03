@@ -1,7 +1,7 @@
 module View.Overlay exposing (view)
 
 import Html exposing (Html, div, input, text, label, select, option, img, button)
-import Html.Attributes exposing (class, type_, id, for, value, src)
+import Html.Attributes exposing (class, type_, id, for, value, src, selected, checked)
 import Html.Events exposing (on, targetValue, onCheck, onInput, onClick)
 import Messages exposing (ConferenceMsg(..))
 import Models.Overlay exposing (Overlay, Placement(..))
@@ -14,7 +14,7 @@ view overlay =
     View.Box.box "Overlay" <|
         div [ class "overlay" ]
             [ div [ class "overlay__enable" ]
-                [ input [ type_ "checkbox", id "overlay-enable", onCheck OverlayEnable ] []
+                [ input [ type_ "checkbox", id "overlay-enable", onCheck OverlayEnable, checked overlay.enabled ] []
                 , label [ for "overlay-enable" ] [ text "Enable" ]
                 ]
             , div [ class "overlay__upload" ]
@@ -26,7 +26,7 @@ view overlay =
                     , on "change" (Json.Decode.map OverlayPlacement decodePlacement)
                     ]
                   <|
-                    List.map placement locations
+                    List.map (placement overlay.placement) locations
                 ]
             , div [ class "overlay__width" ]
                 [ label [ for "overlay-width", onInput OverlayWidth ] [ text "Width" ]
@@ -41,9 +41,10 @@ view overlay =
             ]
 
 
-placement : Placement -> Html ConferenceMsg
-placement placement =
-    option [ value <| toString placement ] [ text <| toString placement ]
+placement : Placement -> Placement -> Html ConferenceMsg
+placement selectedPlacement placement =
+    option [ value <| toString placement, selected <| placement == selectedPlacement ]
+        [ text <| toString placement ]
 
 
 locations : List Placement
