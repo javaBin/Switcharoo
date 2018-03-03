@@ -18,4 +18,9 @@ view maybeOverlay =
 
 viewOverlay : Overlay -> Html Msg
 viewOverlay overlay =
-    img [ class "switcharoo__overlay overlay", style overlay.style, src overlay.image ] []
+    img
+        [ class <| "switcharoo__overlay " ++ overlay.placement
+        , style [ ( "width", overlay.width ), ( "height", overlay.height ) ]
+        , src overlay.image
+        ]
+        []

@@ -44,7 +44,7 @@ update msg model =
                 s =
                     model.slides
             in
-                ( { model | slides = { s | nextSlides = Just (Slides.fromList data.slides) } }, Cmd.none )
+                ( { model | slides = { s | nextSlides = Just (Slides.fromList data.slides) }, overlay = data.overlay }, Cmd.none )
 
         RefetchSlides (Err _) ->
             ( model, Cmd.none )

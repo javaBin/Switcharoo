@@ -26,8 +26,11 @@ type alias Data =
 
 
 type alias Overlay =
-    { image : String
-    , style : List ( String, String )
+    { enabled : Bool
+    , image : String
+    , placement : String
+    , width : String
+    , height : String
     }
 
 

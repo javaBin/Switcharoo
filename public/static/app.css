@@ -221,3 +221,39 @@ body {
     margin: 0;
     text-transform: uppercase;
 }
+
+.switcharoo__overlay {
+    animation: fade-in .4s ease-in-out;
+    position: fixed;
+    z-index: 10;
+}
+
+.switcharoo__overlay.top-left {
+    left: 0;
+    top: 0;
+}
+
+.switcharoo__overlay.top-right {
+    top: 0;
+    right: 0;
+}
+
+.switcharoo__overlay.bottom-left {
+    bottom: 0;
+    left: 0;
+}
+
+.switcharoo__overlay.bottom-right {
+    bottom: 0;
+    right: 0;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
