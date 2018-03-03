@@ -7,9 +7,8 @@ public class PublicData {
     public final List<Object> slides;
     public final Overlay overlay;
 
-    public PublicData(List<Object> slides) {
+    public PublicData(List<Object> slides, Overlay overlay) {
         this.slides = slides;
-        this.overlay = null;
-        //overlay = new Overlay();
+        this.overlay = overlay;
     }
 }

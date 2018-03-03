@@ -63,7 +63,7 @@ public class Application {
             new Overlays(overlays),
             new Tweets(twitter),
             new Program(executor),
-            new Data(slides, conferences, twitter),
+            new Data(slides, conferences, overlays, twitter),
             new Status(status),
             new SocketIO(sessions),
             new FileUpload(properties.filesUploadDir()),

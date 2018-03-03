@@ -3,11 +3,14 @@ package no.javazone.switcharoo.api;
 import com.google.gson.Gson;
 import io.vavr.collection.List;
 import no.javazone.switcharoo.Application;
+import no.javazone.switcharoo.api.mapper.OverlayMapper;
 import no.javazone.switcharoo.api.mapper.SlideMapper;
+import no.javazone.switcharoo.api.model.Overlay;
 import no.javazone.switcharoo.api.model.PublicData;
 import no.javazone.switcharoo.api.model.Tweet;
 import no.javazone.switcharoo.api.model.TwitterSlide;
 import no.javazone.switcharoo.dao.ConferenceDao;
+import no.javazone.switcharoo.dao.OverlayDao;
 import no.javazone.switcharoo.dao.SlidesDao;
 import no.javazone.switcharoo.service.TwitterService;
 
@@ -17,11 +20,13 @@ public class Data implements HttpService {
 
     private final SlidesDao slides;
     private final ConferenceDao conferences;
+    private final OverlayDao overlays;
     private final TwitterService twitter;
 
-    public Data(SlidesDao slides, ConferenceDao conferences, TwitterService twitter) {
+    public Data(SlidesDao slides, ConferenceDao conferences, OverlayDao overlays, TwitterService twitter) {
         this.slides = slides;
         this.conferences = conferences;
+        this.overlays = overlays;
         this.twitter = twitter;
     }
 
@@ -36,8 +41,10 @@ public class Data implements HttpService {
                 data = data.append(new TwitterSlide(t));
             }
 
+            Overlay overlay = overlays.get(req.attribute("conference")).map(OverlayMapper::fromDb).getOrElse((Overlay)null);
+
             res.type("application/json");
-            return gson.toJson(new PublicData(data));
+            return gson.toJson(new PublicData(data, overlay));
         });
     }
 }
