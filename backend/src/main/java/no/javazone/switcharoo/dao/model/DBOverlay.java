@@ -1,14 +1,13 @@
-package no.javazone.switcharoo.api.model;
+package no.javazone.switcharoo.dao.model;
 
-public class Overlay {
-
+public class DBOverlay {
     public final Boolean enabled;
     public final String image;
     public final String placement;
     public final String width;
     public final String height;
 
-    public Overlay(Boolean enabled, String image, String placement, String width, String height) {
+    public DBOverlay(Boolean enabled, String image, String placement, String width, String height) {
         this.enabled = enabled;
         this.image = image;
         this.placement = placement;

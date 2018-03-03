@@ -50,6 +50,7 @@ public class Application {
         SettingsDao settings = new SettingsDao(dataSource, gson);
         SlidesDao slides = new SlidesDao(dataSource);
         StatusDao status = new StatusDao(dataSource);
+        OverlayDao overlays = new OverlayDao(dataSource);
         TwitterService twitter = new TwitterService(executor, settings, services, properties);
         SocketIOSessions sessions = new SocketIOSessions();
 
@@ -59,6 +60,7 @@ public class Application {
             new Slides(slides, auth),
             new Csses(css, conferences, auth),
             new Services(services, auth),
+            new Overlays(overlays),
             new Tweets(twitter),
             new Program(executor),
             new Data(slides, conferences, twitter),
