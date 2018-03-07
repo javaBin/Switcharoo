@@ -2,7 +2,6 @@ module Messages exposing (Msg(..), ConferenceMsg(..), CssMsg(..))
 
 import Auth
 import Slides.Messages
-import Slide.Messages
 import Services.Messages
 import Nav.Model exposing (Page, ConferencePage)
 import Http
@@ -26,7 +25,6 @@ type Msg
 
 type ConferenceMsg
     = SlidesMsg Slides.Messages.Msg
-    | SlideMsg Models.Slides.SlideModel Slide.Messages.Msg
     | GotStyles (Result Http.Error (List CssModel))
     | SaveStyles
     | SavedStyles (Result Http.Error (List CssModel))

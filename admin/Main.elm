@@ -97,19 +97,6 @@ conferenceUpdate msg model =
             in
                 ( { model | slides = newSlides }, mappedCmd )
 
-        SlideMsg slide msg ->
-            let
-                ( newSlide, newMsg ) =
-                    Slide.Slide.update model.conference msg slide
-
-                slidesModel =
-                    model.slides
-
-                newEditSlide =
-                    Maybe.map (\popupState -> { popupState | data = newSlide }) slidesModel.newSlide
-            in
-                ( { model | slides = { slidesModel | newSlide = newEditSlide } }, Cmd.map (SlideMsg newSlide) newMsg )
-
         ServicesMsg msg ->
             let
                 ( newServices, servicesCmd ) =
@@ -367,7 +354,7 @@ conferenceSubscriptions conference =
     Sub.batch
         [ Maybe.withDefault Sub.none <|
             Maybe.map
-                (\popupState -> Sub.map (SlideMsg popupState.data) <| Slide.Slide.subscriptions popupState.data)
+                (\popupState -> Sub.map SlidesMsg <| Slide.Slide.subscriptions popupState.data)
                 conference.slides.newSlide
         , SocketIO.onMessage WSMessage
         , fileUploadSucceeded OverlayFileUploaded

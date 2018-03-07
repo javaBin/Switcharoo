@@ -2,7 +2,7 @@ module Backend exposing (..)
 
 import Slides.Messages
 import Slide.Model
-import Slide.Messages
+import Slides.Messages
 import Services.Messages
 import Service.Messages
 import Service.Model
@@ -186,13 +186,13 @@ createSlide conference model msg =
             }
 
 
-deleteSlide : Conference -> Slide.Model.Slide -> Cmd Slide.Messages.Msg
+deleteSlide : Conference -> Slide.Model.Slide -> Cmd Slides.Messages.Msg
 deleteSlide conference model =
-    Http.send Slide.Messages.DeleteResponse <|
+    Http.send Slides.Messages.DeleteResponse <|
         Http.request
             { method = "DELETE"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]
-            , url = "/conferences/" ++ toString conference.id ++ "slides/" ++ toString model.id
+            , url = "/conferences/" ++ toString conference.id ++ "/slides/" ++ toString model.id
             , body = Http.emptyBody
             , expect = Http.expectString
             , timeout = Nothing

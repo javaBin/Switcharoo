@@ -7,7 +7,7 @@ import Json.Decode exposing (succeed)
 import Models.Slides
 import Events exposing (onClickStopPropagation)
 import Messages exposing (ConferenceMsg(..))
-import Slide.Messages
+import Slides.Messages exposing (Msg)
 
 
 edit : Models.Slides.SlideModel -> Html ConferenceMsg
@@ -29,7 +29,7 @@ editMedia model =
                 [ text "Media" ]
             , button
                 [ class "tabs__tab"
-                , onClickStopPropagation <| SlideMsg model Slide.Messages.TextSlide
+                , onClickStopPropagation <| SlidesMsg <| Slides.Messages.TextSlide model
                 ]
                 [ text "Text" ]
             ]
@@ -37,7 +37,7 @@ editMedia model =
             [ input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput <| (\name -> SlideMsg model (Slide.Messages.Name name))
+                , onInput <| (\name -> SlidesMsg <| Slides.Messages.Name model name)
                 , value model.slide.name
                 , placeholder "Name"
                 ]
@@ -45,7 +45,7 @@ editMedia model =
             , input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput <| (\index -> SlideMsg model (Slide.Messages.Index index))
+                , onInput <| (\index -> SlidesMsg <| Slides.Messages.Index model index)
                 , value <| toString model.slide.index
                 , placeholder "Index"
                 ]
@@ -53,7 +53,7 @@ editMedia model =
             , input
                 [ type_ "file"
                 , id "MediaInputId"
-                , on "change" (succeed <| SlideMsg model Slide.Messages.FileSelected)
+                , on "change" (succeed <| SlidesMsg <| Slides.Messages.FileSelected model)
                 ]
                 []
             , selectColorView model
@@ -67,7 +67,7 @@ editText model =
         [ div [ class "tabs" ]
             [ button
                 [ class "tabs__tab"
-                , onClickStopPropagation <| SlideMsg model Slide.Messages.MediaSlide
+                , onClickStopPropagation <| SlidesMsg <| Slides.Messages.MediaSlide model
                 ]
                 [ text "Media" ]
             , button
@@ -80,7 +80,7 @@ editText model =
             [ input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput (\name -> SlideMsg model (Slide.Messages.Name name))
+                , onInput (\name -> SlidesMsg <| Slides.Messages.Name model name)
                 , value model.slide.name
                 , placeholder "Name"
                 ]
@@ -88,7 +88,7 @@ editText model =
             , input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput (\index -> SlideMsg model (Slide.Messages.Index index))
+                , onInput (\index -> SlidesMsg <| Slides.Messages.Index model index)
                 , value <| toString model.slide.index
                 , placeholder "Index"
                 ]
@@ -96,13 +96,13 @@ editText model =
             , input
                 [ type_ "text"
                 , class "input modal__title"
-                , onInput (\title -> SlideMsg model (Slide.Messages.Title title))
+                , onInput (\title -> SlidesMsg <| Slides.Messages.Title model title)
                 , value model.slide.title
                 , placeholder "Title"
                 ]
                 []
             , textarea
-                [ onInput (\body -> SlideMsg model (Slide.Messages.Body body))
+                [ onInput (\body -> SlidesMsg <| Slides.Messages.Body model body)
                 , class "input modal__body"
                 , value model.slide.body
                 , placeholder "Body"
@@ -134,7 +134,7 @@ singleColorView model color =
             [ button
                 [ classList [ ( "color-button", True ), ( "color-button--selected", selectedColor ) ]
                 , style [ ( "background", currentColor ) ]
-                , onClick <| SlideMsg model <| Slide.Messages.Color color
+                , onClick <| SlidesMsg <| Slides.Messages.Color model color
                 ]
                 []
             ]

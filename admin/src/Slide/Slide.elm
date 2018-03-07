@@ -1,7 +1,7 @@
 module Slide.Slide exposing (..)
 
 import Models.Slides exposing (..)
-import Slide.Messages exposing (..)
+import Slides.Messages exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
 import Html.Events exposing (onClick, onInput, on)
@@ -18,91 +18,6 @@ init =
     ( Models.Slides.initSlideModel, Cmd.none )
 
 
-update : Conference -> Msg -> Models.Slides.SlideModel -> ( Models.Slides.SlideModel, Cmd Msg )
-update conference msg model =
-    case msg of
-        ToggleVisibility ->
-            let
-                slideModel =
-                    model.slide
-
-                newSlide =
-                    { slideModel | visible = not slideModel.visible }
-            in
-                ( { model | slide = newSlide }, editSlide conference newSlide ToggleResponse )
-
-        ToggleResponse _ ->
-            ( model, Cmd.none )
-
-        Edit ->
-            ( model, editSlide conference model.slide EditResponse )
-
-        EditResponse _ ->
-            ( model, Cmd.none )
-
-        CreateResponse _ ->
-            ( model, Cmd.none )
-
-        ToggleDelete ->
-            ( { model | deleteMode = not model.deleteMode }, Cmd.none )
-
-        Delete ->
-            ( model, deleteSlide conference model.slide )
-
-        DeleteResponse _ ->
-            ( model, Cmd.none )
-
-        Name newName ->
-            ( updateSlide model <| \s -> { s | name = newName }, Cmd.none )
-
-        Title newTitle ->
-            ( updateSlide model <| \s -> { s | title = newTitle }, Cmd.none )
-
-        Body newBody ->
-            ( updateSlide model <| \s -> { s | body = newBody }, Cmd.none )
-
-        Index newIndex ->
-            case String.toInt newIndex of
-                Ok n ->
-                    ( updateSlide model <| \s -> { s | index = n }, Cmd.none )
-
-                Err _ ->
-                    ( model, Cmd.none )
-
-        TextSlide ->
-            ( updateSlide model <| \s -> { s | type_ = "text" }, Cmd.none )
-
-        MediaSlide ->
-            ( updateSlide model <| \s -> { s | type_ = "media" }, Cmd.none )
-
-        Color color ->
-            ( updateSlide model <| \s -> { s | color = color }, Cmd.none )
-
-        FileSelected ->
-            ( model, fileSelected "MediaInputId" )
-
-        FileUploaded f ->
-            let
-                _ =
-                    Debug.log (toString f) "yes"
-            in
-                ( updateSlide model <| \s -> { s | title = f.location, body = f.location, type_ = f.filetype }
-                , Cmd.none
-                )
-
-        FileUploadFailed error ->
-            let
-                _ =
-                    Debug.log (toString error) "no"
-            in
-                ( Models.Slides.initSlideModel, Cmd.none )
-
-
-updateSlide : Models.Slides.SlideModel -> (Slide -> Slide) -> Models.Slides.SlideModel
-updateSlide model fn =
-    { model | slide = (fn model.slide) }
-
-
 createOrEditSlide : Conference -> Slide -> (Result.Result Http.Error Slide -> msg) -> Cmd msg
 createOrEditSlide conference model msg =
     if model.id == -1 then
@@ -113,7 +28,7 @@ createOrEditSlide conference model msg =
 
 subscriptions : Models.Slides.SlideModel -> Sub Msg
 subscriptions model =
-    Sub.batch [ fileUploadSucceeded FileUploaded, fileUploadFailed FileUploadFailed ]
+    Sub.batch [ fileUploadSucceeded <| FileUploaded model, fileUploadFailed <| FileUploadFailed model ]
 
 
 icon : String -> Html msg
@@ -134,19 +49,19 @@ view model =
             viewVideo model
 
 
-deleteButton : Slide -> Html Msg
+deleteButton : Models.Slides.SlideModel -> Html Msg
 deleteButton model =
-    button [ class "slide__delete", onClickStopPropagation ToggleDelete ] [ icon "trash" ]
+    button [ class "slide__delete", onClickStopPropagation <| ToggleDelete model ] [ icon "trash" ]
 
 
-editButton : Slide -> Html Msg
+editButton : Models.Slides.SlideModel -> Html Msg
 editButton model =
-    button [ class "slide__edit", onClickStopPropagation Edit ] [ icon "pencil" ]
+    button [ class "slide__edit", onClickStopPropagation <| Edit model ] [ icon "pencil" ]
 
 
-slideIndex : Slide -> Html Msg
+slideIndex : Models.Slides.SlideModel -> Html Msg
 slideIndex model =
-    div [ class "slide__index" ] [ text <| toString model.index ]
+    div [ class "slide__index" ] [ text <| toString model.slide.index ]
 
 
 viewText : Models.Slides.SlideModel -> Html Msg
@@ -157,7 +72,7 @@ viewText model =
     in
         li
             [ class "slide"
-            , onClick ToggleVisibility
+            , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ) ]
             ]
             [ div
@@ -169,9 +84,9 @@ viewText model =
                 [ div [ class "slide__title" ] [ text model.slide.title ]
                 , div [ class "slide__body" ] [ text model.slide.body ]
                 ]
-            , deleteButton model.slide
-            , editButton model.slide
-            , slideIndex model.slide
+            , deleteButton model
+            , editButton model
+            , slideIndex model
             , confirmDeleteView model
             ]
 
@@ -184,7 +99,7 @@ viewImage model =
     in
         li
             [ class "slide slide--image"
-            , onClick ToggleVisibility
+            , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ) ]
             ]
             [ div
@@ -196,9 +111,9 @@ viewImage model =
                     [ ( "background-image", "url(" ++ model.slide.body ++ ")" ) ]
                 ]
                 []
-            , deleteButton model.slide
-            , editButton model.slide
-            , slideIndex model.slide
+            , deleteButton model
+            , editButton model
+            , slideIndex model
             , confirmDeleteView model
             ]
 
@@ -211,7 +126,7 @@ viewVideo model =
     in
         li
             [ class "slide slide--video"
-            , onClick ToggleVisibility
+            , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ) ]
             ]
             [ div
@@ -223,9 +138,9 @@ viewVideo model =
                 [ div [ class "slide__title" ] [ text model.slide.name ]
                 , div [ class "slide__body" ] [ text "(video)" ]
                 ]
-            , deleteButton model.slide
-            , editButton model.slide
-            , slideIndex model.slide
+            , deleteButton model
+            , editButton model
+            , slideIndex model
             , confirmDeleteView model
             ]
 
@@ -249,7 +164,7 @@ editMediaView model =
                 [ text "Media" ]
             , button
                 [ class "tabs__tab"
-                , onClickStopPropagation TextSlide
+                , onClickStopPropagation <| TextSlide model
                 ]
                 [ text "Text" ]
             ]
@@ -257,7 +172,7 @@ editMediaView model =
             [ input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput Name
+                , onInput <| Name model
                 , value model.slide.name
                 , placeholder "Name"
                 ]
@@ -265,7 +180,7 @@ editMediaView model =
             , input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput Index
+                , onInput <| Index model
                 , value <| toString model.slide.index
                 , placeholder "Index"
                 ]
@@ -273,7 +188,7 @@ editMediaView model =
             , input
                 [ type_ "file"
                 , id "MediaInputId"
-                , on "change" (succeed FileSelected)
+                , on "change" (succeed <| FileSelected model)
                 ]
                 []
             , selectColorView model
@@ -287,7 +202,7 @@ editTextView model =
         [ div [ class "tabs" ]
             [ button
                 [ class "tabs__tab"
-                , onClickStopPropagation MediaSlide
+                , onClickStopPropagation <| MediaSlide model
                 ]
                 [ text "Media" ]
             , button
@@ -300,7 +215,7 @@ editTextView model =
             [ input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput Name
+                , onInput <| Name model
                 , value model.slide.name
                 , placeholder "Name"
                 ]
@@ -308,7 +223,7 @@ editTextView model =
             , input
                 [ type_ "text"
                 , class "input modal__index"
-                , onInput Index
+                , onInput <| Index model
                 , value <| toString model.slide.index
                 , placeholder "Index"
                 ]
@@ -316,13 +231,13 @@ editTextView model =
             , input
                 [ type_ "text"
                 , class "input modal__title"
-                , onInput Title
+                , onInput <| Title model
                 , value model.slide.title
                 , placeholder "Title"
                 ]
                 []
             , textarea
-                [ onInput Body
+                [ onInput <| Body model
                 , class "input modal__body"
                 , value model.slide.body
                 , placeholder "Body"
@@ -354,7 +269,7 @@ singleColorView model color =
             [ button
                 [ classList [ ( "color-button", True ), ( "color-button--selected", selectedColor ) ]
                 , style [ ( "background", currentColor ) ]
-                , onClick <| Color color
+                , onClick <| Color model color
                 ]
                 []
             ]
@@ -363,6 +278,6 @@ singleColorView model color =
 confirmDeleteView : Models.Slides.SlideModel -> Html Msg
 confirmDeleteView model =
     div [ classList [ ( "slide__confirm-delete", True ), ( "slide__confirm-delete--visible", model.deleteMode ) ] ]
-        [ button [ class "button button--cancel", onClickStopPropagation ToggleDelete ] [ text "Cancel" ]
-        , button [ class "button slide__delete-button", onClickStopPropagation Delete ] [ text "Delete" ]
+        [ button [ class "button button--cancel", onClickStopPropagation <| ToggleDelete model ] [ text "Cancel" ]
+        , button [ class "button slide__delete-button", onClickStopPropagation <| Delete model ] [ text "Delete" ]
         ]
