@@ -13,7 +13,7 @@ import Backend exposing (editSlide, createSlide, deleteSlide)
 import Models.Conference exposing (Conference)
 
 
-init : ( Models.Slides.SlideModel, Cmd Msg )
+init : ( SlideModel, Cmd Msg )
 init =
     ( Models.Slides.initSlideModel, Cmd.none )
 
@@ -26,7 +26,7 @@ createOrEditSlide conference model msg =
         editSlide conference model msg
 
 
-subscriptions : Models.Slides.SlideModel -> Sub Msg
+subscriptions : SlideModel -> Sub Msg
 subscriptions model =
     Sub.batch [ fileUploadSucceeded <| FileUploaded model, fileUploadFailed <| FileUploadFailed model ]
 
@@ -36,7 +36,7 @@ icon c =
     i [ class <| "icon-" ++ c ] []
 
 
-view : Models.Slides.SlideModel -> Html Msg
+view : SlideModel -> Html Msg
 view model =
     case model.slide.type_ of
         "text" ->
@@ -49,22 +49,22 @@ view model =
             viewVideo model
 
 
-deleteButton : Models.Slides.SlideModel -> Html Msg
+deleteButton : SlideModel -> Html Msg
 deleteButton model =
     button [ class "slide__delete", onClickStopPropagation <| ToggleDelete model ] [ icon "trash" ]
 
 
-editButton : Models.Slides.SlideModel -> Html Msg
+editButton : SlideModel -> Html Msg
 editButton model =
     button [ class "slide__edit", onClickStopPropagation <| Edit model ] [ icon "pencil" ]
 
 
-slideIndex : Models.Slides.SlideModel -> Html Msg
+slideIndex : SlideModel -> Html Msg
 slideIndex model =
     div [ class "slide__index" ] [ text <| toString model.slide.index ]
 
 
-viewText : Models.Slides.SlideModel -> Html Msg
+viewText : SlideModel -> Html Msg
 viewText model =
     let
         borderStyle =
@@ -74,6 +74,8 @@ viewText model =
             [ class "slide"
             , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ) ]
+            , attribute "draggable" "true"
+            , onDragStart <| Move model
             ]
             [ div
                 [ classList
@@ -91,7 +93,7 @@ viewText model =
             ]
 
 
-viewImage : Models.Slides.SlideModel -> Html Msg
+viewImage : SlideModel -> Html Msg
 viewImage model =
     let
         borderStyle =
@@ -118,7 +120,7 @@ viewImage model =
             ]
 
 
-viewVideo : Models.Slides.SlideModel -> Html Msg
+viewVideo : SlideModel -> Html Msg
 viewVideo model =
     let
         borderStyle =
@@ -145,7 +147,7 @@ viewVideo model =
             ]
 
 
-editView : Models.Slides.SlideModel -> Html Msg
+editView : SlideModel -> Html Msg
 editView model =
     if model.slide.type_ == "text" then
         editTextView model
@@ -153,7 +155,7 @@ editView model =
         editMediaView model
 
 
-editMediaView : Models.Slides.SlideModel -> Html Msg
+editMediaView : SlideModel -> Html Msg
 editMediaView model =
     div []
         [ div [ class "tabs" ]
@@ -196,7 +198,7 @@ editMediaView model =
         ]
 
 
-editTextView : Models.Slides.SlideModel -> Html Msg
+editTextView : SlideModel -> Html Msg
 editTextView model =
     div []
         [ div [ class "tabs" ]
@@ -248,7 +250,7 @@ editTextView model =
         ]
 
 
-selectColorView : Models.Slides.SlideModel -> Html Msg
+selectColorView : SlideModel -> Html Msg
 selectColorView model =
     div []
         [ ul [ class "modal__color" ] <|
@@ -256,7 +258,7 @@ selectColorView model =
         ]
 
 
-singleColorView : Models.Slides.SlideModel -> Maybe String -> Html Msg
+singleColorView : SlideModel -> Maybe String -> Html Msg
 singleColorView model color =
     let
         currentColor =
@@ -275,9 +277,14 @@ singleColorView model color =
             ]
 
 
-confirmDeleteView : Models.Slides.SlideModel -> Html Msg
+confirmDeleteView : SlideModel -> Html Msg
 confirmDeleteView model =
     div [ classList [ ( "slide__confirm-delete", True ), ( "slide__confirm-delete--visible", model.deleteMode ) ] ]
         [ button [ class "button button--cancel", onClickStopPropagation <| ToggleDelete model ] [ text "Cancel" ]
         , button [ class "button slide__delete-button", onClickStopPropagation <| Delete model ] [ text "Delete" ]
         ]
+
+
+onDragStart : msg -> Attribute msg
+onDragStart msg =
+    on "dragstart" <| Json.Decode.succeed msg
