@@ -16,5 +16,7 @@ BEGIN
   INSERT INTO csses(selector, property, value, type, title, conference_id) VALUES('.tweet__name', 'color', '#000000', 'string', 'Tweet author name color', conference);
 
   INSERT INTO slides(title, body, visible, type, index, name, conference_id) VALUES('Welcome', 'Your first slide', TRUE, 'text', 10, 'welcome', conference);
+
+  INSERT INTO overlays(enabled, image, placement, width, height, conference_id) VALUES(false, '', 'TopLeft', '100%', '100%', conference);
 END;
 $$ LANGUAGE plpgsql;
