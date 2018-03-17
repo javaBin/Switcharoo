@@ -3,17 +3,17 @@ package no.javazone.switcharoo.dao;
 import io.vavr.collection.List;
 import io.vavr.control.Either;
 import no.javazone.switcharoo.dao.model.DBConference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 import static no.javazone.switcharoo.dao.utils.DBUtils.query;
 import static no.javazone.switcharoo.dao.utils.DBUtils.updateQuery;
 
 public class ConferenceDao {
+    static Logger LOG = LoggerFactory.getLogger(ConferenceDao.class);
     private final DataSource dataSource;
 
     public ConferenceDao(DataSource dataSource) {
@@ -58,7 +58,19 @@ public class ConferenceDao {
             } else {
                 return null;
             }
-        }, "Could not create conference");
+        }, "Could not create conference").flatMap(newConference -> {
+            String newConferenceSQL = "{call new_conference(?)}";
+            try (Connection connection = dataSource.getConnection()) {
+                try (CallableStatement statement = connection.prepareCall(newConferenceSQL)) {
+                    statement.setInt(1, newConference.id.intValue());
+                    statement.execute();
+                    return Either.right(newConference);
+                }
+            } catch (SQLException e) {
+                LOG.error("Could not create conference data", e);
+                return Either.left("Could not create conference data");
+            }
+        });
     }
 
     public Either<String, DBConference> update(final DBConference conference) {

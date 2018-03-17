@@ -1,7 +1,5 @@
 package no.javazone.switcharoo.dao.utils;
 
-import com.zaxxer.hikari.pool.HikariProxyStatement;
-import com.zaxxer.hikari.pool.ProxyStatement;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import org.slf4j.Logger;
