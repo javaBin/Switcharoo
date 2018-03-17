@@ -139,6 +139,20 @@ getSlides conference =
             }
 
 
+updateIndexes : Conference -> List Int -> Cmd Slides.Messages.Msg
+updateIndexes conference ids =
+    Http.send Slides.Messages.IndexesUpdated <|
+        Http.request
+            { method = "PUT"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/conferences/" ++ toString conference.id ++ "/slides-indexes"
+            , body = Http.jsonBody <| Encode.list <| List.map Encode.int ids
+            , expect = Http.expectString
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
 encodeSlide : Slide.Model.Slide -> Encode.Value
 encodeSlide model =
     Encode.object <|

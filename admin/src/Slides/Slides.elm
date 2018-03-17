@@ -102,6 +102,63 @@ update conference msg model =
         FileUploadFailed slide error ->
             Debug.log (toString error) ( model, Cmd.none )
 
+        Move slide ->
+            ( { model | moving = Just slide }, Cmd.none )
+
+        CancelMove ->
+            ( { model | moving = Nothing }, Cmd.none )
+
+        Drop location ->
+            let
+                id =
+                    Maybe.withDefault -1 <| Maybe.map (\s -> s.slide.id) model.moving
+
+                oldLocation =
+                    Maybe.withDefault location <| flatMap (\elem -> elemIndex elem model.slides) model.moving
+
+                newLocation =
+                    if location > oldLocation then
+                        location - 1
+                    else
+                        location
+
+                slidesWithoutMoving =
+                    List.filter (\s -> s.slide.id /= id) model.slides
+
+                newSlides =
+                    case model.moving of
+                        Nothing ->
+                            model.slides
+
+                        Just moving ->
+                            List.take newLocation slidesWithoutMoving ++ [ moving ] ++ List.drop newLocation slidesWithoutMoving
+            in
+                ( { model | slides = newSlides, moving = Nothing }, Backend.updateIndexes conference <| List.map (.id << .slide) newSlides )
+
+        IndexesUpdated (Ok _) ->
+            ( model, Cmd.none )
+
+        IndexesUpdated (Err err) ->
+            Debug.log (toString err) ( model, Backend.getSlides conference )
+
+
+elemIndex : a -> List a -> Maybe Int
+elemIndex elem list =
+    elemIndexHelp 0 elem list
+
+
+elemIndexHelp : Int -> a -> List a -> Maybe Int
+elemIndexHelp index elem list =
+    case list of
+        [] ->
+            Nothing
+
+        x :: xs ->
+            if x == elem then
+                Just index
+            else
+                elemIndexHelp (index + 1) elem xs
+
 
 updateSlide : Models.Slides.SlideModel -> (Slide -> Slide) -> Models.Slides.SlideModel
 updateSlide model fn =
@@ -127,7 +184,26 @@ setEditSlide slides slide =
 
 view : Slides -> List (Html Msg)
 view model =
-    viewNewSlide :: List.map Slide.Slide.view model.slides
+    let
+        slides =
+            List.map
+                (\slide ->
+                    Slide.Slide.view slide <|
+                        Maybe.withDefault False <|
+                            Maybe.map (\moving -> moving == slide) model.moving
+                )
+                model.slides
+
+        moving =
+            Maybe.withDefault False <| Maybe.map (\_ -> True) model.moving
+
+        dropZones =
+            List.map (Slide.Slide.viewDrop moving) <| List.range 1 <| List.length slides
+
+        elements =
+            List.foldr (++) [] <| List.map2 (\a b -> [ a, b ]) slides dropZones
+    in
+        viewNewSlide :: Slide.Slide.viewDrop moving 0 :: elements
 
 
 viewNewSlide : Html Msg
@@ -135,3 +211,18 @@ viewNewSlide =
     li [ class "slide slide--new-slide", onClick NewSlide ]
         [ div [ class "slide__content slide__content--new-slide" ] []
         ]
+
+
+flatMap : (a -> Maybe b) -> Maybe a -> Maybe b
+flatMap fn maybe =
+    Maybe.map fn maybe |> joinMap
+
+
+joinMap : Maybe (Maybe a) -> Maybe a
+joinMap maybe =
+    case maybe of
+        Just a ->
+            a
+
+        Nothing ->
+            Nothing

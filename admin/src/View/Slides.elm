@@ -10,6 +10,7 @@ import Popup
 import View.Slide
 import Services.Services
 import View.Box
+import Json.Decode
 
 
 viewSlides : ConferenceModel -> Html ConferenceMsg

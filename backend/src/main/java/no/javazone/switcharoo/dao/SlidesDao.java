@@ -122,4 +122,22 @@ public class SlidesDao {
             rs.getString("color")
         );
     }
+
+    public Either<String, Boolean> updateIndexes(final List<Long> ids, final long conferenceId) {
+        String indexes = String.join(",", ids.zipWithIndex().map(t -> t.toString()).toJavaList());
+        String sql = String.format("UPDATE slides AS s SET index = c.index FROM (values %s) AS c(id, index) WHERE c.id = s.id AND conference_id = ?", indexes);
+        return updateQuery(dataSource, c -> {
+             PreparedStatement p = c.prepareStatement(sql);
+             p.setLong(1, conferenceId);
+             return p;
+            },
+            (st, i) -> {
+                if (i == ids.length()) {
+                    return true;
+                } else {
+                    LOG.warn("Update failed. Tried updating {} rows, only updated {}", ids.length(), i);
+                    return false;
+                }
+            }, "Could not update indexes");
+    }
 }

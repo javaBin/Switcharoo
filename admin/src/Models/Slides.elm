@@ -6,6 +6,7 @@ import Popup
 type alias Slides =
     { slides : List SlideModel
     , newSlide : Maybe (Popup.State SlideModel)
+    , moving : Maybe SlideModel
     }
 
 
@@ -29,7 +30,7 @@ type alias Slide =
 
 initSlides : Slides
 initSlides =
-    Slides [] Nothing
+    Slides [] Nothing Nothing
 
 
 initSlide : Slide

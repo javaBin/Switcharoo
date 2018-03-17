@@ -4,7 +4,7 @@ import Models.Slides exposing (..)
 import Slides.Messages exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class, classList, style, type_, id, value, draggable, placeholder, disabled, attribute, src)
-import Html.Events exposing (onClick, onInput, on)
+import Html.Events exposing (onClick, onInput, on, onWithOptions)
 import Json.Decode exposing (succeed)
 import Http
 import Events exposing (onClickStopPropagation)
@@ -36,17 +36,29 @@ icon c =
     i [ class <| "icon-" ++ c ] []
 
 
-view : SlideModel -> Html Msg
-view model =
-    case model.slide.type_ of
-        "text" ->
-            viewText model
+view : SlideModel -> Bool -> Html Msg
+view model moving =
+    let
+        opacity =
+            if moving then
+                ( "opacity", "0.1" )
+            else
+                ( "opacity", "1" )
+    in
+        case model.slide.type_ of
+            "text" ->
+                viewText model opacity
 
-        "image" ->
-            viewImage model
+            "image" ->
+                viewImage model opacity
 
-        _ ->
-            viewVideo model
+            _ ->
+                viewVideo model opacity
+
+
+viewDrop : Bool -> Int -> Html Msg
+viewDrop moving location =
+    li [ classList [ ( "slide--drop", True ), ( "slide--drop--moving", moving ) ], attribute "ondragover" "return false", onDrop <| Drop location ] []
 
 
 deleteButton : SlideModel -> Html Msg
@@ -64,8 +76,8 @@ slideIndex model =
     div [ class "slide__index" ] [ text <| toString model.slide.index ]
 
 
-viewText : SlideModel -> Html Msg
-viewText model =
+viewText : SlideModel -> ( String, String ) -> Html Msg
+viewText model opacity =
     let
         borderStyle =
             Maybe.withDefault "transparent" model.slide.color
@@ -73,9 +85,10 @@ viewText model =
         li
             [ class "slide"
             , onClick <| ToggleVisibility model
-            , style [ ( "borderColor", borderStyle ) ]
+            , style [ ( "borderColor", borderStyle ), opacity ]
             , attribute "draggable" "true"
             , onDragStart <| Move model
+            , onDragEnd CancelMove
             ]
             [ div
                 [ classList
@@ -93,8 +106,8 @@ viewText model =
             ]
 
 
-viewImage : SlideModel -> Html Msg
-viewImage model =
+viewImage : SlideModel -> ( String, String ) -> Html Msg
+viewImage model opacity =
     let
         borderStyle =
             Maybe.withDefault "transparent" model.slide.color
@@ -102,7 +115,10 @@ viewImage model =
         li
             [ class "slide slide--image"
             , onClick <| ToggleVisibility model
-            , style [ ( "borderColor", borderStyle ) ]
+            , style [ ( "borderColor", borderStyle ), opacity ]
+            , attribute "draggable" "true"
+            , onDragStart <| Move model
+            , onDragEnd CancelMove
             ]
             [ div
                 [ classList
@@ -120,8 +136,8 @@ viewImage model =
             ]
 
 
-viewVideo : SlideModel -> Html Msg
-viewVideo model =
+viewVideo : SlideModel -> ( String, String ) -> Html Msg
+viewVideo model opacity =
     let
         borderStyle =
             Maybe.withDefault "transparent" model.slide.color
@@ -129,7 +145,10 @@ viewVideo model =
         li
             [ class "slide slide--video"
             , onClick <| ToggleVisibility model
-            , style [ ( "borderColor", borderStyle ) ]
+            , style [ ( "borderColor", borderStyle ), opacity ]
+            , attribute "draggable" "true"
+            , onDragStart <| Move model
+            , onDragEnd CancelMove
             ]
             [ div
                 [ classList
@@ -288,3 +307,23 @@ confirmDeleteView model =
 onDragStart : msg -> Attribute msg
 onDragStart msg =
     on "dragstart" <| Json.Decode.succeed msg
+
+
+onDragEnd : msg -> Attribute msg
+onDragEnd msg =
+    on "dragend" <| Json.Decode.succeed msg
+
+
+onDrop : msg -> Attribute msg
+onDrop msg =
+    onPreventHelper "drop" msg
+
+
+onPreventHelper : String -> msg -> Attribute msg
+onPreventHelper event msg =
+    onWithOptions
+        event
+        { preventDefault = True
+        , stopPropagation = False
+        }
+        (Json.Decode.succeed msg)

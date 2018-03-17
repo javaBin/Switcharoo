@@ -28,3 +28,7 @@ type Msg
     | FileSelected SlideModel
     | FileUploaded SlideModel FileData
     | FileUploadFailed SlideModel String
+    | Move SlideModel
+    | CancelMove
+    | Drop Int
+    | IndexesUpdated (Result Http.Error String)

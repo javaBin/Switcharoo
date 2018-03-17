@@ -1,9 +1,13 @@
 package no.javazone.switcharoo.api;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import io.vavr.collection.List;
+import io.vavr.control.Try;
 import no.javazone.switcharoo.Authentication;
 import no.javazone.switcharoo.api.mapper.SlideMapper;
 import no.javazone.switcharoo.api.model.Slide;
+import no.javazone.switcharoo.api.verifier.SlideVerifier;
 import no.javazone.switcharoo.dao.SlidesDao;
 import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
@@ -64,6 +68,22 @@ public class Slides implements HttpService {
                         return "";
                     })
                     .getOrElseThrow(BadRequestException::new))
+            );
+
+            put("/slides-indexes",
+                (req, res) -> Try.of(() -> (List<Long>)gson.fromJson(req.body(), new TypeToken<List<Long>>(){}.getType()))
+                    .toEither("Malformed JSON")
+                    .flatMap(SlideVerifier::verify)
+                    .flatMap(ids -> slides.updateIndexes(ids, req.attribute("conference")))
+                    .map(updated -> {
+                        if (updated) {
+                            res.status(200);
+                        } else {
+                            res.status(400);
+                        }
+                        return "";
+                    })
+                .getOrElseThrow(BadRequestException::new)
             );
 
             before("/slides", (req, res) -> { if (!auth.verify(req)) halt(401);});
