@@ -69,7 +69,7 @@ icon c =
 
 view : Model -> Html Msg
 view model =
-    li [ class "slide" ]
+    li [ class "slide slide--special" ]
         [ button
             [ classList [ ( "slide__content", True ), ( "slide__content--visible", model.value ) ]
             , onClick Toggle
