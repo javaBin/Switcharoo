@@ -20,6 +20,7 @@ public class ContentTypes {
         contentTypes.put("webm", "video/webm");
 
         contentTypes.put("jpg", "image/jpeg");
+        contentTypes.put("jpeg", "image/jpeg");
         contentTypes.put("png", "image/png");
         contentTypes.put("svg", "image/svg+xml");
 
