@@ -14,7 +14,7 @@ import View.Box
 view : Model -> Html Msg
 view model =
     div [ class "conferences" ]
-        [ View.Box.box "New conference" <| viewCreateConference model
+        [ View.Box.box "New conference" [] <| viewCreateConference model
         , viewConferences model
         ]
 

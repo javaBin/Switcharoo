@@ -13,7 +13,7 @@ import View.Overlay
 viewSettings : ConferenceModel -> Html ConferenceMsg
 viewSettings model =
     View.Box.container <|
-        [ View.Box.box "Twitter" <|
+        [ View.Box.box "Twitter" [] <|
             div [ class "settings" ]
                 [ ul [ class "settings__list" ] <|
                     List.map viewSetting model.settings

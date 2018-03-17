@@ -203,14 +203,7 @@ view model =
         elements =
             List.foldr (++) [] <| List.map2 (\a b -> [ a, b ]) slides dropZones
     in
-        viewNewSlide :: Slide.Slide.viewDrop moving 0 :: elements
-
-
-viewNewSlide : Html Msg
-viewNewSlide =
-    li [ class "slide slide--new-slide", onClick NewSlide ]
-        [ div [ class "slide__content slide__content--new-slide" ] []
-        ]
+        Slide.Slide.viewDrop moving 0 :: elements
 
 
 flatMap : (a -> Maybe b) -> Maybe a -> Maybe b

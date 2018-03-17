@@ -11,7 +11,7 @@ import View.Box
 
 viewStyles : ConferenceModel -> Html ConferenceMsg
 viewStyles model =
-    View.Box.box "Styles" <|
+    View.Box.box "Styles" [] <|
         div [ class "styles" ]
             [ ul [ class "styles-list" ] <|
                 List.map viewStyle model.styles

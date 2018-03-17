@@ -11,7 +11,7 @@ import View.Box
 
 view : Overlay -> Html ConferenceMsg
 view overlay =
-    View.Box.box "Overlay" <|
+    View.Box.box "Overlay" [] <|
         div [ class "overlay" ]
             [ div [ class "overlay__enable" ]
                 [ input [ type_ "checkbox", id "overlay-enable", onCheck OverlayEnable, checked overlay.enabled ] []

@@ -10,9 +10,13 @@ container boxes =
         boxes
 
 
-box : String -> Html msg -> Html msg
-box title body =
+box : String -> List (Html msg) -> Html msg -> Html msg
+box title actions body =
     div [ class "box" ]
-        [ h1 [ class "box__title" ] [ text title ]
+        [ div [ class "box__header" ]
+            ([ h1 [ class "box__title" ] [ text title ]
+             ]
+                ++ actions
+            )
         , div [ class "box__content" ] [ body ]
         ]
