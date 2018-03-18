@@ -1,7 +1,7 @@
 module View.Overlay exposing (view)
 
 import Html exposing (Html, div, input, text, label, select, option, img, button)
-import Html.Attributes exposing (class, type_, id, for, value, src, selected, checked)
+import Html.Attributes exposing (class, type_, id, for, value, src, selected, checked, style)
 import Html.Events exposing (on, targetValue, onCheck, onInput, onClick)
 import Messages exposing (ConferenceMsg(..))
 import Models.Overlay exposing (Overlay, Placement(..))
@@ -14,7 +14,7 @@ view overlay =
     View.Box.box "Overlay" [] <|
         div [ class "overlay" ]
             [ div [ class "overlay__enable" ]
-                [ input [ type_ "checkbox", id "overlay-enable", onCheck OverlayEnable, checked overlay.enabled ] []
+                [ input [ type_ "checkbox", id "overlay-enable", onCheck OverlayEnable, checked overlay.enabled, class "checkbox" ] []
                 , label [ for "overlay-enable" ] [ text "Enable" ]
                 ]
             , div [ class "overlay__upload" ]
@@ -36,15 +36,30 @@ view overlay =
                 [ label [ for "overlay-height" ] [ text "Height" ]
                 , input [ type_ "text", id "overlay-height", value overlay.height, class "input--box", onInput OverlayHeight ] []
                 ]
-            , img [ class "overlay__image", src overlay.image ] []
-            , button [ class "button", onClick OverlaySave ] [ text "Save" ]
+            , preview overlay
+            , button [ class "overlay__save button", onClick OverlaySave ] [ text "Save" ]
             ]
 
 
 placement : Placement -> Placement -> Html ConferenceMsg
 placement selectedPlacement placement =
     option [ value <| toString placement, selected <| placement == selectedPlacement ]
-        [ text <| toString placement ]
+        [ text <| placementToString placement ]
+
+
+preview : Overlay -> Html ConferenceMsg
+preview overlay =
+    div [ class "overlay__preview preview" ]
+        [ div [ class "preview__content" ]
+            [ img
+                [ class <| "preview__image " ++ placementToClass overlay.placement
+                , src overlay.image
+                , style [ ( "width", "auto" ), ( "height", "auto" ), ( "transform-origin", placementToClass overlay.placement ) ]
+                ]
+                []
+            , text "Preview"
+            ]
+        ]
 
 
 locations : List Placement
@@ -55,6 +70,38 @@ locations =
 decodePlacement : Json.Decode.Decoder Placement
 decodePlacement =
     andThen stringToPlacement targetValue
+
+
+placementToString : Placement -> String
+placementToString placement =
+    case placement of
+        TopLeft ->
+            "Top left"
+
+        TopRight ->
+            "Top right"
+
+        BottomLeft ->
+            "Bottom left"
+
+        BottomRight ->
+            "Bottom right"
+
+
+placementToClass : Placement -> String
+placementToClass placement =
+    case placement of
+        TopLeft ->
+            "top left"
+
+        TopRight ->
+            "top right"
+
+        BottomLeft ->
+            "bottom left"
+
+        BottomRight ->
+            "bottom right"
 
 
 stringToPlacement : String -> Decoder Placement

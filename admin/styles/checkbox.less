@@ -1,0 +1,35 @@
+@size: 16px;
+
+.checkbox {
+    margin-right: 20px;
+    outline: 0;
+}
+
+.checkbox:before {
+    position: relative;
+    display: block;
+    width: @size;
+    height: @size;
+    border: 2px solid black;
+    border-radius: 2px;
+    content: "";
+    background: #FFF;
+    top: -( @size / 4 );
+}
+
+.checkbox:after {
+    border-radius: 2px;
+    position: relative;
+    display: block;
+    top: -20px;
+    width: @size;
+    height: @size;
+    content: "";
+    background-repeat: no-repeat;
+    background-position:center;
+}
+
+.checkbox:checked:after {
+    background-color: black;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg fill='%23ffffff' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 0h24v24H0z' fill='none'/%3e%3cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3e%3c/svg%3e");
+}
