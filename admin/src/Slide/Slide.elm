@@ -11,6 +11,7 @@ import Events exposing (onClickStopPropagation)
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
 import Backend exposing (editSlide, createSlide, deleteSlide)
 import Models.Conference exposing (Conference)
+import Icons
 
 
 init : ( SlideModel, Cmd Msg )
@@ -63,12 +64,12 @@ viewDrop moving location =
 
 deleteButton : SlideModel -> Html Msg
 deleteButton model =
-    button [ class "slide__delete", onClickStopPropagation <| ToggleDelete model ] [ icon "trash" ]
+    button [ class "slide__delete", onClickStopPropagation <| ToggleDelete model ] [ Icons.deleteIcon ]
 
 
 editButton : SlideModel -> Html Msg
 editButton model =
-    button [ class "slide__edit", onClickStopPropagation <| Edit model ] [ icon "pencil" ]
+    button [ class "slide__edit", onClickStopPropagation <| Edit model ] [ Icons.editIcon ]
 
 
 slideIndex : SlideModel -> Html Msg

@@ -1,9 +1,7 @@
 .button {
-    background-color: #00bcd4;
-    border: 0;
+    border: 1px solid rgba(0, 0, 0, .1);
     border-radius: 2px;
-    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
-    color: white;
+    color: #2d2d2d;
     font-family: Roboto, sans-serif;
     font-size: 14px;
     font-weight: 500;
@@ -11,11 +9,11 @@
     outline: 0;
     padding: 0 16px;
     text-transform: uppercase;
-    transition: background-color .4s;
+    transition: box-shadow .2s;
 }
 
 .button:hover {
-    background-color: #5acedd;
+    box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px;
 }
 
 .button:not([disabled]) {

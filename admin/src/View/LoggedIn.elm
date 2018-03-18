@@ -1,7 +1,7 @@
 module View.LoggedIn exposing (view)
 
-import Html exposing (Html, map, div, text, li, i, ul, button, a)
-import Html.Attributes exposing (class, classList, href)
+import Html exposing (Html, map, div, text, li, i, ul, button, a, img)
+import Html.Attributes exposing (class, classList, href, src)
 import Models.Model exposing (Model)
 import Models.ConferenceModel exposing (ConferenceModel)
 import Messages exposing (ConferenceMsg(..))
@@ -11,6 +11,7 @@ import View.Slides exposing (viewSlides)
 import Slides.Slides
 import Nav.Nav exposing (routeToString)
 import Nav.Model exposing (Page(..), ConferencePage(..))
+import Icons
 
 
 view : ConferenceModel -> Html ConferenceMsg
@@ -56,7 +57,7 @@ viewMain model =
 viewSidebar : ConferenceModel -> Html ConferenceMsg
 viewSidebar model =
     div [ class "app__sidebar sidebar" ]
-        [ text "Switcharoo"
+        [ img [ src "logo.svg", class "sidebar__logo" ] []
         , ul [ class "sidebar__menu" ]
             [ viewLink model <| SlidesPage
             , viewLink model <| SettingsPage
@@ -81,7 +82,7 @@ viewLink model page =
             [ href <| routeToString <| Nav.Model.ConferencePage model.conference.id page
             , classList [ ( "sidebar__link", True ), ( "sidebar__link--active", model.page == page ) ]
             ]
-            [ i [ class <| linkText page ] [ text "" ]
+            [ icon page
             , text <| pageTitle page
             ]
         ]
@@ -89,27 +90,28 @@ viewLink model page =
 
 viewBackToConferences : Html ConferenceMsg
 viewBackToConferences =
-    a
-        [ href <| routeToString Nav.Model.ConferencesPage
-        , class "sidebar__conferences sidebar__link"
+    div [ class "sidebar__menu-link" ]
+        [ a
+            [ href <| routeToString Nav.Model.ConferencesPage
+            , class "sidebar__conferences sidebar__link"
+            ]
+            [ Icons.keyboardArrowLeftIcon
+            , text "Conferences"
+            ]
         ]
-        [ i [ class "sidebar__icon icon-arrow-left" ] [ text "" ]
-        , text "Conferences"
-        ]
 
 
-linkText : ConferencePage -> String
-linkText page =
-    "sidebar__icon "
-        ++ case page of
-            SlidesPage ->
-                "icon-screen-desktop"
+icon : ConferencePage -> Html msg
+icon page =
+    case page of
+        SlidesPage ->
+            Icons.slidesIcon
 
-            SettingsPage ->
-                "icon-settings"
+        SettingsPage ->
+            Icons.settingsIcon
 
-            StylesPage ->
-                "icon-magic-wand"
+        StylesPage ->
+            Icons.brushIcon
 
 
 viewMessageArea : ConferenceModel -> Html ConferenceMsg
