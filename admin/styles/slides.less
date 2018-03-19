@@ -48,7 +48,19 @@
 }
 
 .slide--drop {
+    background: #aaa;
+    border-radius: 2px;
+    margin: 15px 0;
+    opacity: 0;
+    transition: opacity .4s ease-in-out;
     width: 15px;
+}
+
+.slide--drop--moving {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg fill='%23000000' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M16 13h-3V3h-2v10H8l4 4 4-4zM4 19v2h16v-2H4z'/%3e%3cpath d='M0 0h24v24H0z' fill='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
 }
 
 .slide__title {

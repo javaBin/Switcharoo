@@ -43,6 +43,6 @@ viewConference conference =
 viewCreateConference : Model -> Html Msg
 viewCreateConference model =
     div [ class "conferences__new" ]
-        [ input [ type_ "text", class "input--box conferences__input", placeholder "Name", onInput ConferenceName ] []
+        [ input [ type_ "text", class "input conferences__input", placeholder "Name", onInput ConferenceName ] []
         , button [ class "conferences__create button", onClick CreateConference ] [ text "Create conference" ]
         ]
