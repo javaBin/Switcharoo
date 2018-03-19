@@ -8,6 +8,7 @@ import Models.Slides
 import Events exposing (onClickStopPropagation)
 import Messages exposing (ConferenceMsg(..))
 import Slides.Messages exposing (Msg)
+import Icons
 
 
 edit : Models.Slides.SlideModel -> Html ConferenceMsg
@@ -26,12 +27,12 @@ editMedia model =
                 [ class "tabs__tab tabs__tab--active"
                 , disabled True
                 ]
-                [ text "Media" ]
+                [ Icons.image, text "Media" ]
             , button
                 [ class "tabs__tab"
                 , onClickStopPropagation <| SlidesMsg <| Slides.Messages.TextSlide model
                 ]
-                [ text "Text" ]
+                [ Icons.formatAlignLeft, text "Text" ]
             ]
         , div [ class "modal__slide" ]
             [ input
@@ -69,12 +70,12 @@ editText model =
                 [ class "tabs__tab"
                 , onClickStopPropagation <| SlidesMsg <| Slides.Messages.MediaSlide model
                 ]
-                [ text "Media" ]
+                [ Icons.image, text "Media" ]
             , button
                 [ class "tabs__tab tabs__tab--active"
                 , disabled True
                 ]
-                [ text "Text" ]
+                [ Icons.formatAlignLeft, text "Text" ]
             ]
         , div [ class "modal__slide" ]
             [ input
