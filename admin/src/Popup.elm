@@ -3,6 +3,7 @@ module Popup exposing (State, state, config, view)
 import Html exposing (Html, div, button, text, i)
 import Html.Attributes exposing (class, classList, attribute)
 import Events exposing (onClickStopPropagation)
+import Icons
 
 
 type alias State data =
@@ -70,15 +71,10 @@ modalFooterView config =
             [ class "button button--cancel"
             , onClickStopPropagation config.cancelMsg
             ]
-            [ icon "close" ]
+            [ Icons.close ]
         , button
             [ class "button button--ok modal__save"
             , onClickStopPropagation config.saveMsg
             ]
-            [ icon "check" ]
+            [ Icons.check ]
         ]
-
-
-icon : String -> Html msg
-icon c =
-    i [ class <| "icon-" ++ c ] []
