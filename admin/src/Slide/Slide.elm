@@ -12,6 +12,7 @@ import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFa
 import Backend exposing (editSlide, createSlide, deleteSlide)
 import Models.Conference exposing (Conference)
 import Icons
+import Events
 
 
 init : ( SlideModel, Cmd Msg )
@@ -30,11 +31,6 @@ createOrEditSlide conference model msg =
 subscriptions : SlideModel -> Sub Msg
 subscriptions model =
     Sub.batch [ fileUploadSucceeded <| FileUploaded model, fileUploadFailed <| FileUploadFailed model ]
-
-
-icon : String -> Html msg
-icon c =
-    i [ class <| "icon-" ++ c ] []
 
 
 view : SlideModel -> Bool -> Html Msg
@@ -59,7 +55,7 @@ view model moving =
 
 viewDrop : Bool -> Int -> Html Msg
 viewDrop moving location =
-    li [ classList [ ( "slide--drop", True ), ( "slide--drop--moving", moving ) ], attribute "ondragover" "return false", onDrop <| Drop location ] []
+    li [ classList [ ( "slide--drop", True ), ( "slide--drop--moving", moving ) ], attribute "ondragover" "return false", Events.onDrop <| Drop location ] []
 
 
 deleteButton : SlideModel -> Html Msg
@@ -88,8 +84,8 @@ viewText model opacity =
             , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ), opacity ]
             , attribute "draggable" "true"
-            , onDragStart <| Move model
-            , onDragEnd CancelMove
+            , Events.onDragStart <| Move model
+            , Events.onDragEnd CancelMove
             ]
             [ div
                 [ classList
@@ -118,8 +114,8 @@ viewImage model opacity =
             , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ), opacity ]
             , attribute "draggable" "true"
-            , onDragStart <| Move model
-            , onDragEnd CancelMove
+            , Events.onDragStart <| Move model
+            , Events.onDragEnd CancelMove
             ]
             [ div
                 [ classList
@@ -148,8 +144,8 @@ viewVideo model opacity =
             , onClick <| ToggleVisibility model
             , style [ ( "borderColor", borderStyle ), opacity ]
             , attribute "draggable" "true"
-            , onDragStart <| Move model
-            , onDragEnd CancelMove
+            , Events.onDragStart <| Move model
+            , Events.onDragEnd CancelMove
             ]
             [ div
                 [ classList
@@ -173,28 +169,3 @@ confirmDeleteView model =
         [ button [ class "button button--cancel", onClickStopPropagation <| ToggleDelete model ] [ text "Cancel" ]
         , button [ class "button slide__delete-button", onClickStopPropagation <| Delete model ] [ text "Delete" ]
         ]
-
-
-onDragStart : msg -> Attribute msg
-onDragStart msg =
-    on "dragstart" <| Json.Decode.succeed msg
-
-
-onDragEnd : msg -> Attribute msg
-onDragEnd msg =
-    on "dragend" <| Json.Decode.succeed msg
-
-
-onDrop : msg -> Attribute msg
-onDrop msg =
-    onPreventHelper "drop" msg
-
-
-onPreventHelper : String -> msg -> Attribute msg
-onPreventHelper event msg =
-    onWithOptions
-        event
-        { preventDefault = True
-        , stopPropagation = False
-        }
-        (Json.Decode.succeed msg)
