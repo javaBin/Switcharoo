@@ -34,6 +34,26 @@ editIcon =
     icon "mode_edit"
 
 
+close : Html msg
+close =
+    icon "close"
+
+
+check : Html msg
+check =
+    icon "check"
+
+
+image : Html msg
+image =
+    icon "image"
+
+
+formatAlignLeft : Html msg
+formatAlignLeft =
+    icon "format_align_left"
+
+
 icon : String -> Html msg
 icon name =
     i [ class "material-icons" ] [ text name ]
