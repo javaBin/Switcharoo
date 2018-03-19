@@ -22,18 +22,7 @@ edit slide =
 editMedia : Models.Slides.SlideModel -> Html ConferenceMsg
 editMedia model =
     div []
-        [ div [ class "tabs" ]
-            [ button
-                [ class "tabs__tab tabs__tab--active"
-                , disabled True
-                ]
-                [ Icons.image, text "Media" ]
-            , button
-                [ class "tabs__tab"
-                , onClickStopPropagation <| SlidesMsg <| Slides.Messages.TextSlide model
-                ]
-                [ Icons.formatAlignLeft, text "Text" ]
-            ]
+        [ tabsView model True False
         , div [ class "modal__slide" ]
             [ input
                 [ type_ "text"
@@ -65,18 +54,7 @@ editMedia model =
 editText : Models.Slides.SlideModel -> Html ConferenceMsg
 editText model =
     div []
-        [ div [ class "tabs" ]
-            [ button
-                [ class "tabs__tab"
-                , onClickStopPropagation <| SlidesMsg <| Slides.Messages.MediaSlide model
-                ]
-                [ Icons.image, text "Media" ]
-            , button
-                [ class "tabs__tab tabs__tab--active"
-                , disabled True
-                ]
-                [ Icons.formatAlignLeft, text "Text" ]
-            ]
+        [ tabsView model False True
         , div [ class "modal__slide" ]
             [ input
                 [ type_ "text"
@@ -111,6 +89,24 @@ editText model =
                 []
             , selectColorView model
             ]
+        ]
+
+
+tabsView : Models.Slides.SlideModel -> Bool -> Bool -> Html ConferenceMsg
+tabsView model mediaSelected textSelected =
+    div [ class "tabs" ]
+        [ button
+            [ classList [ ( "tabs__tab", True ), ( "tabs__tab--active", mediaSelected ) ]
+            , onClickStopPropagation <| SlidesMsg <| Slides.Messages.MediaSlide model
+            , disabled mediaSelected
+            ]
+            [ Icons.image, text "Media" ]
+        , button
+            [ classList [ ( "tabs__tab", True ), ( "tabs__tab--active", textSelected ) ]
+            , onClickStopPropagation <| SlidesMsg <| Slides.Messages.TextSlide model
+            , disabled textSelected
+            ]
+            [ Icons.formatAlignLeft, text "Text" ]
         ]
 
 
