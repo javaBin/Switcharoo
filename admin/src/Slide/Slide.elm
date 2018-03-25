@@ -73,34 +73,40 @@ slideIndex model =
     div [ class "slide__index" ] [ text <| toString model.slide.index ]
 
 
-viewText : SlideModel -> ( String, String ) -> Html Msg
-viewText model opacity =
+colorIndicator : SlideModel -> Html msg
+colorIndicator model =
     let
-        borderStyle =
+        color =
             Maybe.withDefault "transparent" model.slide.color
     in
-        li
-            [ class "slide"
-            , onClick <| ToggleVisibility model
-            , style [ ( "borderColor", borderStyle ), opacity ]
-            , attribute "draggable" "true"
-            , Events.onDragStart <| Move model
-            , Events.onDragEnd CancelMove
-            ]
-            [ div
-                [ classList
-                    [ ( "slide__content slide__content--text", True )
-                    , ( "slide__content--visible", model.slide.visible )
-                    ]
+        div [ class "slide__color-indicator", style [ ( "background-color", color ) ] ] []
+
+
+viewText : SlideModel -> ( String, String ) -> Html Msg
+viewText model opacity =
+    li
+        [ class "slide"
+        , onClick <| ToggleVisibility model
+        , style [ opacity ]
+        , attribute "draggable" "true"
+        , Events.onDragStart <| Move model
+        , Events.onDragEnd CancelMove
+        ]
+        [ div
+            [ classList
+                [ ( "slide__content slide__content--text", True )
+                , ( "slide__content--visible", model.slide.visible )
                 ]
-                [ div [ class "slide__title" ] [ text model.slide.title ]
-                , div [ class "slide__body" ] [ text model.slide.body ]
-                ]
-            , deleteButton model
-            , editButton model
-            , slideIndex model
-            , confirmDeleteView model
             ]
+            [ div [ class "slide__title" ] [ text model.slide.title ]
+            , div [ class "slide__body" ] [ text model.slide.body ]
+            ]
+        , deleteButton model
+        , editButton model
+        , slideIndex model
+        , confirmDeleteView model
+        , colorIndicator model
+        ]
 
 
 viewImage : SlideModel -> ( String, String ) -> Html Msg
