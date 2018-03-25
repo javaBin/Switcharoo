@@ -16,17 +16,9 @@ type alias Model =
     { selection : Maybe ConferenceModel
     , conferenceName : String
     , conferences : List Conference
-
-    -- , slides : Models.Slides.Slides
-    -- , services : Services.Model.Model
-    -- , settings : List Setting
     , auth : Auth.AuthStatus
     , flags : Flags
     , page : Nav.Model.Page
-
-    -- , styles : List CssModel
-    -- , savedSuccessfully : Maybe Bool
-    -- , connectedClients : Maybe String
     }
 
 
