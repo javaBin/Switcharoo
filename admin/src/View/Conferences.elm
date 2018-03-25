@@ -9,6 +9,7 @@ import Messages exposing (Msg(..))
 import Nav.Model exposing (Page(..), ConferencePage(..))
 import Nav.Nav exposing (routeToString)
 import View.Box
+import Icons
 
 
 view : Model -> Html Msg
@@ -35,7 +36,7 @@ viewConference conference =
             , href <| routeToString <| ConferencePage conference.id SlidesPage
             ]
             [ text conference.name
-            , i [ class "icon-arrow-right" ] [ text "" ]
+            , Icons.keyboardArrowRight
             ]
         ]
 
