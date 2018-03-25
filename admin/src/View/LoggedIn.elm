@@ -57,7 +57,9 @@ viewMain model =
 viewSidebar : ConferenceModel -> Html ConferenceMsg
 viewSidebar model =
     div [ class "app__sidebar sidebar" ]
-        [ img [ src "logo.svg", class "sidebar__logo" ] []
+        [ a [ href <| routeToString Nav.Model.ConferencesPage ]
+            [ img [ src "logo.svg", class "sidebar__logo" ] [] ]
+        , div [ class "sidebar__conference" ] [ text model.conference.name ]
         , ul [ class "sidebar__menu" ]
             [ viewLink model <| SlidesPage
             , viewLink model <| SettingsPage

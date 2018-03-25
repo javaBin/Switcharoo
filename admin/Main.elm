@@ -87,6 +87,12 @@ update msg model =
 conferenceUpdate : ConferenceMsg -> ConferenceModel -> ( ConferenceModel, Cmd ConferenceMsg )
 conferenceUpdate msg model =
     case msg of
+        GotConference (Err err) ->
+            Debug.log (toString err) ( model, Cmd.none )
+
+        GotConference (Ok conference) ->
+            ( { model | conference = conference }, Cmd.none )
+
         SlidesMsg msg ->
             let
                 ( newSlides, cmd ) =
@@ -294,8 +300,16 @@ updatePage page model =
 
                 cmd =
                     updateConferencePage conference.conference conferencePage
+
+                conferenceRequest =
+                    case model.selection of
+                        Nothing ->
+                            Cmd.map ConferenceMsg <| Backend.getConference id
+
+                        _ ->
+                            Cmd.none
             in
-                ( { model | selection = Just conference }, Cmd.map ConferenceMsg cmd )
+                ( { model | selection = Just conference }, Cmd.batch [ conferenceRequest, Cmd.map ConferenceMsg cmd ] )
 
 
 updateConferencePage : Conference -> ConferencePage -> Cmd ConferenceMsg

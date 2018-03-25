@@ -50,6 +50,20 @@ saveOverlay conference overlay =
             }
 
 
+getConference : Int -> Cmd ConferenceMsg
+getConference id =
+    Http.send GotConference <|
+        Http.request
+            { method = "GET"
+            , headers = [ Http.header "authorization" <| authorization "login_token" ]
+            , url = "/conferences/" ++ toString id
+            , body = Http.emptyBody
+            , expect = Http.expectJson <| Decoder.conferenceDecoder
+            , timeout = Maybe.Nothing
+            , withCredentials = False
+            }
+
+
 getConferences : String -> Cmd Msg
 getConferences hack =
     Task.attempt Conferences <| getConferencesTask hack

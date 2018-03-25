@@ -24,7 +24,8 @@ type Msg
 
 
 type ConferenceMsg
-    = SlidesMsg Slides.Messages.Msg
+    = GotConference (Result Http.Error Conference)
+    | SlidesMsg Slides.Messages.Msg
     | GotStyles (Result Http.Error (List CssModel))
     | SaveStyles
     | SavedStyles (Result Http.Error (List CssModel))
