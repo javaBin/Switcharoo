@@ -24,6 +24,11 @@ keyboardArrowLeftIcon =
     icon "keyboard_arrow_left"
 
 
+keyboardArrowRight : Html msg
+keyboardArrowRight =
+    icon "keyboard_arrow_right"
+
+
 deleteIcon : Html msg
 deleteIcon =
     icon "delete"
