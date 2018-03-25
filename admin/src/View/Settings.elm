@@ -27,5 +27,5 @@ viewSetting : Setting -> Html ConferenceMsg
 viewSetting setting =
     li [ class "settings__setting" ]
         [ div [ class "settings__setting-title" ] [ text setting.hint ]
-        , input [ type_ "text", value setting.value, onInput <| SettingChanged setting, class "input--box" ] []
+        , input [ type_ "text", value setting.value, onInput <| SettingChanged setting, class "input" ] []
         ]
