@@ -9,14 +9,6 @@ function getHost() {
     conference: conference
   });
 
-  app.ports.connect.subscribe(function(url) {
-    var socket = io(url);
-    socket.on('event', function(data) {
-      console.log(data);
-      app.ports.onMessage.send(data);
-    });
-  });
-
   window.onhashchange = function() {
     window.location.reload();
   };

@@ -10,3 +10,4 @@ type Msg
     | Refetch
     | RefetchSlides (Result Http.Error Data)
     | SlidesMsg Slides.Msg
+    | WSMessage String

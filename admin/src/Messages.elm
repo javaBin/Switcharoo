@@ -10,6 +10,7 @@ import Models.Conference exposing (Conference)
 import Models.Slides
 import Models.Overlay exposing (Overlay, Placement)
 import Ports exposing (FileData)
+import Ws
 
 
 type Msg
@@ -36,7 +37,7 @@ type ConferenceMsg
     | SaveSettings
     | SettingsSaved (Result Http.Error (List Setting))
     | DisableSavedSuccessfully
-    | WSMessage String
+    | WSMessage Ws.Command
     | SlidePopupCancel
     | SlidePopupSave Models.Slides.SlideModel
     | SlideSave (Result Http.Error Models.Slides.Slide)

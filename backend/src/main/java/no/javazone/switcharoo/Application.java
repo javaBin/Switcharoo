@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.vavr.gson.VavrGson;
 import no.javazone.switcharoo.api.*;
-import no.javazone.switcharoo.api.socketio.SocketIOSessions;
+import no.javazone.switcharoo.api.socketio.WSSessions;
 import no.javazone.switcharoo.config.Properties;
 import no.javazone.switcharoo.dao.*;
 import no.javazone.switcharoo.dao.model.DBConference;
@@ -52,7 +52,7 @@ public class Application {
         StatusDao status = new StatusDao(dataSource);
         OverlayDao overlays = new OverlayDao(dataSource);
         TwitterService twitter = new TwitterService(executor, settings, services, properties);
-        SocketIOSessions sessions = new SocketIOSessions();
+        WSSessions sessions = new WSSessions();
 
         List<HttpService> httpServices = Arrays.asList(
             new Conferences(conferences, auth),
@@ -65,15 +65,12 @@ public class Application {
             new Program(executor),
             new Data(slides, conferences, overlays, twitter),
             new Status(status),
-            new SocketIO(sessions),
             new FileUpload(properties.filesUploadDir()),
             new Static("/admin/*", Paths.get(properties.filesFrontendDir(), "admin")),
             new Static("/uploads/*", Paths.get(properties.filesUploadDir())),
-            new Static("/*", Paths.get(properties.filesFrontendDir(), "public"))
+            new Static("/public/*", Paths.get(properties.filesFrontendDir(), "public")),
+            new Static("/", Paths.get(properties.filesFrontendDir(), "public"))
         );
-
-        Ws ws = new Ws(sessions);
-        webSocket("/socket.io/*", ws);
 
         exception(BadRequestException.class, (e, req, res) -> {
             LOG.warn("BadRequest: {}", e.reason);
@@ -85,8 +82,10 @@ public class Application {
             res.body(e.reason);
         });
 
-        redirect.get("/admin", "/admin/");
 
+        Ws ws = new Ws(sessions);
+        webSocket("/websocket", ws);
+        redirect.get("/admin", "/admin/");
         httpServices.forEach(s -> s.register(gson));
 
         before("/conferences/:conference/*", (req, res) -> setConference(req, conferences));

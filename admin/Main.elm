@@ -18,13 +18,14 @@ import Decoder exposing (stylesDecoder)
 import Task
 import Process exposing (sleep)
 import Time exposing (millisecond)
-import SocketIO
 import Popup
 import View.Login
 import View.LoggedIn
 import View.Conferences
 import Decoders.Slide
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
+import WebSocket
+import Ws
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -39,7 +40,7 @@ init flags location =
             else
                 Cmd.none
     in
-        ( initModel flags page, Cmd.batch [ cmd, SocketIO.connect <| flags.host ++ "/admin" ] )
+        ( initModel flags page, cmd )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -164,7 +165,7 @@ conferenceUpdate msg model =
             )
 
         WSMessage s ->
-            ( { model | connectedClients = Just s }, Cmd.none )
+            parseWebsocketMessage model s
 
         SlidePopupCancel ->
             let
@@ -220,6 +221,22 @@ conferenceUpdate msg model =
 
         OverlaySaved (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
+
+
+parseWebsocketMessage : ConferenceModel -> Ws.Command -> ( ConferenceModel, Cmd ConferenceMsg )
+parseWebsocketMessage model command =
+    case command of
+        Ws.Welcome ->
+            ( model, WebSocket.send "ws://localhost:4567/websocket" "REGISTER:ADMIN" )
+
+        Ws.ClientCount count ->
+            Debug.log count ( { model | connectedClients = Just count }, Cmd.none )
+
+        Ws.Illegal frame ->
+            Debug.log ("Illegal frame: " ++ frame) ( model, Cmd.none )
+
+        Ws.Unknown command ->
+            Debug.log ("Unknown command: " ++ command) ( model, Cmd.none )
 
 
 updateEnable : Overlay -> Bool -> Overlay
@@ -370,7 +387,7 @@ conferenceSubscriptions conference =
             Maybe.map
                 (\popupState -> Sub.map SlidesMsg <| Slide.Slide.subscriptions popupState.data)
                 conference.slides.newSlide
-        , SocketIO.onMessage WSMessage
+        , WebSocket.listen "ws://localhost:4567/websocket" (\s -> WSMessage <| Ws.parse s)
         , fileUploadSucceeded OverlayFileUploaded
         , fileUploadFailed OverlayFileUploadFailed
         ]

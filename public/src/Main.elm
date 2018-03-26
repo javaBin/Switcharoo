@@ -8,9 +8,9 @@ import Models.Slides as Slides
 import Time exposing (Time, second, millisecond)
 import Models exposing (Model, Data, SlideWrapper, Flags)
 import Decoder.Data
-import SocketIO
 import Messages exposing (Msg(..))
 import View.Overlay
+import WebSocket
 
 
 initModel : String -> Model
@@ -20,7 +20,7 @@ initModel conference =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( initModel flags.conference, Cmd.batch [ getSlides flags.conference Slides, SocketIO.connect <| flags.host ++ "/users" ] )
+    ( initModel flags.conference, getSlides flags.conference Slides )
 
 
 type alias SlidesResult =
@@ -59,6 +59,9 @@ update msg model =
             in
                 ( { model | slides = newSlides }, mappedCmd )
 
+        WSMessage message ->
+            ( model, WebSocket.send "ws://localhost:4567/websocket" "REGISTER:PUBLIC" )
+
 
 getSlides : String -> SlidesResult -> Cmd Msg
 getSlides conference message =
@@ -78,6 +81,7 @@ subscription model =
     Sub.batch
         [ Time.every (10 * second) (\_ -> Refetch)
         , Sub.map SlidesMsg <| Slides.subscriptions model.slides
+        , WebSocket.listen "ws://localhost:4567/websocket" WSMessage
         ]
 
 
