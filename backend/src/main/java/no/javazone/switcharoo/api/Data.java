@@ -11,22 +11,29 @@ import no.javazone.switcharoo.api.model.Tweet;
 import no.javazone.switcharoo.api.model.TwitterSlide;
 import no.javazone.switcharoo.dao.ConferenceDao;
 import no.javazone.switcharoo.dao.OverlayDao;
+import no.javazone.switcharoo.dao.ServiceDao;
 import no.javazone.switcharoo.dao.SlidesDao;
 import no.javazone.switcharoo.service.TwitterService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static spark.Spark.get;
 
 public class Data implements HttpService {
 
+    static Logger LOG = LoggerFactory.getLogger(Data.class);
+
     private final SlidesDao slides;
     private final ConferenceDao conferences;
     private final OverlayDao overlays;
     private final TwitterService twitter;
+    private final ServiceDao services;
 
-    public Data(SlidesDao slides, ConferenceDao conferences, OverlayDao overlays, TwitterService twitter) {
+    public Data(SlidesDao slides, ConferenceDao conferences, OverlayDao overlays, ServiceDao services, TwitterService twitter) {
         this.slides = slides;
         this.conferences = conferences;
         this.overlays = overlays;
+        this.services = services;
         this.twitter = twitter;
     }
 
@@ -35,10 +42,13 @@ public class Data implements HttpService {
         get("/data/:conference", (req, res) -> {
             Application.setConference(req, conferences);
             List<Object> data = List.empty();
-            data = data.appendAll(slides.listVisible(req.attribute("conference")).map(SlideMapper::fromDb));
-            List<Tweet> t = twitter.tweets();
-            if (t.size() > 0) {
-                data = data.append(new TwitterSlide(t));
+            long conference = req.attribute("conference");
+            data = data.appendAll(slides.listVisible(conference).map(SlideMapper::fromDb));
+            if (isTwitterEnabled()) {
+                List<Tweet> t = twitter.tweets(conference);
+                if (t.size() > 0) {
+                    data = data.append(new TwitterSlide(t));
+                }
             }
 
             Overlay overlay = overlays.get(req.attribute("conference")).map(OverlayMapper::fromDb).getOrElse((Overlay)null);
@@ -46,5 +56,14 @@ public class Data implements HttpService {
             res.type("application/json");
             return gson.toJson(new PublicData(data, overlay));
         });
+    }
+
+    private boolean isTwitterEnabled() {
+        return services.getByKey("twitter-enabled", 0)
+            .map(value -> value.value)
+            .getOrElseGet(error -> {
+                LOG.error(error);
+                return false;
+            });
     }
 }

@@ -1,9 +1,12 @@
 package no.javazone.switcharoo.service;
 
+import io.vavr.collection.HashMap;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import io.vavr.control.Try;
 import no.javazone.switcharoo.api.model.Tweet;
 import no.javazone.switcharoo.config.Properties;
+import no.javazone.switcharoo.dao.ConferenceDao;
 import no.javazone.switcharoo.dao.ServiceDao;
 import no.javazone.switcharoo.dao.SettingsDao;
 import org.slf4j.Logger;
@@ -21,24 +24,24 @@ public class TwitterService {
 
     static Logger LOG = LoggerFactory.getLogger(TwitterService.class);
     private final SettingsDao settings;
-    private final ServiceDao services;
+    private final ConferenceDao conferences;
     private Twitter twitter;
-    private List<Tweet> tweets = List.empty();
+    private Map<Long, List<Tweet>> tweets = HashMap.empty();
 
-    public TwitterService(ScheduledExecutorService executor, SettingsDao settings, ServiceDao services, Properties properties) {
+    public TwitterService(ScheduledExecutorService executor, SettingsDao settings, Properties properties, ConferenceDao conferences) {
         executor.scheduleAtFixedRate(getTweets(), 1, 10 * 60, TimeUnit.SECONDS);
         this.settings = settings;
-        this.services = services;
         this.twitter = getTwitterClient(
                 properties.twitterConsumerKey(),
                 properties.twitterConsumerSecret(),
                 properties.twitterAccessToken(),
                 properties.twitterAccessTokenSecret()
         );
+        this.conferences = conferences;
     }
 
-    public List<Tweet> tweets() {
-        return this.tweets;
+    public List<Tweet> tweets(Long conferenceId) {
+        return this.tweets.getOrElse(conferenceId, List.empty());
     }
 
     private Twitter getTwitterClient(String consumerKey, String consumerSecret, String accessToken, String accessTokenSecret) {
@@ -52,27 +55,24 @@ public class TwitterService {
     }
 
     private Runnable getTweets() {
-        return () -> {
-            if (isTwitterEnabled()) {
-                tweets = settings.getByKey("twitter-search", 0)
-                    .map(value -> value.value.get("value").getAsString())
-                    .flatMap(searchTerm -> {
-                        LOG.info(String.format("Fetching new tweets: %s", searchTerm));
-                        Query query = new Query(String.format("%s +exclude:retweets", searchTerm))
-                            .resultType(Query.ResultType.recent)
-                            .count(4);
-                        return Try.of(() -> twitter.search(query)).toEither().mapLeft(e -> e.getMessage());
-                    })
-                    .map(result -> List.ofAll(result.getTweets()).map(this::mapTweet))
-                    .getOrElseGet(error -> {
-                        LOG.error(error);
-                        return List.empty();
-                    });
-                LOG.info(String.format("New tweets: %s", tweets.toString()));
-            } else {
-                LOG.info("Twitter is not enabled, NOT fetching new tweets");
-            }
-        };
+        return () -> conferences.list().forEach(conference -> {
+            List<Tweet> tweets = settings.getByKey("twitter-search", conference.id)
+                .map(value -> value.value.get("value").getAsString())
+                .flatMap(searchTerm -> {
+                    LOG.info(String.format("Fetching new tweets: %s", searchTerm));
+                    Query query = new Query(String.format("%s +exclude:retweets", searchTerm))
+                        .resultType(Query.ResultType.recent)
+                        .count(4);
+                    return Try.of(() -> twitter.search(query)).toEither().mapLeft(e -> e.getMessage());
+                })
+                .map(result -> List.ofAll(result.getTweets()).map(this::mapTweet))
+                .getOrElseGet(error -> {
+                    LOG.error(error);
+                    return List.empty();
+                });
+            this.tweets.put((long)0, tweets);
+            LOG.info(String.format("New tweets: %s", tweets.toString()));
+        });
     }
 
     private Tweet mapTweet(Status status) {
@@ -82,14 +82,5 @@ public class TwitterService {
             status.getUser().getOriginalProfileImageURL(),
             status.getUser().getScreenName()
         );
-    }
-
-    private boolean isTwitterEnabled() {
-        return services.getByKey("twitter-enabled", 0)
-            .map(value -> value.value)
-            .getOrElseGet(error -> {
-                LOG.error(error);
-                return false;
-            });
     }
 }

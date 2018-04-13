@@ -51,7 +51,7 @@ public class Application {
         SlidesDao slides = new SlidesDao(dataSource);
         StatusDao status = new StatusDao(dataSource);
         OverlayDao overlays = new OverlayDao(dataSource);
-        TwitterService twitter = new TwitterService(executor, settings, services, properties);
+        TwitterService twitter = new TwitterService(executor, settings, properties, conferences);
         WSSessions sessions = new WSSessions();
 
         List<HttpService> httpServices = Arrays.asList(
@@ -63,7 +63,7 @@ public class Application {
             new Overlays(overlays),
             new Tweets(twitter),
             new Program(executor),
-            new Data(slides, conferences, overlays, twitter),
+            new Data(slides, conferences, overlays, services, twitter),
             new Status(status),
             new FileUpload(properties.filesUploadDir()),
             new Static("/admin/*", Paths.get(properties.filesFrontendDir(), "admin")),
