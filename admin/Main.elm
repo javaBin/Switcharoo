@@ -14,15 +14,12 @@ import Models.Conference exposing (Conference)
 import Models.Overlay exposing (Overlay, Placement)
 import Auth
 import Messages exposing (Msg(..), ConferenceMsg(..), CssMsg(..))
-import Decoder exposing (stylesDecoder)
 import Task
 import Process exposing (sleep)
 import Time exposing (millisecond)
-import Popup
 import View.Login
 import View.LoggedIn
 import View.Conferences
-import Decoders.Slide
 import Ports exposing (FileData, fileSelected, fileUploadSucceeded, fileUploadFailed)
 import WebSocket
 import Ws
