@@ -111,62 +111,56 @@ viewText model opacity =
 
 viewImage : SlideModel -> ( String, String ) -> Html Msg
 viewImage model opacity =
-    let
-        borderStyle =
-            Maybe.withDefault "transparent" model.slide.color
-    in
-        li
-            [ class "slide slide--image"
-            , onClick <| ToggleVisibility model
-            , style [ ( "borderColor", borderStyle ), opacity ]
-            , attribute "draggable" "true"
-            , Events.onDragStart <| Move model
-            , Events.onDragEnd CancelMove
-            ]
-            [ div
-                [ classList
-                    [ ( "slide__content slide__content--image", True )
-                    , ( "slide__content--visible", model.slide.visible )
-                    ]
-                , style
-                    [ ( "background-image", "url(" ++ model.slide.body ++ ")" ) ]
+    li
+        [ class "slide slide--image"
+        , onClick <| ToggleVisibility model
+        , style [ opacity ]
+        , attribute "draggable" "true"
+        , Events.onDragStart <| Move model
+        , Events.onDragEnd CancelMove
+        ]
+        [ div
+            [ classList
+                [ ( "slide__content slide__content--image", True )
+                , ( "slide__content--visible", model.slide.visible )
                 ]
-                []
-            , deleteButton model
-            , editButton model
-            , slideIndex model
-            , confirmDeleteView model
+            , style
+                [ ( "background-image", "url(" ++ model.slide.body ++ ")" ) ]
             ]
+            []
+        , deleteButton model
+        , editButton model
+        , slideIndex model
+        , confirmDeleteView model
+        , colorIndicator model
+        ]
 
 
 viewVideo : SlideModel -> ( String, String ) -> Html Msg
 viewVideo model opacity =
-    let
-        borderStyle =
-            Maybe.withDefault "transparent" model.slide.color
-    in
-        li
-            [ class "slide slide--video"
-            , onClick <| ToggleVisibility model
-            , style [ ( "borderColor", borderStyle ), opacity ]
-            , attribute "draggable" "true"
-            , Events.onDragStart <| Move model
-            , Events.onDragEnd CancelMove
-            ]
-            [ div
-                [ classList
-                    [ ( "slide__content slide__content--video", True )
-                    , ( "slide__content--visible", model.slide.visible )
-                    ]
+    li
+        [ class "slide slide--video"
+        , onClick <| ToggleVisibility model
+        , style [ opacity ]
+        , attribute "draggable" "true"
+        , Events.onDragStart <| Move model
+        , Events.onDragEnd CancelMove
+        ]
+        [ div
+            [ classList
+                [ ( "slide__content slide__content--video", True )
+                , ( "slide__content--visible", model.slide.visible )
                 ]
-                [ div [ class "slide__title" ] [ text model.slide.name ]
-                , div [ class "slide__body" ] [ text "(video)" ]
-                ]
-            , deleteButton model
-            , editButton model
-            , slideIndex model
-            , confirmDeleteView model
             ]
+            [ div [ class "slide__title" ] [ text model.slide.name ]
+            , div [ class "slide__body" ] [ text "(video)" ]
+            ]
+        , deleteButton model
+        , editButton model
+        , slideIndex model
+        , confirmDeleteView model
+        , colorIndicator model
+        ]
 
 
 confirmDeleteView : SlideModel -> Html Msg
