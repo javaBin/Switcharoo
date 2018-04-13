@@ -15,7 +15,7 @@ type alias ConferenceModel =
     , services : Services.Model.Model
     , settings : List Setting
     , styles : List CssModel
-    , connectedClients : Maybe String
+    , connectedClients : String
     , overlay : Overlay
     }
 
@@ -48,5 +48,5 @@ initConferenceModel page conference =
         Services.Model.init
         []
         []
-        Nothing
+        "0"
         initOverlay

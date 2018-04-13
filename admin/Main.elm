@@ -227,7 +227,7 @@ parseWebsocketMessage model command =
             ( model, WebSocket.send "ws://localhost:4567/websocket" "REGISTER:ADMIN" )
 
         Ws.ClientCount count ->
-            Debug.log count ( { model | connectedClients = Just count }, Cmd.none )
+            Debug.log count ( { model | connectedClients = count }, Cmd.none )
 
         Ws.Illegal frame ->
             Debug.log ("Illegal frame: " ++ frame) ( model, Cmd.none )

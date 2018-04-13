@@ -60,6 +60,7 @@ viewSidebar model =
         [ a [ href <| routeToString Nav.Model.ConferencesPage ]
             [ img [ src "logo.svg", class "sidebar__logo" ] [] ]
         , div [ class "sidebar__conference" ] [ text model.conference.name ]
+        , div [ class "sidebar__clients" ] [ text <| "Clients: " ++ model.connectedClients ]
         , ul [ class "sidebar__menu" ]
             [ viewLink model <| SlidesPage
             , viewLink model <| SettingsPage
