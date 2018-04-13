@@ -309,8 +309,14 @@ updatePage page model =
         ConferencePage id conferencePage ->
             let
                 conference =
-                    Models.ConferenceModel.initConferenceModel conferencePage <|
-                        Models.Conference.Conference id ""
+                    Maybe.withDefault
+                        (Models.ConferenceModel.initConferenceModel conferencePage <|
+                            Models.Conference.Conference id ""
+                        )
+                        model.selection
+
+                updatedConference =
+                    { conference | page = conferencePage }
 
                 cmd =
                     updateConferencePage conference.conference conferencePage
@@ -323,7 +329,7 @@ updatePage page model =
                         _ ->
                             Cmd.none
             in
-                ( { model | selection = Just conference }, Cmd.batch [ conferenceRequest, Cmd.map ConferenceMsg cmd ] )
+                ( { model | selection = Just updatedConference }, Cmd.batch [ conferenceRequest, Cmd.map ConferenceMsg cmd ] )
 
 
 updateConferencePage : Conference -> ConferencePage -> Cmd ConferenceMsg
