@@ -1,7 +1,7 @@
 module View.Conferences exposing (view)
 
-import Html exposing (Html, div, input, button, text, ul, li, a, i)
-import Html.Attributes exposing (class, type_, placeholder, href)
+import Html exposing (Html, div, input, button, text, ul, li, a, i, img)
+import Html.Attributes exposing (class, type_, placeholder, href, src)
 import Html.Events exposing (onClick, onInput)
 import Models.Model exposing (Model)
 import Models.Conference exposing (Conference)
@@ -15,7 +15,8 @@ import Icons
 view : Model -> Html Msg
 view model =
     div [ class "conferences" ]
-        [ View.Box.box "New conference" [] <| viewCreateConference model
+        [ img [ class "conferences__logo", src "logo_dark.svg" ] []
+        , View.Box.box "New conference" [] <| viewCreateConference model
         , viewConferences model
         ]
 
