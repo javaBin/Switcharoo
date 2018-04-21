@@ -11,6 +11,11 @@ function getHost() {
     window.location.reload();
   };
 
+  var conference = window.location.hash.slice(1);
+  if (conference === '') {
+    return;
+  }
+
   var link = document.createElement('link');
   link.href = '/custom.css/' + conference;
   link.type = 'text/css';
