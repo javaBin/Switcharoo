@@ -1,5 +1,6 @@
 package no.javazone.switcharoo.api;
 
+import io.vavr.control.Option;
 import io.vavr.control.Try;
 import no.javazone.switcharoo.api.socketio.ClientType;
 import no.javazone.switcharoo.api.socketio.WSSession;
@@ -44,21 +45,28 @@ public class Ws {
 
         Match(command).of(
             Case($("REGISTER"), () -> run(() -> register(session, message)) ),
+            Case($("CONFERENCE"), () -> run(() -> setConference(session, message))),
             Case($(), () -> run(() -> unknownCommand(rawMessage)))
         );
-
-        int clientCount = sessions.of(ClientType.PUBLIC).size();
-        sessions.of(ClientType.ADMIN)
-            .forEach((s, ws) -> Try.run(() -> s.getRemote().sendString("CLIENTCOUNT:" + clientCount)));
     }
 
     @SuppressWarnings("unused")
     @OnWebSocketClose
     public void close(Session session, int statusCode, String reason) {
+        Option<WSSession> wsSession = sessions.get(session);
         sessions.remove(session);
-        int clientCount = sessions.of(ClientType.PUBLIC).size();
-        sessions.of(ClientType.ADMIN)
-            .forEach((s, ws) -> Try.run(() -> s.getRemote().sendString("CLIENTCOUNT:" + clientCount)));
+
+        wsSession
+            .forEach(s -> {
+                String conference = s.getConference();
+                if (conference == null) {
+                    return;
+                } else {
+                    int clientCount = sessions.of(ClientType.PUBLIC, conference).size();
+                    sessions.of(ClientType.ADMIN, conference)
+                        .forEach((a, ws) -> Try.run(() -> a.getRemote().sendString("CLIENTCOUNT:" + clientCount)));
+                }
+            });
     }
 
     private void register(Session session, String clientType) {
@@ -66,6 +74,14 @@ public class Ws {
             .getOrElseGet(e -> ClientType.UNKNOWN);
 
         sessions.get(session).forEach(wsSession -> wsSession.setClientType(type));
+    }
+
+    private void setConference(Session session, String conference) {
+        sessions.get(session).forEach(s -> s.setConference(conference));
+
+        int clientCount = sessions.of(ClientType.PUBLIC, conference).size();
+        sessions.of(ClientType.ADMIN, conference)
+            .forEach((s, ws) -> Try.run(() -> s.getRemote().sendString("CLIENTCOUNT:" + clientCount)));
     }
 
     private void unknownCommand(String command) {

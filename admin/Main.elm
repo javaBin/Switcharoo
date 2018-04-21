@@ -224,7 +224,12 @@ parseWebsocketMessage : Flags -> ConferenceModel -> Ws.Command -> ( ConferenceMo
 parseWebsocketMessage flags model command =
     case command of
         Ws.Welcome ->
-            ( model, WebSocket.send (wsUrl flags) "REGISTER:ADMIN" )
+            ( model
+            , Cmd.batch
+                [ WebSocket.send (wsUrl flags) <| "CONFERENCE:" ++ toString model.conference.id
+                , WebSocket.send (wsUrl flags) "REGISTER:ADMIN"
+                ]
+            )
 
         Ws.ClientCount count ->
             ( { model | connectedClients = count }, Cmd.none )

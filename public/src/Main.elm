@@ -74,7 +74,12 @@ update msg model =
                 ( { model | slides = newSlides }, mappedCmd )
 
         WSMessage message ->
-            ( model, WebSocket.send (wsUrl model.settings) "REGISTER:PUBLIC" )
+            case model.page of
+                Conferences ->
+                    ( model, Cmd.none )
+
+                Conference n ->
+                    ( model, parseWebsocketMessage model.settings n message )
 
         PageChanged page ->
             pageChanged model page
@@ -84,6 +89,19 @@ update msg model =
 
         GotConferences (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
+
+
+parseWebsocketMessage : Settings -> Int -> String -> Cmd msg
+parseWebsocketMessage settings conference message =
+    case message of
+        "WELCOME:" ->
+            Cmd.batch
+                [ WebSocket.send (wsUrl settings) <| "CONFERENCE:" ++ toString conference
+                , WebSocket.send (wsUrl settings) "REGISTER:PUBLIC"
+                ]
+
+        _ ->
+            Cmd.none
 
 
 pageChanged : Model -> Page -> ( Model, Cmd Msg )

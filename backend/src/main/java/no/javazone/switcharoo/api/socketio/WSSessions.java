@@ -23,8 +23,8 @@ public class WSSessions {
         return s;
     }
 
-    public Map<Session, WSSession> of(ClientType clientType) {
-        return sessions.filter(s -> clientType.equals(s._2.getClientType()));
+    public Map<Session, WSSession> of(ClientType clientType, String conference) {
+        return sessions.filter(s -> clientType.equals(s._2.getClientType()) && conference.equals(s._2.getConference()));
     }
 
     public void remove(Session session) {
