@@ -6,9 +6,10 @@
   "scripts": {
     "clean": "rm -rf ../dist/public && mkdir -p ../dist/public",
     "copy": "cp -a static/. ../dist/public/",
+    "watch:static": "onchange 'static/**' -- npm run copy",
     "build:elm": "elm-make src/Main.elm --output=../dist/public/app.js",
     "watch:elm": "elm-live src/Main.elm --output=../dist/public/app.js -- --debug",
-    "watch": "npm-run-all clean copy --parallel watch:elm",
+    "watch": "npm-run-all clean copy --parallel watch:elm watch:static",
     "build": "npm-run-all clean copy build:elm",
     "start": "npm run watch"
   },
@@ -18,6 +19,7 @@
   "devDependencies": {
     "elm-live": "^2.4.1",
     "less": "^2.7.1",
-    "npm-run-all": "^3.1.2"
+    "npm-run-all": "^3.1.2",
+    "onchange": "^3.3.0"
   }
 }
