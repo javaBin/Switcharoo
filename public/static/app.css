@@ -8,9 +8,9 @@ html, body {
 }
 
 body {
-    background: #222152;
-    color: white;
-    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, 'sans serif';
+    background: #F6F8F9;
+    color: black;
+    font-family: 'Helvetica Neue', Helvetica, Arial, 'sans serif';
     overflow: hidden;
 }
 
@@ -198,30 +198,6 @@ body {
     color: #F25D5B;
 }
 
-.votes {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    padding: 0 100px;
-    position: relative;
-    width: 100%;
-}
-
-.votes__header {
-    font-size: 6rem;
-    text-align: center;
-    margin: 0;
-}
-
-.votes__vote {
-    color: #FCB018;
-    font-size: 6rem;
-    margin: 0;
-    text-transform: uppercase;
-}
-
 .switcharoo__overlay {
     animation: fade-in .4s ease-in-out;
     position: fixed;
@@ -246,6 +222,35 @@ body {
 .switcharoo__overlay.bottom-right {
     bottom: 0;
     right: 0;
+}
+
+.conferences {
+    align-items: center;
+    cursor: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.conferences__logo {
+    margin: 50px 0 30px;
+    width: 200px;
+}
+
+.conferences__title {
+    font-size: 1.5rem;
+    font-weight: 200;
+}
+
+.conferences__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.conferences__link {
+    color: black;
 }
 
 @keyframes fade-in {

@@ -1,21 +1,29 @@
-module Models exposing (Model, Data, Overlay, Slides, SlideWrapper(..), Flags)
+module Models exposing (Model, Data, Overlay, Slides, SlideWrapper(..), Flags, Settings)
 
 import Models.Info as Info
 import Models.Tweets as Tweets
 import Models.Program as Program
 import List.Zipper exposing (Zipper)
+import Models.Page exposing (Page)
+import Models.Conference
 
 
 type alias Flags =
     { host : String
-    , conference : String
+    }
+
+
+type alias Settings =
+    { host : String
     }
 
 
 type alias Model =
     { slides : Slides
     , overlay : Maybe Overlay
-    , conference : String
+    , settings : Settings
+    , conferences : List Models.Conference.Conference
+    , page : Page
     }
 
 

@@ -1,12 +1,10 @@
 function getHost() {
-  return window.location.protocol + '//' + window.location.host;
+  return window.location.host;
 }
 
 (function() {
-  var conference = window.location.hash.slice(1);
   var app = Elm.Main.fullscreen({
-    host: getHost(),
-    conference: conference
+    host: getHost()
   });
 
   window.onhashchange = function() {

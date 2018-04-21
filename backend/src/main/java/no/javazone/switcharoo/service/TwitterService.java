@@ -7,7 +7,6 @@ import io.vavr.control.Try;
 import no.javazone.switcharoo.api.model.Tweet;
 import no.javazone.switcharoo.config.Properties;
 import no.javazone.switcharoo.dao.ConferenceDao;
-import no.javazone.switcharoo.dao.ServiceDao;
 import no.javazone.switcharoo.dao.SettingsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

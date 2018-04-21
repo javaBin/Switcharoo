@@ -67,9 +67,11 @@ public class Application {
             new Status(status),
             new FileUpload(properties.filesUploadDir()),
             new Static("/admin/*", Paths.get(properties.filesFrontendDir(), "admin")),
+            new Static("/conference/:id/*", Paths.get(properties.filesFrontendDir(), "public")),
             new Static("/uploads/*", Paths.get(properties.filesUploadDir())),
-            new Static("/public/*", Paths.get(properties.filesFrontendDir(), "public")),
-            new Static("/", Paths.get(properties.filesFrontendDir(), "public"))
+            new Static("/display/*", Paths.get(properties.filesFrontendDir(), "public"))
+//            new Static("/:id", Paths.get(properties.filesFrontendDir(), "public")),
+//            new Static("/", Paths.get(properties.filesFrontendDir(), "public"))
         );
 
         exception(BadRequestException.class, (e, req, res) -> {
@@ -86,6 +88,8 @@ public class Application {
         Ws ws = new Ws(sessions);
         webSocket("/websocket", ws);
         redirect.get("/admin", "/admin/");
+        redirect.get("/display", "/display/");
+        redirect.get("/", "/display/");
         httpServices.forEach(s -> s.register(gson));
 
         before("/conferences/:conference/*", (req, res) -> setConference(req, conferences));

@@ -1,5 +1,5 @@
 function getHost() {
-  return window.location.protocol + '//' + window.location.host;
+  return window.location.host;
 }
 
 (function() {

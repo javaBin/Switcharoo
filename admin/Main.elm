@@ -46,7 +46,7 @@ update msg model =
         ConferenceMsg conferenceMsg ->
             let
                 ( conferenceModel, cmd ) =
-                    Maybe.withDefault ( Nothing, Cmd.none ) <| Maybe.map (Tuple.mapFirst Just) <| Maybe.map (\c -> conferenceUpdate conferenceMsg c) model.selection
+                    Maybe.withDefault ( Nothing, Cmd.none ) <| Maybe.map (Tuple.mapFirst Just) <| Maybe.map (\c -> conferenceUpdate model.flags conferenceMsg c) model.selection
             in
                 ( { model | selection = conferenceModel }, Cmd.map ConferenceMsg cmd )
 
@@ -82,8 +82,8 @@ update msg model =
             ( { model | conferenceName = name }, Cmd.none )
 
 
-conferenceUpdate : ConferenceMsg -> ConferenceModel -> ( ConferenceModel, Cmd ConferenceMsg )
-conferenceUpdate msg model =
+conferenceUpdate : Flags -> ConferenceMsg -> ConferenceModel -> ( ConferenceModel, Cmd ConferenceMsg )
+conferenceUpdate flags msg model =
     case msg of
         GotConference (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
@@ -162,7 +162,7 @@ conferenceUpdate msg model =
             )
 
         WSMessage s ->
-            parseWebsocketMessage model s
+            parseWebsocketMessage flags model s
 
         SlidePopupCancel ->
             let
@@ -220,14 +220,14 @@ conferenceUpdate msg model =
             Debug.log (toString err) ( model, Cmd.none )
 
 
-parseWebsocketMessage : ConferenceModel -> Ws.Command -> ( ConferenceModel, Cmd ConferenceMsg )
-parseWebsocketMessage model command =
+parseWebsocketMessage : Flags -> ConferenceModel -> Ws.Command -> ( ConferenceModel, Cmd ConferenceMsg )
+parseWebsocketMessage flags model command =
     case command of
         Ws.Welcome ->
-            ( model, WebSocket.send "ws://localhost:4567/websocket" "REGISTER:ADMIN" )
+            ( model, WebSocket.send (wsUrl flags) "REGISTER:ADMIN" )
 
         Ws.ClientCount count ->
-            Debug.log count ( { model | connectedClients = count }, Cmd.none )
+            ( { model | connectedClients = count }, Cmd.none )
 
         Ws.Illegal frame ->
             Debug.log ("Illegal frame: " ++ frame) ( model, Cmd.none )
@@ -375,7 +375,7 @@ subscriptions model =
                     Sub.none
 
                 Just conf ->
-                    Sub.map ConferenceMsg <| conferenceSubscriptions conf
+                    Sub.map ConferenceMsg <| conferenceSubscriptions model conf
     in
         Sub.batch
             [ Auth.loginResult LoginResult
@@ -383,17 +383,22 @@ subscriptions model =
             ]
 
 
-conferenceSubscriptions : ConferenceModel -> Sub ConferenceMsg
-conferenceSubscriptions conference =
+conferenceSubscriptions : Model -> ConferenceModel -> Sub ConferenceMsg
+conferenceSubscriptions model conference =
     Sub.batch
         [ Maybe.withDefault Sub.none <|
             Maybe.map
                 (\popupState -> Sub.map SlidesMsg <| Slide.Slide.subscriptions popupState.data)
                 conference.slides.newSlide
-        , WebSocket.listen "ws://localhost:4567/websocket" (\s -> WSMessage <| Ws.parse s)
+        , WebSocket.listen (wsUrl model.flags) (\s -> WSMessage <| Ws.parse s)
         , fileUploadSucceeded OverlayFileUploaded
         , fileUploadFailed OverlayFileUploadFailed
         ]
+
+
+wsUrl : Flags -> String
+wsUrl flags =
+    "ws://" ++ flags.host ++ "/websocket"
 
 
 main : Program Flags Model Msg
