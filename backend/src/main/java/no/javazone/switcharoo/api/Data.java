@@ -3,6 +3,7 @@ package no.javazone.switcharoo.api;
 import com.google.gson.Gson;
 import io.vavr.collection.List;
 import no.javazone.switcharoo.Application;
+import no.javazone.switcharoo.api.mapper.ConferenceMapper;
 import no.javazone.switcharoo.api.mapper.OverlayMapper;
 import no.javazone.switcharoo.api.mapper.SlideMapper;
 import no.javazone.switcharoo.api.model.Overlay;
@@ -39,6 +40,8 @@ public class Data implements HttpService {
 
     @Override
     public void register(Gson gson) {
+        get("/data", (req, res) -> gson.toJson(conferences.list().map(ConferenceMapper::fromDb)));
+
         get("/data/:conference", (req, res) -> {
             Application.setConference(req, conferences);
             List<Object> data = List.empty();
