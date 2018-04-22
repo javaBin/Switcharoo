@@ -65,7 +65,7 @@ public class ServiceDao {
             } else {
                 return null;
             }
-        }, String.format("Could not find service named %s", key));
+        }, String.format("Could not find service named '%s' for conference '%d'", key, conferenceId));
     }
 
     public Either<String, DBService> create(final DBService service, final long conferenceId) {

@@ -39,7 +39,7 @@ public class SettingsDao {
                 settings = settings.append(fromResultSet(rs, gson));
             }
             return settings;
-        }, "Could not find slides for conference " + conferenceId).getOrElse(List::empty);
+        }, "Could not find settings for conference").getOrElse(List::empty);
     }
 
     public Either<String, DBSetting> get(final long id, final long conferenceId) {

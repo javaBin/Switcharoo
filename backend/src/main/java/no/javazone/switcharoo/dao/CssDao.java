@@ -32,7 +32,7 @@ public class CssDao {
                 csses = csses.append(fromResultSet(rs));
             }
             return csses;
-        }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
+        }, "No css found for conference").getOrElse(List::empty);
     }
 
     public Either<String, DBCss> get(final long id, final long conferenceId) {

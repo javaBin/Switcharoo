@@ -14,6 +14,7 @@ import no.javazone.switcharoo.service.TwitterService;
 import org.aeonbits.owner.ConfigFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import spark.Request;
 
 import javax.sql.DataSource;
@@ -70,8 +71,6 @@ public class Application {
             new Static("/conference/:id/*", Paths.get(properties.filesFrontendDir(), "public")),
             new Static("/uploads/*", Paths.get(properties.filesUploadDir())),
             new Static("/display/*", Paths.get(properties.filesFrontendDir(), "public"))
-//            new Static("/:id", Paths.get(properties.filesFrontendDir(), "public")),
-//            new Static("/", Paths.get(properties.filesFrontendDir(), "public"))
         );
 
         exception(BadRequestException.class, (e, req, res) -> {
@@ -93,12 +92,13 @@ public class Application {
         httpServices.forEach(s -> s.register(gson));
 
         before("/conferences/:conference/*", (req, res) -> setConference(req, conferences));
+        afterAfter((req, res) -> MDC.clear());
     }
 
     public static void setConference(Request req, ConferenceDao conferences) {
         Long conferenceId = parseLong(req.params(":conference")).getOrElseThrow(BadRequestException::new);
         DBConference conference = conferences.get(conferenceId).getOrElseThrow(NotFoundException::new);
         req.attribute("conference", conference.id);
-        LOG.info("Conference: {}", conference.id);
+        MDC.put("conference", Long.toString(conference.id));
     }
 }
