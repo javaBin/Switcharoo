@@ -47,7 +47,7 @@ public class Data implements HttpService {
             List<Object> data = List.empty();
             long conference = req.attribute("conference");
             data = data.appendAll(slides.listVisible(conference).map(SlideMapper::fromDb));
-            if (isTwitterEnabled()) {
+            if (isTwitterEnabled(conference)) {
                 List<Tweet> t = twitter.tweets(conference);
                 if (t.size() > 0) {
                     data = data.append(new TwitterSlide(t));
@@ -61,8 +61,8 @@ public class Data implements HttpService {
         });
     }
 
-    private boolean isTwitterEnabled() {
-        return services.getByKey("twitter-enabled", 0)
+    private boolean isTwitterEnabled(long conference) {
+        return services.getByKey("twitter-enabled", conference)
             .map(value -> value.value)
             .getOrElseGet(error -> {
                 LOG.error(error);
