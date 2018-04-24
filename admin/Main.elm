@@ -5,6 +5,7 @@ import Navigation
 import Nav.Nav exposing (hashParser, routeToString)
 import Nav.Model exposing (Page(..), ConferencePage(..))
 import Slides.Slides
+import Slides.Messages
 import Slide.Slide
 import Services.Services
 import Backend
@@ -93,13 +94,21 @@ conferenceUpdate flags msg model =
 
         SlidesMsg msg ->
             let
-                ( newSlides, cmd ) =
-                    Slides.Slides.update model.conference msg model.slides
+                ( msgModel, msgCmd ) =
+                    case msg of
+                        Slides.Messages.IndexesUpdated (Ok _) ->
+                            showMessage model True
 
-                mappedCmd =
-                    Cmd.map SlidesMsg cmd
+                        Slides.Messages.IndexesUpdated (Err _) ->
+                            showMessage model False
+
+                        _ ->
+                            ( model, Cmd.none )
+
+                ( slides, cmd ) =
+                    Slides.Slides.update model.conference msg model.slides
             in
-                ( { model | slides = newSlides }, mappedCmd )
+                ( { msgModel | slides = slides }, Cmd.batch [ msgCmd, Cmd.map SlidesMsg cmd ] )
 
         ServicesMsg msg ->
             let
@@ -241,6 +250,11 @@ parseWebsocketMessage flags model command =
             Debug.log ("Unknown command: " ++ command) ( model, Cmd.none )
 
 
+showMessage : ConferenceModel -> Bool -> ( ConferenceModel, Cmd ConferenceMsg )
+showMessage model success =
+    ( { model | savedSuccessfully = Just success }, disableSavedSuccessfully )
+
+
 updateEnable : Overlay -> Bool -> Overlay
 updateEnable overlay enabled =
     { overlay | enabled = enabled }
@@ -273,7 +287,7 @@ updateOverlay overlay updateFn =
 
 disableSavedSuccessfully : Cmd ConferenceMsg
 disableSavedSuccessfully =
-    Task.perform (\_ -> DisableSavedSuccessfully) <| sleep <| 2000 * millisecond
+    Task.perform (\_ -> DisableSavedSuccessfully) <| sleep <| 1500 * millisecond
 
 
 findAndUpdateCss : CssModel -> CssMsg -> CssModel -> ( CssModel, Cmd ConferenceMsg )
