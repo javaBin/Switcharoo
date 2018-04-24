@@ -42,7 +42,7 @@ public class SlidesDao {
                 slides = slides.append(fromResultSet(rs));
             }
             return slides;
-        }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
+        }, "No slides found for conference").getOrElse(List::empty);
     }
 
     public Either<String, DBSlide> get(final long id, final long conferenceId) {

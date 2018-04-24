@@ -33,7 +33,7 @@ public class OverlayDao {
             } else {
                 return null;
             }
-        }, "Could not find overlay for conference " + conferenceId);
+        }, "Could not find overlay");
     }
 
     public Either<String, DBOverlay> update(final DBOverlay overlay, final long conferenceId) {

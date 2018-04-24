@@ -33,7 +33,7 @@ public class ServiceDao {
                 services = services.append(fromResultSet(rs));
             }
             return services;
-        }, "No slides found for conference " + conferenceId).getOrElse(List::empty);
+        }, "No services found for conference").getOrElse(List::empty);
     }
 
     public Either<String, DBService> get(final long id, final long conferenceId) {
@@ -65,7 +65,7 @@ public class ServiceDao {
             } else {
                 return null;
             }
-        }, String.format("Could not find service named '%s' for conference '%d'", key, conferenceId));
+        }, String.format("Could not find service named '%s'", key));
     }
 
     public Either<String, DBService> create(final DBService service, final long conferenceId) {
