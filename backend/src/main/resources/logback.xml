@@ -1,17 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration>
+<configuration scan="true" debug="true">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%X{conference}] [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="no.javazone.switcharoo" level="INFO" additivity="false">
+    <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+        <webhookUri>${SLACK_WEB_HOOK}</webhookUri>
+        <channel>#log</channel>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{HH:mm:ss.SSS} [%X{conference}] [%thread] %-5level %logger - %msg%n</pattern>
+        </layout>
+        <username>Switcharoo</username>
+        <iconEmoji>:robot_face:</iconEmoji>
+        <colorCoding>true</colorCoding>
+    </appender>
+
+    <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="SLACK" />
+    </appender>
+
+    <logger name="no.javazone.switcharoo" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="no.javazone.switcharoo" level="WARN" additivity="false">
+        <appender-ref ref="ASYNC_SLACK" />
     </logger>
 
     <root level="INFO">
