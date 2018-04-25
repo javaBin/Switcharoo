@@ -2,11 +2,16 @@ function getHost() {
   return window.location.host;
 }
 
+function isSecure() {
+  return window.location.protocol === 'https:';
+}
+
 (function() {
   var token = localStorage.getItem('login_token');
   var app = Elm.Main.fullscreen({
     loggedIn: token ? true : false,
-    host: getHost()
+    host: getHost(),
+    secure: isSecure()
   });
 
   var lock = new Auth0Lock(

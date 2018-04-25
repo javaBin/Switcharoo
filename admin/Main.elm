@@ -417,7 +417,14 @@ conferenceSubscriptions model conference =
 
 wsUrl : Flags -> String
 wsUrl flags =
-    "ws://" ++ flags.host ++ "/websocket"
+    let
+        protocol =
+            if flags.secure then
+                "wss://"
+            else
+                "ws://"
+    in
+        protocol ++ flags.host ++ "/websocket"
 
 
 main : Program Flags Model Msg

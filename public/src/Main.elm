@@ -19,7 +19,7 @@ import View.Conference
 
 initModel : Flags -> Page -> Model
 initModel flags page =
-    Model (Slides.init []) Nothing (Settings flags.host) [] page
+    Model (Slides.init []) Nothing (Settings flags.host flags.secure) [] page
 
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
@@ -150,7 +150,14 @@ subscription model =
 
 wsUrl : Settings -> String
 wsUrl settings =
-    "ws://" ++ settings.host ++ "/websocket"
+    let
+        protocol =
+            if settings.secure then
+                "wss://"
+            else
+                "ws://"
+    in
+        protocol ++ settings.host ++ "/websocket"
 
 
 main : Program Flags Model Msg

@@ -2,9 +2,14 @@ function getHost() {
   return window.location.host;
 }
 
+function isSecure() {
+  return window.location.protocol === 'https:';
+}
+
 (function() {
   var app = Elm.Main.fullscreen({
-    host: getHost()
+    host: getHost(),
+    secure: isSecure()
   });
 
   window.onhashchange = function() {

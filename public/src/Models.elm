@@ -10,11 +10,13 @@ import Models.Conference
 
 type alias Flags =
     { host : String
+    , secure : Bool
     }
 
 
 type alias Settings =
     { host : String
+    , secure : Bool
     }
 
 
