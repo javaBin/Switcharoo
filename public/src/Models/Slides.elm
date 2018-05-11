@@ -12,6 +12,7 @@ import Task
 import Process exposing (sleep)
 import List.Zipper exposing (Zipper, withDefault, first, next, current, toList)
 import Models exposing (Slides, SlideWrapper(..))
+import Keyboard
 
 
 init : List SlideWrapper -> Slides
@@ -28,6 +29,7 @@ type Msg
     = NextSlide
     | HideSlide
     | ShowSlide
+    | Keypress Keyboard.KeyCode
 
 
 update : Msg -> Slides -> ( Slides, Cmd Msg )
@@ -44,20 +46,33 @@ update msg model =
                     ( model, Cmd.none )
 
         NextSlide ->
-            case next model.slides of
-                Just z ->
-                    ( { model | slides = z }, showSlide )
-
-                Nothing ->
-                    case model.nextSlides of
-                        Just n ->
-                            ( { model | slides = n, nextSlides = Nothing }, showSlide )
-
-                        Nothing ->
-                            ( { model | slides = first model.slides }, showSlide )
+            nextSlide model
 
         ShowSlide ->
             ( { model | switching = False }, Cmd.none )
+
+        Keypress code ->
+            case code of
+                39 ->
+                    nextSlide model
+
+                _ ->
+                    ( model, Cmd.none )
+
+
+nextSlide : Slides -> ( Slides, Cmd Msg )
+nextSlide slides =
+    case next slides.slides of
+        Just z ->
+            ( { slides | slides = z }, showSlide )
+
+        Nothing ->
+            case slides.nextSlides of
+                Just n ->
+                    ( { slides | slides = n, nextSlides = Nothing }, showSlide )
+
+                Nothing ->
+                    ( { slides | slides = first slides.slides }, showSlide )
 
 
 hideSlide : Cmd Msg
@@ -95,7 +110,10 @@ viewSlide slide =
 
 subscriptions : Slides -> Sub Msg
 subscriptions model =
-    Time.every (10 * second) (\_ -> HideSlide)
+    Sub.batch
+        [ Time.every (10 * second) (\_ -> HideSlide)
+        , Keyboard.ups Keypress
+        ]
 
 
 updateIfPossible : Slides -> Maybe Slides -> ( Slides, Maybe Slides )
