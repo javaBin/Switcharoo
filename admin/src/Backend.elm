@@ -24,7 +24,7 @@ import Task
 
 getOverlay : Conference -> Cmd ConferenceMsg
 getOverlay conference =
-    Http.send OverlaySaved <|
+    Http.send GotOverlay <|
         Http.request
             { method = "GET"
             , headers = [ Http.header "authorization" <| authorization "login_token" ]

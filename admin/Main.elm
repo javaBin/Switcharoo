@@ -223,9 +223,15 @@ conferenceUpdate flags msg model =
             ( model, Backend.saveOverlay model.conference model.overlay )
 
         OverlaySaved (Ok overlay) ->
-            ( { model | overlay = overlay }, Cmd.none )
+            ( { model | overlay = overlay, savedSuccessfully = Just True }, disableSavedSuccessfully )
 
         OverlaySaved (Err err) ->
+            Debug.log (toString err) ( { model | savedSuccessfully = Just False }, disableSavedSuccessfully )
+
+        GotOverlay (Ok overlay) ->
+            ( { model | overlay = overlay }, Cmd.none )
+
+        GotOverlay (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
 
 

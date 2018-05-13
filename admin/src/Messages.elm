@@ -51,6 +51,7 @@ type ConferenceMsg
     | OverlayFileUploadFailed String
     | OverlaySave
     | OverlaySaved (Result Http.Error Overlay)
+    | GotOverlay (Result Http.Error Overlay)
 
 
 type CssMsg
