@@ -1,7 +1,7 @@
 module View.Slide exposing (edit)
 
-import Html exposing (Html, div, button, text, input, ul, li, textarea)
-import Html.Attributes exposing (class, classList, style, placeholder, value, type_, id, disabled)
+import Html exposing (Html, div, button, text, input, ul, li, textarea, img, video)
+import Html.Attributes exposing (class, classList, style, placeholder, value, type_, id, disabled, src, attribute)
 import Html.Events exposing (onClick, onInput, on)
 import Json.Decode exposing (succeed)
 import Models.Slides
@@ -26,7 +26,7 @@ editMedia model =
         , div [ class "modal__slide" ]
             [ input
                 [ type_ "text"
-                , class "input modal__index"
+                , class "input modal__name"
                 , onInput <| (\name -> SlidesMsg <| Slides.Messages.Name model name)
                 , value model.slide.name
                 , placeholder "Name"
@@ -40,6 +40,7 @@ editMedia model =
                 , placeholder "Index"
                 ]
                 []
+            , viewMedia model.slide.body model.slide.type_
             , input
                 [ type_ "file"
                 , id "MediaInputId"
@@ -49,6 +50,28 @@ editMedia model =
             , selectColorView model
             ]
         ]
+
+
+viewMedia : String -> String -> Html msg
+viewMedia media type_ =
+    if media == "" then
+        div [] []
+    else
+        (if type_ == "image" then
+            div [ class "modal__preview", style [ ( "backgroundImage", "url(" ++ media ++ ")" ) ] ] []
+         else if type_ == "video" then
+            div [ class "modal__preview" ]
+                [ video
+                    [ src media
+                    , attribute "autoplay" "true"
+                    , attribute "loop" "true"
+                    , class "modal__preview-video"
+                    ]
+                    []
+                ]
+         else
+            div [] []
+        )
 
 
 editText : Models.Slides.SlideModel -> Html ConferenceMsg
