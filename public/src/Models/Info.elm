@@ -3,15 +3,15 @@ module Models.Info exposing (Model, view, info, empty)
 import Html exposing (..)
 import Html.Attributes exposing (class, style, attribute, src)
 import Json.Decode.Extra exposing ((|:))
-import Json.Decode exposing (Decoder, decodeValue, succeed, string, int, andThen, maybe, field)
+import Json.Decode exposing (Decoder, decodeValue, succeed, string, float, andThen, maybe, field)
 import String exposing (toInt)
 
 
 type alias Model =
     { title : String
     , body : String
-    , index : Int
     , slideType : InfoType
+    , duration : Float
     }
 
 
@@ -27,7 +27,7 @@ type InfoType
 
 empty : Model
 empty =
-    Model "" "" 0 TextInfo
+    Model "" "" TextInfo 10000
 
 
 update : Msg -> Model -> Model
@@ -42,8 +42,8 @@ info =
     succeed Model
         |: (field "title" string)
         |: (field "body" string)
-        |: (field "index" int)
         |: ((field "type" string) |> andThen decodeType)
+        |: (field "duration" float)
 
 
 decodeIndex : String -> Decoder Int
