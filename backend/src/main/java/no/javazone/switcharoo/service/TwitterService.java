@@ -28,7 +28,7 @@ public class TwitterService {
     private Map<Long, List<Tweet>> tweets = HashMap.empty();
 
     public TwitterService(ScheduledExecutorService executor, SettingsDao settings, Properties properties, ConferenceDao conferences) {
-        executor.scheduleAtFixedRate(getTweets(), 1, 10 * 60, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(getTweets(), 1, 60 * 5, TimeUnit.SECONDS);
         this.settings = settings;
         this.twitter = getTwitterClient(
                 properties.twitterConsumerKey(),
@@ -55,6 +55,7 @@ public class TwitterService {
 
     private Runnable getTweets() {
         return () -> conferences.list().forEach(conference -> {
+            LOG.info("Starting tweet fetching...");
             List<Tweet> tweets = settings.getByKey("twitter-search", conference.id)
                 .map(value -> value.value.get("value").getAsString())
                 .flatMap(searchTerm -> {
