@@ -70,7 +70,7 @@ public class TwitterService {
                     LOG.error(error);
                     return List.empty();
                 });
-            this.tweets.put((long)0, tweets);
+            this.tweets = this.tweets.put(conference.id, tweets);
             LOG.info(String.format("New tweets: %s", tweets.toString()));
         });
     }
