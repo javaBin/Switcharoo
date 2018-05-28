@@ -11,6 +11,6 @@ import Models.Slides
 view : Model -> Html Msg
 view model =
     div [ class "switcharoo" ]
-        [ (View.Overlay.view model.overlay)
+        [ (View.Overlay.view model.overlay model.slides)
         , map SlidesMsg (Models.Slides.view model.slides)
         ]
