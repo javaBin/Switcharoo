@@ -17,17 +17,20 @@
         <username>Switcharoo</username>
         <iconEmoji>:robot_face:</iconEmoji>
         <colorCoding>true</colorCoding>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
     </appender>
 
     <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
         <appender-ref ref="SLACK" />
     </appender>
 
-    <logger name="no.javazone.switcharoo" level="DEBUG" additivity="false">
+    <logger name="no.javazone.switcharoo" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
-    <logger name="no.javazone.switcharoo" level="WARN" additivity="false">
+    <logger name="no.javazone.switcharoo" additivity="false">
         <appender-ref ref="ASYNC_SLACK" />
     </logger>
 
