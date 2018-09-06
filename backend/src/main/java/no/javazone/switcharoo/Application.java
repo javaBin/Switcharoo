@@ -2,6 +2,9 @@ package no.javazone.switcharoo;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import io.vavr.gson.VavrGson;
 import no.javazone.switcharoo.api.*;
 import no.javazone.switcharoo.api.socketio.WSSessions;
@@ -10,6 +13,7 @@ import no.javazone.switcharoo.dao.*;
 import no.javazone.switcharoo.dao.model.DBConference;
 import no.javazone.switcharoo.exception.BadRequestException;
 import no.javazone.switcharoo.exception.NotFoundException;
+import no.javazone.switcharoo.service.ProgramService;
 import no.javazone.switcharoo.service.TwitterService;
 import org.aeonbits.owner.ConfigFactory;
 import org.slf4j.Logger;
@@ -19,7 +23,9 @@ import spark.Request;
 
 import javax.sql.DataSource;
 
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -42,6 +48,18 @@ public class Application {
         DataSource dataSource = db.dataSource();
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        gsonBuilder.registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
+            @Override
+            public void write(JsonWriter out, ZonedDateTime value) throws IOException {
+                out.value(value.toString());
+            }
+
+            @Override
+            public ZonedDateTime read(JsonReader in) throws IOException {
+                return ZonedDateTime.parse(in.nextString());
+            }
+        }).enableComplexMapKeySerialization();
         VavrGson.registerAll(gsonBuilder);
         Gson gson = gsonBuilder.create();
 
@@ -53,6 +71,7 @@ public class Application {
         StatusDao status = new StatusDao(dataSource);
         OverlayDao overlays = new OverlayDao(dataSource);
         TwitterService twitter = new TwitterService(executor, settings, properties, conferences);
+        ProgramService program = new ProgramService(executor, settings, properties, gson);
         WSSessions sessions = new WSSessions();
 
         List<HttpService> httpServices = Arrays.asList(
@@ -65,7 +84,7 @@ public class Application {
             new Overlays(overlays),
             new Tweets(twitter),
             new Program(executor),
-            new Data(slides, conferences, overlays, services, twitter),
+            new Data(slides, conferences, overlays, services, twitter, program),
             new Status(status),
             new FileUpload(properties.filesUploadDir()),
             new Static("/admin/*", Paths.get(properties.filesFrontendDir(), "admin")),
