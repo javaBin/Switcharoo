@@ -64,7 +64,8 @@ public class Data implements HttpService {
             }
 
             if (isProgramEnabled(conference)) {
-                ZonedDateTime time = ZonedDateTime.parse("2018-09-12T08:01:00Z");//ZonedDateTime.now();
+                //ZonedDateTime time = ZonedDateTime.parse("2018-09-12T08:01:00Z");
+                ZonedDateTime time = ZonedDateTime.now();
                 Slot slot = program.getSlot(time)
                     .getOrNull();
 
