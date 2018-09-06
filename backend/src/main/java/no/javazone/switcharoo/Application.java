@@ -56,6 +56,7 @@ public class Application {
         WSSessions sessions = new WSSessions();
 
         List<HttpService> httpServices = Arrays.asList(
+            new Auth(auth),
             new Conferences(conferences, auth),
             new Settings(settings, auth),
             new Slides(slides, auth),
