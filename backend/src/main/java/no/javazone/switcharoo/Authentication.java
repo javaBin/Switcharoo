@@ -37,7 +37,7 @@ public class Authentication {
             // Don’t do anything here, just catch it to hinder it from being logged
             return false;
         } catch (RuntimeException e) {
-            LOG.warn("Error verifying auth header", e);
+            LOG.warn("Error verifying auth header ({})", authorization, e);
             return false;
         }
     }
