@@ -66,12 +66,15 @@ public class Data implements HttpService {
             if (isProgramEnabled(conference)) {
                 //ZonedDateTime time = ZonedDateTime.parse("2018-09-12T08:01:00Z");
                 ZonedDateTime time = ZonedDateTime.now();
+                LOG.info("Getting slot for {}", time);
                 Slot slot = program.getSlot(time)
                     .getOrNull();
 
                 if (slot != null) {
                     String heading = time.isBefore(slot.start) ? "Next up" : "Right now";
                     data = data.append(new ProgramSlide(heading, slot.sessions));
+                } else {
+                    LOG.warn("Slot was 'null' for {}", time);
                 }
             }
 

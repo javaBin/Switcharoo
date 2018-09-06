@@ -76,6 +76,7 @@ public class Application {
 
         List<HttpService> httpServices = Arrays.asList(
             new Auth(auth),
+            new Program(program),
             new Conferences(conferences, auth),
             new Settings(settings, auth),
             new Slides(slides, auth),
@@ -83,7 +84,6 @@ public class Application {
             new Services(services, auth),
             new Overlays(overlays),
             new Tweets(twitter),
-            new Program(executor),
             new Data(slides, conferences, overlays, services, twitter, program),
             new Status(status),
             new FileUpload(properties.filesUploadDir()),
