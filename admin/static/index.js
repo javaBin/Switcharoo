@@ -21,6 +21,8 @@ function checkStatus(response) {
 }
 
 (function() {
+  let app;
+  let isAuthenticated = false;
   var token = localStorage.getItem('login_token');
 
   var lock = new Auth0Lock(
@@ -34,7 +36,10 @@ function checkStatus(response) {
   );
 
   lock.on('authenticated', function(authResult) {
+    isAuthenticated = true;
     localStorage.setItem('login_token', authResult.idToken);
+    startApp();
+
     app.ports.loginResult.send({
       token: authResult.idToken
     });
@@ -49,24 +54,32 @@ function checkStatus(response) {
   });
 
   setTimeout(function() {
-    var token = localStorage.getItem('login_token');
-    if (token) {
-      app.ports.loginResult.send({
-        token: token
+    if (!isAuthenticated) {
+      fetch('/auth/verify', {
+        headers: {
+          authorization: 'Bearer ' + token
+        }
+      }).then(function(res) {
+        if (res.ok) {
+          startApp();
+
+          app.ports.loginResult.send({
+            token: token
+          });
+        } else {
+          lock.show();
+        }
       });
-    } else {
-      lock.show();
     }
   }, 200);
 
-  var app = Elm.Main.fullscreen({
-    loggedIn: token ? true : false,
-    host: getHost(),
-    secure: isSecure()
-  });
-  enablePorts(app);
+  function startApp() {
+    app = Elm.Main.fullscreen({
+      loggedIn: token ? true : false,
+      host: getHost(),
+      secure: isSecure()
+    });
 
-  function enablePorts(app) {
     app.ports.fileSelected.subscribe(function(id) {
       var input = document.getElementById(id);
       if (input == null) {
@@ -94,4 +107,17 @@ function checkStatus(response) {
       lock.show();
     });
   }
+
+  // setTimeout(function() {
+  //   var token = localStorage.getItem('login_token');
+  //   if (token) {
+  //     app.ports.loginResult.send({
+  //       token: token
+  //     });
+  //   } else {
+  //     lock.show();
+  //   }
+  // }, 200);
+
+  // function enablePorts(app) {}
 })();
