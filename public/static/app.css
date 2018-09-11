@@ -86,7 +86,7 @@ body {
 }
 
 .program__header {
-    color: #FCB018;
+    color: #ffffff;
     font-size: 6rem;
     margin-bottom: 0;
     margin-top: 0;
@@ -118,12 +118,14 @@ body {
 }
 
 .entry__room {
+    color: #ffffff;
     font-size: 7rem;
     font-weight: 100;
     margin: -16px 40px 0 0;
 }
 
 .entry__title {
+    color: #ffffff;
     font-size: 3.5rem;
     font-weight: 100;
     margin-bottom: 5px;
@@ -137,7 +139,7 @@ body {
 }
 
 .entry__speakers {
-    color: rgba(255, 255, 255, .7);
+    color: #ffffff;
     font-size: 1.5rem;
 }
 
