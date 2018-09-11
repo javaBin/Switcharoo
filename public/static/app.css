@@ -81,12 +81,18 @@ body {
     padding: 0;
 }
 
+.program {
+    height: 100%;
+}
+
 .program__header {
     color: #FCB018;
     font-size: 6rem;
     margin-bottom: 0;
+    margin-top: 0;
     text-align: center;
     text-transform: uppercase;
+    padding-top: 0.67em;
 }
 
 .program__program {
