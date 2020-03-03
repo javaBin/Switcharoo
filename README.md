@@ -1,7 +1,5 @@
 # Switcharoo
 
-	It's time for a switcharoo - Justin Timberlake
-
 Information monitor system
 
 ## Requirements
