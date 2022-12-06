@@ -25,6 +25,6 @@
         "onchange": "^4.0.0"
     },
     "dependencies": {
-        "elm-live": "^2.7.5"
+        "elm-live": "^4.0.2"
     }
 }
